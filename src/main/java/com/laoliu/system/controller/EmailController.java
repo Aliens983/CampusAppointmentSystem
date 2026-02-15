@@ -1,10 +1,12 @@
 package com.laoliu.system.controller;
 
+import com.laoliu.system.common.CodeGenerator;
 import com.laoliu.system.service.EmailSendService;
 import com.laoliu.system.vo.request.EmailRequest;
 import com.laoliu.system.vo.response.EmailResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,12 @@ public class EmailController {
     public EmailController(EmailSendService emailSendService) {
         this.emailSendService = emailSendService;
     }
+    @Value("${email.subject}")
+    private String emailSubject;
+
+    @Value("${email.content}")
+    private String emailContent;
+
 
     @PostMapping
     public ResponseEntity<EmailResponse> sendEmail(@RequestBody EmailRequest request) {
@@ -32,17 +40,12 @@ public class EmailController {
                 return ResponseEntity.badRequest().body(new EmailResponse("请求参数不能为空", false));
             }
             String to = request.getTo();
-            String subject = request.getSubject();
-            String content = request.getContent();
+            String subject = emailSubject;
+            String content = emailContent+ " "+CodeGenerator.generateCode()+" ,打死都不要告诉别人!!!";
+            log.info("邮件发送请求处理开始，收件人：{}，主题：{}，内容：{}", to, subject, content);
 
             if (to == null || to.isEmpty()) {
                 return ResponseEntity.badRequest().body(new EmailResponse("收件人邮箱不能为空", false));
-            }
-            if (subject == null || subject.isEmpty()) {
-                return ResponseEntity.badRequest().body(new EmailResponse("邮件主题不能为空", false));
-            }
-            if (content == null || content.isEmpty()) {
-                return ResponseEntity.badRequest().body(new EmailResponse("邮件内容不能为空", false));
             }
 
             // 发送邮件

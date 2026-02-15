@@ -11,7 +11,5 @@ import lombok.Setter;
 public class EmailRequest {
     // Getters and Setters
     private String to;
-    private String subject;
-    private String content;
 
 }
