@@ -1,0 +1,16 @@
+spring:
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: dmregy@163.com
+    password: VPbQ2X9N2gM6PANi
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+            required: true
+          starttls:
+            enable: false

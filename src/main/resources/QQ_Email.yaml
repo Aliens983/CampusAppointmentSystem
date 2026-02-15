@@ -1,0 +1,16 @@
+spring:
+  mail:
+    host: smtp.qq.com
+    port: 465
+    username: 255169814@qq.com
+    password: raflirbayopmbigg
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+            required: true
+          starttls:
+            enable: false
