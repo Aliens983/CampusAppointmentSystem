@@ -1,5 +1,6 @@
 package com.laoliu.system.controller;
 
+import com.laoliu.system.entity.User;
 import com.laoliu.system.utils.JWTUtils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
