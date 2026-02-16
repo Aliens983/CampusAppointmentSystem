@@ -1,11 +1,15 @@
 package com.laoliu.system.controller;
 
+import com.laoliu.system.converter.UserConverter;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.utils.JWTUtils;
+import com.laoliu.system.vo.response.UserResponse;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,14 +27,16 @@ public class UserController {
 
     private final JWTUtils jwtUtils;
     private final UserMapper userMapper;
+    private final UserConverter userConverter;
 
-    public UserController(JWTUtils jwtUtils, UserMapper userMapper) {
+    public UserController(JWTUtils jwtUtils, UserMapper userMapper, UserConverter userConverter) {
         this.jwtUtils = jwtUtils;
         this.userMapper = userMapper;
+        this.userConverter = userConverter;
     }
 
     @GetMapping
-    public User getUserByParseToken(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> getUserByParseToken(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
         String token = request.getHeader("Authorization");
         try {
@@ -48,11 +54,13 @@ public class UserController {
             User user;
             user = userMapper.selectByPrimaryKey(Long.valueOf(userId));
             log.info("User :{}",user);
-            return user;
+            UserResponse userResponse = userConverter.convertUserToUserResponse(user);
+            result.put("user", userResponse);
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", e.getMessage());
-            return null;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
     }
