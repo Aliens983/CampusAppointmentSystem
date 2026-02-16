@@ -1,9 +1,11 @@
 package com.laoliu.system.controller;
 
+import com.laoliu.system.converter.UserConverter;
+import com.laoliu.system.entity.User;
+import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.utils.RedisUtil;
 import com.laoliu.system.vo.request.UserRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +21,18 @@ public class LoginController {
 
     private final JWTUtils jwtUtils;
 
-    public LoginController(RedisUtil redisUtil, JWTUtils jwtUtils) {
+    private final UserMapper userMapper;
+
+    private final UserConverter userConverter;
+
+    public LoginController(RedisUtil redisUtil, JWTUtils jwtUtils, UserMapper userMapper, UserConverter userConverter) {
         this.redisUtil = redisUtil;
         this.jwtUtils = jwtUtils;
+        this.userMapper = userMapper;
+        this.userConverter = userConverter;
     }
+
+
 
     /**
      * 验证邮箱验证码并登录
@@ -32,6 +42,7 @@ public class LoginController {
         try {
             String email = userRequest.getEmail();
             String code = userRequest.getCode();
+
 
             if (email == null || code == null) {
                 return ResponseEntity.badRequest().body("邮箱和验证码不能为空");
@@ -51,10 +62,19 @@ public class LoginController {
             // 验证码正确，删除Redis中的验证码（防止重复使用）
             redisUtil.removeVerificationCode("verification_code:" + email);
 
+
+
+            User user = userConverter.convertUserRequestToUser(userRequest);
+            userMapper.insertSelective(user);
+
             // 生成JWT Token
-            String token = jwtUtils.generateJwt();
+
+            Long userId = Long.valueOf(user.getId());
+
+            String token = jwtUtils.generateToken(userId);
 
             return ResponseEntity.ok(token);
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("登录验证失败：" + e.getMessage());
         }
