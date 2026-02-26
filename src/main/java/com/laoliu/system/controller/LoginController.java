@@ -69,14 +69,14 @@ public class LoginController {
 
             // 生成JWT Token
 
-            Long userId = Long.valueOf(user.getId());
+            Long userId = user.getId();
 
             String token = jwtUtils.generateToken(userId);
 
             return ResponseEntity.ok(token);
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("登录验证失败：" + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("登录验证失败：" + e.getLocalizedMessage());
         }
     }
 

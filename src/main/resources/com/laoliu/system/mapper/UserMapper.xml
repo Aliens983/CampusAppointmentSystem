@@ -12,11 +12,12 @@
             <result property="age" column="age" />
             <result property="email" column="email" />
             <result property="password" column="password" />
+            <result property="role" column="role" />
     </resultMap>
 
     <sql id="Base_Column_List">
         id,name,grade,sex,age,email,
-        password
+        password,role
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -33,9 +34,9 @@
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.laoliu.system.entity.User" useGeneratedKeys="true">
         insert into user
         ( id,name,grade,sex,age,email,
-        password)
+        password,role)
         values (#{id},#{name},#{grade},#{sex},#{age},#{email},
-        #{password})
+        #{password},#{role})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.laoliu.system.entity.User" useGeneratedKeys="true">
         insert into user
@@ -47,6 +48,7 @@
                 <if test="age != null">age,</if>
                 <if test="email != null">email,</if>
                 <if test="password != null">password,</if>
+                <if test="role != null">role,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
                 <if test="id != null">#{id},</if>
@@ -56,6 +58,7 @@
                 <if test="age != null">#{age},</if>
                 <if test="email != null">#{email},</if>
                 <if test="password != null">#{password},</if>
+                <if test="role != null">#{role},</if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.laoliu.system.entity.User">
@@ -79,6 +82,9 @@
                 <if test="password != null">
                     password = #{password},
                 </if>
+                <if test="role != null">
+                    role = #{role},
+                </if>
         </set>
         where   id = #{id} 
     </update>
@@ -90,7 +96,8 @@
             sex =  #{sex},
             age =  #{age},
             email =  #{email},
-            password =  #{password}
+            password =  #{password},
+            role =  #{role}
         where   id = #{id} 
     </update>
 </mapper>

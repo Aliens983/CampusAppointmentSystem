@@ -9,6 +9,6 @@ import lombok.Data;
 public class UserResponse {
 
     private String email;
-    private Integer age;
+    private String role;
 
 }

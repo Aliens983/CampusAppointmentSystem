@@ -43,7 +43,6 @@ public class RedisUtil {
      * @param key 邮箱地址作为key
      */
     public void removeVerificationCode(String key) {
-
         redisTemplate.delete(key);
     }
 }

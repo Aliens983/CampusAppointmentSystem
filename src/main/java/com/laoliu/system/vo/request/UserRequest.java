@@ -12,6 +12,7 @@ public class UserRequest {
     private String grade;
     private String sex;
     private Integer age;
+    private Integer role;
     private String email;
     private String code;
     private String password;

@@ -35,7 +35,7 @@ public class EmailController {
 
     @Value("${email.content}")
     private String emailContent;
-    
+
     // 验证码过期时间（秒），默认5分钟
     @Value("${email.code.expiration:300}")
     private int codeExpiration;
@@ -53,7 +53,7 @@ public class EmailController {
                 return ResponseEntity.badRequest().body(new EmailResponse("请求参数不能为空", false));
             }
             String to = request.getTo();
-            
+
             if (to == null || to.isEmpty()) {
                 return ResponseEntity.badRequest().body(new EmailResponse("收件人邮箱不能为空", false));
             }
@@ -87,7 +87,7 @@ public class EmailController {
                      to, subject, codeExpiration, frequencyLimit);
             return ResponseEntity.ok(new EmailResponse("邮件发送成功"));
         } catch (RuntimeException e) {
-            log.error("邮件发送请求处理失败，错误信息：{}", e.getMessage());
+            log.error("邮件发送请求处理失败，错误信息：{}", e.getCause());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new EmailResponse("邮件发送失败：" + e.getMessage(), false));
         } catch (Exception e) {

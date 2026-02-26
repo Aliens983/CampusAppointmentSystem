@@ -28,6 +28,30 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+        <!-- SonarQube Server Address -->
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+
+        <!-- Project Identification -->
+        <sonar.projectKey>CAS</sonar.projectKey>
+        <sonar.projectName>CAS</sonar.projectName>
+
+        <!-- Security Best Practice: Use Environment Variable for Token -->
+        <!-- suppress UnresolvedMavenProperty -->
+        <!--suppress UnresolvedMavenProperty -->
+        <sonar.token>${env.SONAR_TOKEN}</sonar.token>
+
+        <!-- Source and Test Directories (Defaults usually work, but explicit is better) -->
+        <sonar.sources>src/main/java</sonar.sources>
+        <sonar.tests>src/test/java</sonar.tests>
+
+        <!-- Compiled Classes Location -->
+        <sonar.java.binaries>target/classes</sonar.java.binaries>
+
+        <!-- Code Coverage Report (JaCoCo) -->
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+
+        <!-- Unit Test Reports (Surefire) -->
+        <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
     </properties>
     <dependencies>
         <dependency>
