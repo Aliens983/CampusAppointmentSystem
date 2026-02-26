@@ -1,7 +1,6 @@
 package com.laoliu.system.converter;
 
 import com.laoliu.system.entity.User;
-import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.vo.request.UserRequest;
 import com.laoliu.system.vo.response.UserResponse;
 import org.springframework.stereotype.Component;
@@ -12,11 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserConverter {
 
-    private final UserMapper userMapper;
 
-    public UserConverter(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
 
     public User convertUserRequestToUser(UserRequest userRequest) {
         User user = new User();
