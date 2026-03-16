@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laoliu.system.mapper.ItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.laoliu.system.entity.Item">
+            <id property="orderId" column="order_id" />
+            <result property="userId" column="user_id" />
+            <result property="serviceId" column="service_id" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        order_id,user_id,service_id,create_time,update_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from item
+        where  order_id = #{orderId} 
+    </select>
+
+<!--    <resultMap id="MyServiceResult" type="com.laoliu.system.entity.Service">-->
+<!--        <id property="serviceId" column="service_id" />-->
+<!--        <result property="serviceName" column="service_name" />-->
+<!--        <result property="serviceDescribe" column="service_describe" />-->
+<!--        <result property="serviceState" column="service_state" />-->
+<!--    </resultMap>-->
+<!--    <select id="selectUserServices" resultMap="MyServiceResult">-->
+    <select id="selectUserServices" resultType="com.laoliu.system.entity.Service">
+        select s.service_id,s.service_name,s.service_describe,s.service_state from service s left join item on s.service_id = item.service_id where item.user_id = #{userId}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from item
+        where  order_id = #{orderId} 
+    </delete>
+    <insert id="insert" keyColumn="order_id" keyProperty="orderId" parameterType="com.laoliu.system.entity.Item" useGeneratedKeys="true">
+        insert into item
+        ( order_id,user_id,service_id,create_time,update_time)
+        values (#{orderId},#{userId},#{serviceId},#{createTime},#{updateTime})
+    </insert>
+    <insert id="insertSelective" keyColumn="order_id" keyProperty="orderId" parameterType="com.laoliu.system.entity.Item" useGeneratedKeys="true">
+        insert into item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="orderId != null">order_id,</if>
+                <if test="userId != null">user_id,</if>
+                <if test="serviceId != null">service_id,</if>
+                <if test="createTime != null">create_time,</if>
+                <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="orderId != null">#{orderId},</if>
+                <if test="userId != null">#{userId},</if>
+                <if test="serviceId != null">#{serviceId},</if>
+                <if test="createTime != null">#{createTime},</if>
+                <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.laoliu.system.entity.Item">
+        update item
+        <set>
+                <if test="userId != null">
+                    user_id = #{userId},
+                </if>
+                <if test="serviceId != null">
+                    service_id = #{serviceId},
+                </if>
+                <if test="createTime != null">
+                    create_time = #{createTime},
+                </if>
+                <if test="updateTime != null">
+                    update_time = #{updateTime},
+                </if>
+        </set>
+        where   order_id = #{orderId} 
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.laoliu.system.entity.Item">
+        update item
+        set 
+            user_id =  #{userId},
+            service_id =  #{serviceId},
+            create_time =  #{createTime},
+            update_time =  #{updateTime}
+        where   order_id = #{orderId} 
+    </update>
+</mapper>

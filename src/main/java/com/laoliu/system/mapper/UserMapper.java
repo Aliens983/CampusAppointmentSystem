@@ -5,7 +5,7 @@ import com.laoliu.system.entity.User;
 /**
 * @author 25516
 * @description 针对表【user】的数据库操作Mapper
-* @createDate 2026-02-25 22:37:58
+* @createDate 2026-03-16 10:31:02
 * @Entity com.laoliu.system.entity.User
 */
 public interface UserMapper {

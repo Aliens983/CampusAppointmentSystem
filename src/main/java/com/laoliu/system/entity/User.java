@@ -1,9 +1,14 @@
 package com.laoliu.system.entity;
 
+import org.springframework.stereotype.Component;
+
+
 /**
  * 
+ * @author 25516
  * @TableName user
  */
+@Component
 public class User {
     /**
      * Primary key, auto-increment
@@ -44,6 +49,10 @@ public class User {
      * Your role in this system.1 is admin,0 is user.
      */
     private Integer role;
+
+    // there is no need to store the service in the user,just select by controller is ok.
+    //add an attribute to store the service
+//    List<Service> services;
 
     /**
      * Primary key, auto-increment
