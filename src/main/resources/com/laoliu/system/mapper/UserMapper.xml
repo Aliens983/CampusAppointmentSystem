@@ -26,6 +26,9 @@
         from user
         where  id = #{id} 
     </select>
+    <select id="getRoleByUserId" resultType="java.lang.String">
+        select role from user where id = #{userId}
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from user
@@ -100,4 +103,20 @@
             role =  #{role}
         where   id = #{id} 
     </update>
+    <update id="updateRoleToCommonUser">
+        update user
+        set
+            role = 0
+        where
+            id = #{userId}
+    </update>
+    <update id="updateRoleToAdmin">
+        update user
+        set
+            role = 1
+        where
+            id = #{userId}
+    </update>
+
+
 </mapper>

@@ -3,7 +3,6 @@ package com.laoliu.system.controller;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.service.BookService;
 import com.laoliu.system.utils.JWTUtils;
-import com.laoliu.system.vo.response.UserResponse;
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;

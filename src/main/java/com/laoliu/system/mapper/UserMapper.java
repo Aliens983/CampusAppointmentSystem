@@ -22,4 +22,9 @@ public interface UserMapper {
 
     int updateByPrimaryKey(User record);
 
+    String getRoleByUserId(Long userId);
+
+    void updateRoleToCommonUser(Long userId);
+
+    void updateRoleToAdmin(Long userId);
 }

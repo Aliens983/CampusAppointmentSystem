@@ -5,6 +5,8 @@ import com.laoliu.system.entity.User;
 import com.laoliu.system.mapper.ItemMapper;
 import com.laoliu.system.mapper.ServiceMapper;
 import com.laoliu.system.mapper.UserMapper;
+import com.laoliu.system.utils.JWTUtils;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -25,11 +27,13 @@ public class ServiceController {
     private final ServiceMapper serviceMapper;
     private final ItemMapper itemMapper;
     private final UserMapper userMapper;
+    private final JWTUtils jwtUtils;
 
-    public ServiceController(ServiceMapper serviceMapper, ItemMapper itemMapper, UserMapper userMapper) {
+    public ServiceController(ServiceMapper serviceMapper, ItemMapper itemMapper, UserMapper userMapper, JWTUtils jwtUtils) {
         this.serviceMapper = serviceMapper;
         this.itemMapper = itemMapper;
         this.userMapper = userMapper;
+        this.jwtUtils = jwtUtils;
     }
 
     @GetMapping
@@ -78,10 +82,21 @@ public class ServiceController {
     @GetMapping("/id")
     @Operation(summary = "获取指定用户的所有已近预约的服务")
     public ResponseEntity<Map<String, Object>> getUserServices(HttpServletRequest request, @RequestParam Long userId) {
+        // TODO
         User user = userMapper.selectByPrimaryKey(userId);
         try {
             if (user == null) {
                 Map<String, Object> result = new HashMap<>();
+                String token = request.getHeader("Authorization");
+
+                if (token != null && token.startsWith("Bearer ")) {
+                    token = token.substring(7);
+                }
+                Claims claims = jwtUtils.parseToken(token);
+                result.put("success", true);
+
+
+
                 result.put("success", false);
                 result.put("message", "用户不存在");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
@@ -109,5 +124,6 @@ public class ServiceController {
             result.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
+
     }
 }
