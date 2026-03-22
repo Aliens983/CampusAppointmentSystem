@@ -80,14 +80,14 @@ public class RoleController {
             if ("普通用户".equals(role)){
                 result.put("success", false);
                 result.put("message", "普通用户没有权限修改用户角色");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body( result);
             }
 
             String changeRole = roleService.changeRoleById(Long.valueOf(userId));
             if (changeRole == null){
                 result.put("success", false);
                 result.put("message", "没有此用户");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
             }
             result.put("success", true);
             result.put("message", "修改用户角色成功");
@@ -99,7 +99,7 @@ public class RoleController {
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }
 
