@@ -30,6 +30,10 @@
         select role from user where id = #{userId}
     </select>
 
+    <select id="getAllBookings" resultType="java.lang.String">
+        select service_name,service_describe from service s inner join item i on s.service_id = i.service_id where i.user_id = #{userId}
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from user
         where  id = #{id} 

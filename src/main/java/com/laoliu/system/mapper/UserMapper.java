@@ -2,6 +2,8 @@ package com.laoliu.system.mapper;
 
 import com.laoliu.system.entity.User;
 
+import java.util.List;
+
 /**
 * @author 25516
 * @description 针对表【user】的数据库操作Mapper
@@ -27,4 +29,6 @@ public interface UserMapper {
     void updateRoleToCommonUser(Long userId);
 
     void updateRoleToAdmin(Long userId);
+
+    List<String> getAllBookings(Long userId);
 }

@@ -39,4 +39,10 @@ public class BookServiceImpl implements BookService {
 //        user.setServices(services);
         return user;
     }
+
+    @Override
+    public List<String> getAllBookings(Long userId) {
+        return userMapper.getAllBookings(userId);
+    }
+
 }
