@@ -122,5 +122,25 @@
             id = #{userId}
     </update>
 
+    <update id="cancelService">
+        update item
+        set status = 3
+        where
+        user_id = #{userId}
+        and
+        service_id in
+        <foreach collection="serviceId" item="serviceID" open="(" separator="," close=")">
+            #{serviceID}
+        </foreach>
+    </update>
+    <update id="changeStatus">
+        update item
+        set status = #{code}
+        where
+        user_id = #{userId}
+        and
+        service_id = #{serviceId}
+    </update>
+
 
 </mapper>

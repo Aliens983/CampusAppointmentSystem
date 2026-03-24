@@ -60,6 +60,12 @@
                 <if test="updateTime != null">#{updateTime},</if>
         </trim>
     </insert>
+    <insert id="insertServices">
+        insert into item(user_id,service_id) values
+        <foreach collection="services" item="service" separator=",">
+            (#{userId},#{service})
+        </foreach>
+    </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.laoliu.system.entity.Item">
         update item
         <set>

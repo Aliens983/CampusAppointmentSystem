@@ -1,5 +1,6 @@
 package com.laoliu.system.service.impl;
 
+import com.laoliu.system.common.ManageStatus;
 import com.laoliu.system.entity.Item;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.mapper.ItemMapper;
@@ -27,8 +28,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public User bookService(Long userId,Integer serviceId) {
-        itemMapper.insert(new Item(null,userId,serviceId,new Date(),new Date()));
+    public User bookService(Long userId,List<Integer> serviceIds) {
+//        itemMapper.insert(new Item(null,userId,serviceId,new Date(),new Date()));
+//        当有多条服务时，应该使用动态sql的列表来插入
+        itemMapper.insertServices(userId,serviceIds);
+
         User user = userMapper.selectByPrimaryKey(userId);
         // this maybe has the null pointer problem!!!
 //        user.getServices().add(serviceMapper.selectByPrimaryKey(Long.valueOf(serviceId)));
@@ -45,4 +49,23 @@ public class BookServiceImpl implements BookService {
         return userMapper.getAllBookings(userId);
     }
 
+    @Override
+    public boolean cancelBook(Long userId, List<Integer> serviceId) {
+        return userMapper.cancelService(userId, serviceId);
+    }
+
+    @Override
+    public boolean changeStatus(Long userId, Integer serviceIds, String status) {
+        Integer code = null;
+        for (ManageStatus manageStatus : ManageStatus.values()) {
+            if (manageStatus.getMessage().equals(status)) {
+                code = manageStatus.getCode();
+                break;
+            }
+        }
+        if (code == null) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+        return userMapper.changeStatus(userId, serviceIds, code);
+    }
 }

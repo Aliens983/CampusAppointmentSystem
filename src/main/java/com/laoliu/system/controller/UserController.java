@@ -61,7 +61,7 @@ public class UserController {
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
 
     }

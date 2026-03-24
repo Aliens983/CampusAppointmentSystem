@@ -31,4 +31,8 @@ public interface UserMapper {
     void updateRoleToAdmin(Long userId);
 
     List<String> getAllBookings(Long userId);
+
+    boolean cancelService(Long userId, List<Integer> serviceId);
+
+    boolean changeStatus(Long userId, Integer serviceId, Integer code);
 }
