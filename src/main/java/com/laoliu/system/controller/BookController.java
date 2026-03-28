@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +37,7 @@ public class BookController {
     @Operation(summary = "预定服务")
     public ResponseEntity<Map<String, Object>> bookService(HttpServletRequest request, @RequestParam Integer serviceId) {
 
+        //TODO: 这里的serviceId最好改成List,这样前端就可以一次预定多个服务
         Map<String, Object> result = new HashMap<>();
         String token = request.getHeader("Authorization");
         try {
@@ -66,6 +68,7 @@ public class BookController {
     @GetMapping("/allService")
     @Operation(summary = "查看所有预约")
     public ResponseEntity<Map<String, Object>> getBook(HttpServletRequest request) {
+        //TODO: 这里查询前需要检查数据库的状态,如果数据库中的服务已经改成了取消预约的状态码,在查询时就不应该显示取消的服务
         Map<String, Object> result = new HashMap<>();
         try {
             Long userId = getUserIdViaTokenApi.getUserId(request);
@@ -79,6 +82,28 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
 
+    }
+
+    @PostMapping("/cancel")
+    @Operation(summary = "取消预约")
+    public ResponseEntity<Map<String, Object>> cancelBooking(HttpServletRequest request, @RequestParam List<Long> bookingIds) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            Long userId = getUserIdViaTokenApi.getUserId(request);
+            boolean success = bookService.cancelBookings(userId,bookingIds);
+            if (success) {
+                result.put("success", true);
+                result.put("message", "取消预约成功");
+            } else {
+                result.put("success", false);
+                result.put("message", "取消预约失败");
+            }
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
     }
 
 }

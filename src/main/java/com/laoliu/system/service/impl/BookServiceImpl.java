@@ -45,4 +45,17 @@ public class BookServiceImpl implements BookService {
         return userMapper.getAllBookings(userId);
     }
 
+    @Override
+    public boolean cancelBookings(Long userId,List<Long> bookingIds) {
+        //TODO: 这里可以尝试使用方法itemMapper.setBookingStatus(bookingIds);直接把list传递进入会不会性能好一点呢?
+        try {
+            for (Long bookingId : bookingIds) {
+                itemMapper.setBookingStatus(userId,bookingId);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

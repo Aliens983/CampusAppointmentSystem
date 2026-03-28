@@ -26,4 +26,6 @@ public interface ItemMapper {
     int updateByPrimaryKey(Item record);
 
     List<Service> selectUserServices(Long userId);
+
+    void setBookingStatus(Long userId,Long bookingId);
 }

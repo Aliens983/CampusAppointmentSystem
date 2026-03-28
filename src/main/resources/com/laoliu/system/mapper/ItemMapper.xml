@@ -87,4 +87,9 @@
             update_time =  #{updateTime}
         where   order_id = #{orderId} 
     </update>
+    <update id="setBookingStatus">
+        update item
+        set manage_status = 3
+        where service_id = #{bookingId} and user_id = #{userId}
+    </update>
 </mapper>

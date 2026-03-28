@@ -11,4 +11,6 @@ public interface BookService {
     User bookService(Long userId,Integer serviceId);
 
     List<String> getAllBookings(Long userId);
+
+    boolean cancelBookings(Long userId,List<Long> bookingIds);
 }

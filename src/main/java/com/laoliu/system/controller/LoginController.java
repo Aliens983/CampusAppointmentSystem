@@ -39,6 +39,7 @@ public class LoginController {
      */
     @PostMapping("/verify-code")
     public ResponseEntity<String> verifyEmailCode(@RequestBody UserRequest userRequest) {
+        //TODO: 如果邮箱不匹配的话报错信息显示的是验证码的问题,没指出是邮箱的问题,这里可能需要改一下
         try {
             String email = userRequest.getEmail();
             String code = userRequest.getCode();

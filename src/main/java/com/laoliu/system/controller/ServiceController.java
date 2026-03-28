@@ -80,9 +80,9 @@ public class ServiceController {
     }
 
     @GetMapping("/id")
-    @Operation(summary = "获取指定用户的所有已近预约的服务")
+    @Operation(summary = "获取指定用户的所有已经预约的服务")
     public ResponseEntity<Map<String, Object>> getUserServices(HttpServletRequest request, @RequestParam Long userId) {
-        // TODO
+        // TODO: 照理说应该不用传递userId,直接从token里获取就行了,或者这个方法再写一个,给管理员使用让管理员可以查看任意用户的预约服务,现在先这样写着,后续再优化
         User user = userMapper.selectByPrimaryKey(userId);
         try {
             if (user == null) {
@@ -94,8 +94,6 @@ public class ServiceController {
                 }
                 Claims claims = jwtUtils.parseToken(token);
                 result.put("success", true);
-
-
 
                 result.put("success", false);
                 result.put("message", "用户不存在");
