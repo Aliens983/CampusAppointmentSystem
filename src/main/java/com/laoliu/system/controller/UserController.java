@@ -1,12 +1,16 @@
 package com.laoliu.system.controller;
 
+import com.laoliu.system.annotation.RequireRole;
 import com.laoliu.system.converter.UserConverter;
 import com.laoliu.system.entity.User;
+import com.laoliu.system.enums.UserRoleEnum;
 import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.vo.response.UserResponse;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +41,7 @@ public class UserController {
     }
 
     @GetMapping
+    @RequireRole(UserRoleEnum.USER)
     public ResponseEntity<Map<String, Object>> getUserByParseToken(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
         String token = request.getHeader("Authorization");

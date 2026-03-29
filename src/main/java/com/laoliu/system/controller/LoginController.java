@@ -71,8 +71,9 @@ public class LoginController {
             // 生成JWT Token
 
             Long userId = user.getId();
+            Integer role = user.getRole() != null ? user.getRole() : 0;
 
-            String token = jwtUtils.generateToken(userId);
+            String token = jwtUtils.generateToken(userId, role);
 
             return ResponseEntity.ok(token);
 
