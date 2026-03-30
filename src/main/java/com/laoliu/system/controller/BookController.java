@@ -4,6 +4,7 @@ import com.laoliu.system.api.GetUserIdViaTokenApi;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.service.BookService;
 import com.laoliu.system.utils.JWTUtils;
+import com.laoliu.system.vo.response.BookResultResponse;
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,9 +36,8 @@ public class BookController {
 
     @PostMapping
     @Operation(summary = "预定服务")
-    public ResponseEntity<Map<String, Object>> bookService(HttpServletRequest request, @RequestParam Integer serviceId) {
-
-        //TODO: 这里的serviceId最好改成List,这样前端就可以一次预定多个服务
+    public ResponseEntity<Map<String, Object>> bookService(HttpServletRequest request, @RequestParam List<Integer> serviceIds) {
+        //TODO: 这里如果预约的id超过了本来预约范围的下标就会直接报错,所以这里要检查一下预约的ID应该在范围之内,这是前端还是后端的活?
         Map<String, Object> result = new HashMap<>();
         String token = request.getHeader("Authorization");
         try {
@@ -46,16 +46,22 @@ public class BookController {
                 token = token.substring(7);
             }
             Claims claims = jwtUtils.parseToken(token);
-            result.put("success", true);
 
 
             // 获取用户ID
             Long userId = Long.valueOf((claims.getSubject()));
 
-            User user = bookService.bookService(userId, serviceId);
-            result.put("user", user);
-            return ResponseEntity.ok(result);
-
+            User user = bookService.bookService(userId, serviceIds);
+            BookResultResponse response = new BookResultResponse();
+            response.setUsername(user.getName());
+            response.setEmail(user.getEmail());
+            response.setGrade(user.getGrade());
+            response.setAllBookedServices(bookService.getAllBookings(userId));
+            result.put("message", "预约成功");
+            result.put("success", true);
+            result.put("result", response);
+//            result.put("result", user);
+            return ResponseEntity.ok().body(result);
 
         } catch (Exception e) {
             result.put("success", false);
@@ -87,6 +93,7 @@ public class BookController {
     @PostMapping("/cancel")
     @Operation(summary = "取消预约")
     public ResponseEntity<Map<String, Object>> cancelBooking(HttpServletRequest request, @RequestParam List<Long> bookingIds) {
+        //TODO: 这里取消预约时,要先检查当前用户到底有没有预约到此要取消的预约服务ID,现在是取消用户未预约的服务ID也返回取消预约成功
         Map<String, Object> result = new HashMap<>();
         try {
             Long userId = getUserIdViaTokenApi.getUserId(request);

@@ -60,6 +60,12 @@
                 <if test="updateTime != null">#{updateTime},</if>
         </trim>
     </insert>
+    <insert id="insertServices">
+        insert into item(user_id,service_id) values
+        <foreach collection="serviceId" item="service" separator=",">
+            (#{userId},#{service})
+        </foreach>
+    </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.laoliu.system.entity.Item">
         update item
         <set>
@@ -91,5 +97,14 @@
         update item
         set manage_status = 3
         where service_id = #{bookingId} and user_id = #{userId}
+    </update>
+    <update id="setBookingStatusByParts">
+        update item
+        set manage_status = 3
+        where service_id in
+        <foreach item="item" collection="bookingIds" separator="," close=")" open="(" index="index">
+            #{item}
+        </foreach>
+        and user_id = #{userId}
     </update>
 </mapper>

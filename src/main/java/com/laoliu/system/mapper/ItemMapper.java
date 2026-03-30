@@ -2,6 +2,7 @@ package com.laoliu.system.mapper;
 
 import com.laoliu.system.entity.Item;
 import com.laoliu.system.entity.Service;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -28,4 +29,8 @@ public interface ItemMapper {
     List<Service> selectUserServices(Long userId);
 
     void setBookingStatus(Long userId,Long bookingId);
+
+    int insertServices(@Param("userId") Long userId, @Param("serviceId") List<Integer> serviceId);
+
+    int setBookingStatusByParts(Long userId, List<Long> bookingIds);
 }

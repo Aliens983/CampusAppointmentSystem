@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 25516
@@ -27,9 +28,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public User bookService(Long userId,Integer serviceId) {
-        itemMapper.insert(new Item(null,userId,serviceId,new Date(),new Date()));
-        User user = userMapper.selectByPrimaryKey(userId);
+    public User bookService(Long userId,List<Integer> serviceId) {
+//        itemMapper.insert(new Item(null,userId,serviceId,new Date(),new Date()));
+        itemMapper.insertServices(userId,serviceId);
         // this maybe has the null pointer problem!!!
 //        user.getServices().add(serviceMapper.selectByPrimaryKey(Long.valueOf(serviceId)));
         // suggestion: don't select the service from a database, just add it to the user's services
@@ -37,21 +38,22 @@ public class BookServiceImpl implements BookService {
 //        List<com.laoliu.system.entity.Service> services = user.getServices();
 //        services.add(serviceMapper.selectByPrimaryKey(Long.valueOf(serviceId)));
 //        user.setServices(services);
-        return user;
+        return userMapper.selectByPrimaryKey(userId);
     }
 
     @Override
-    public List<String> getAllBookings(Long userId) {
+    public List<Map<String, Object>> getAllBookings(Long userId) {
         return userMapper.getAllBookings(userId);
     }
 
     @Override
     public boolean cancelBookings(Long userId,List<Long> bookingIds) {
-        //TODO: 这里可以尝试使用方法itemMapper.setBookingStatus(bookingIds);直接把list传递进入会不会性能好一点呢?
+        //直接把list传递进入性能会更好一点
         try {
-            for (Long bookingId : bookingIds) {
-                itemMapper.setBookingStatus(userId,bookingId);
-            }
+//            for (Long bookingId : bookingIds) {
+//                itemMapper.setBookingStatus(userId,bookingId);
+//            }
+            itemMapper.setBookingStatusByParts(userId,bookingIds);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

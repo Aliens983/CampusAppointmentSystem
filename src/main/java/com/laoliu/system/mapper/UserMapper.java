@@ -1,8 +1,10 @@
 package com.laoliu.system.mapper;
 
 import com.laoliu.system.entity.User;
+import org.apache.ibatis.annotations.MapKey;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author 25516
@@ -30,5 +32,5 @@ public interface UserMapper {
 
     void updateRoleToAdmin(Long userId);
 
-    List<String> getAllBookings(Long userId);
+    List<Map<String, Object>> getAllBookings(Long userId);
 }
