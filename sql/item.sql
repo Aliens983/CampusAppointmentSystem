@@ -8,6 +8,7 @@ CREATE TABLE `item` (
   `order_id` INT NOT NULL AUTO_INCREMENT COMMENT 'Order ID',
   `user_id` BIGINT NOT NULL COMMENT 'User ID, foreign key to user.id',
   `service_id` INT NOT NULL COMMENT 'Service ID, foreign key to service.service_id',
+  `manage_status` TINYINT NOT NULL DEFAULT 0 COMMENT 'Manage status: 0-normal, 3-cancelled',
   `create_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Order creation time',
   `update_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Order update time',
   PRIMARY KEY (`order_id`),

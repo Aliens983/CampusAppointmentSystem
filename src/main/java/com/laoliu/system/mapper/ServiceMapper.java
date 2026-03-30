@@ -1,6 +1,7 @@
 package com.laoliu.system.mapper;
 
 import com.laoliu.system.entity.Service;
+import com.laoliu.system.vo.request.ServiceAddRequest;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface ServiceMapper {
 
     int insert(Service record);
 
-    int insertSelective(Service record);
+    int insertSelective(ServiceAddRequest record);
 
     Service selectByPrimaryKey(Long id);
 

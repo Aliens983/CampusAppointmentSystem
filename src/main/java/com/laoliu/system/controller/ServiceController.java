@@ -8,6 +8,7 @@ import com.laoliu.system.mapper.ItemMapper;
 import com.laoliu.system.mapper.ServiceMapper;
 import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.utils.JWTUtils;
+import com.laoliu.system.vo.request.ServiceAddRequest;
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,10 +58,11 @@ public class ServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> addService(@RequestBody Service service) {
+    @RequireRole(UserRoleEnum.ADMIN)
+    public ResponseEntity<Map<String, Object>> addService(@RequestBody ServiceAddRequest serviceAddRequest) {
         try {
             Map<String, Object> result = new HashMap<>();
-            int rowsAffected = serviceMapper.insertSelective(service);
+            int rowsAffected = serviceMapper.insertSelective(serviceAddRequest);
             if (rowsAffected > 0) {
                 result.put("success", true);
                 result.put("message", "添加服务成功");
@@ -83,7 +85,7 @@ public class ServiceController {
 
     @GetMapping("/id")
     @Operation(summary = "获取指定用户的所有已经预约的服务")
-    @RequireRole(UserRoleEnum.USER)
+    @RequireRole(UserRoleEnum.ADMIN)
     public ResponseEntity<Map<String, Object>> getUserServices(HttpServletRequest request, @RequestParam Long userId) {
         // TODO: 照理说应该不用传递userId,直接从token里获取就行了,或者这个方法再写一个,给管理员使用让管理员可以查看任意用户的预约服务,现在先这样写着,后续再优化,先看看注解怎么样,然后后面直接记得查看当前用户是否是管理员
         User user = userMapper.selectByPrimaryKey(userId);

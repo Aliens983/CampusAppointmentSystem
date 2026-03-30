@@ -23,9 +23,10 @@ INSERT INTO `service` (`service_name`, `service_describe`, `service_state`) VALU
 ('法律咨询', '提供法律知识咨询和法律问题解答', 1);
 
 -- 插入示例订单数据
-INSERT INTO `item` (`user_id`, `service_id`) VALUES 
-(1, 1),  -- 张三预约心理咨询
-(1, 2),  -- 张三预约学业辅导
-(2, 1),  -- 李四预约心理咨询
-(3, 3),  -- 王五预约就业指导
-(4, 4);  -- 赵六预约健康检查
+-- manage_status: 0-normal, 3-cancelled
+INSERT INTO `item` (`user_id`, `service_id`, `manage_status`) VALUES 
+(1, 1, 0),  -- 张三预约心理咨询
+(1, 2, 0),  -- 张三预约学业辅导
+(2, 1, 0),  -- 李四预约心理咨询
+(3, 3, 0),  -- 王五预约就业指导
+(4, 4, 0);  -- 赵六预约健康检查

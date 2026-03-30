@@ -32,7 +32,6 @@ public class LoginController {
 
     @PostMapping
     public String login(@RequestBody UserLoginRequest userLoginRequest) {
-        // TODO: 这里最好再查询一下数据库中是否有此邮箱，如果没有的话应该提醒用户邮箱输入错误或邮箱未注册
 
         String email = userLoginRequest.getEmail();
         String password = userLoginRequest.getPassword();

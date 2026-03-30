@@ -41,21 +41,10 @@
         ( service_id,service_name,service_describe,service_state)
         values (#{serviceId},#{serviceName},#{serviceDescribe},#{serviceState})
     </insert>
-
-    <insert id="insertSelective" keyColumn="service_id" keyProperty="serviceId" parameterType="com.laoliu.system.entity.Service" useGeneratedKeys="true">
+    <insert id="insertSelective" parameterType="com.laoliu.system.vo.request.ServiceAddRequest">
         insert into service
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-                <if test="serviceId != null">service_id,</if>
-                <if test="serviceName != null">service_name,</if>
-                <if test="serviceDescribe != null">service_describe,</if>
-                <if test="serviceState != null">service_state,</if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-                <if test="serviceId != null">#{serviceId},</if>
-                <if test="serviceName != null">#{serviceName},</if>
-                <if test="serviceDescribe != null">#{serviceDescribe},</if>
-                <if test="serviceState != null">#{serviceState},</if>
-        </trim>
+        ( service_name,service_describe)
+        values (#{serviceName},#{serviceDescribe})
     </insert>
 
 

@@ -43,7 +43,10 @@ public class RegisterController {
      */
     @PostMapping("/verify-code")
     public ResponseEntity<String> verifyEmailCode(@RequestBody UserRegisterRequest userRegisterRequest) {
-        //TODO: 如果邮箱不匹配的话报错信息显示的是验证码的问题,没指出是邮箱的问题,这里可能需要改一下,这里你还应该给密码加密存储在数据库中,要不要把邮箱存在Redis的键中呢?Redis在此项目还有哪些可以使用的地方?这里还需要检查数据库中是否已经有当前校验的用户，当前情况是
+        //TODO:如果邮箱不匹配的话报错信息显示的是验证码的问题,没指出是邮箱的问题,这里可能需要改一下,
+        // 要不要把邮箱存在Redis的键中呢?Redis在此项目还有哪些可以使用的地方?
+        // 这里还需要检查数据库中是否已经有当前校验的用户，然后是要校验当前注册的邮箱是否已经在数据库中有了,
+        // 有了就直接提醒登录
         try {
             String email = userRegisterRequest.getEmail();
             String code = userRegisterRequest.getCode();
@@ -51,6 +54,11 @@ public class RegisterController {
 
             if (email == null || code == null) {
                 return ResponseEntity.badRequest().body("邮箱和验证码不能为空");
+            }
+
+            Long ifUserId = userMapper.getUserIdByEmail(email);
+            if (ifUserId != null) {
+                return ResponseEntity.badRequest().body("邮箱已存在账号,请直接登录");
             }
 
             // 从Redis获取存储的验证码
