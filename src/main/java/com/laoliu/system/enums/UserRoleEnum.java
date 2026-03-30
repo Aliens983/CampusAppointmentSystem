@@ -1,5 +1,9 @@
 package com.laoliu.system.enums;
 
+/**
+ * @author forever-king
+ */
+
 public enum UserRoleEnum {
     USER(0, "普通用户"),
     ADMIN(1, "管理员"),

@@ -6,7 +6,7 @@ import lombok.Data;
  * @author 25516
  */
 @Data
-public class UserRequest {
+public class UserRegisterRequest {
 
     private String name;
     private String grade;

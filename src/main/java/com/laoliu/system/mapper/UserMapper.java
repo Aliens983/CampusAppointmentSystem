@@ -33,4 +33,8 @@ public interface UserMapper {
     void updateRoleToAdmin(Long userId);
 
     List<Map<String, Object>> getAllBookings(Long userId);
+
+    String getEncodePasswordByEmail(String email);
+
+    Long getUserIdByEmail(String email);
 }

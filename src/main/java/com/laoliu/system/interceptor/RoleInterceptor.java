@@ -7,8 +7,8 @@ import com.laoliu.system.utils.JWTUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -19,10 +19,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author forever-king
+ */
 @Component
+@Slf4j
 public class RoleInterceptor implements HandlerInterceptor {
 
-    private static final Logger log = LoggerFactory.getLogger(RoleInterceptor.class);
 
     private final JWTUtils jwtUtils;
     private final ObjectMapper objectMapper;
@@ -33,7 +36,7 @@ public class RoleInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }

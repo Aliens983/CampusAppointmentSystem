@@ -1,7 +1,7 @@
 package com.laoliu.system.converter;
 
 import com.laoliu.system.entity.User;
-import com.laoliu.system.vo.request.UserRequest;
+import com.laoliu.system.vo.request.UserRegisterRequest;
 import com.laoliu.system.vo.response.UserResponse;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +13,15 @@ public class UserConverter {
 
 
 
-    public User convertUserRequestToUser(UserRequest userRequest) {
+    public User convertUserRequestToUser(UserRegisterRequest userRegisterRequest) {
         User user = new User();
-        user.setName(userRequest.getName());
-        user.setGrade(userRequest.getGrade());
-        user.setSex(userRequest.getSex());
-        user.setAge(userRequest.getAge());
-        user.setRole(userRequest.getRole());
-        user.setEmail(userRequest.getEmail());
-        user.setPassword(userRequest.getPassword());
+        user.setName(userRegisterRequest.getName());
+        user.setGrade(userRegisterRequest.getGrade());
+        user.setSex(userRegisterRequest.getSex());
+        user.setAge(userRegisterRequest.getAge());
+        user.setRole(userRegisterRequest.getRole());
+        user.setEmail(userRegisterRequest.getEmail());
+        user.setPassword(userRegisterRequest.getPassword());
         return user;
     }
 
