@@ -37,7 +37,6 @@ public class BookController {
     @PostMapping
     @Operation(summary = "预定服务")
     public ResponseEntity<Map<String, Object>> bookService(HttpServletRequest request, @RequestParam List<Integer> serviceIds) {
-        //TODO: 这里如果预约的id超过了本来预约范围的下标就会直接报错,所以这里要检查一下预约的ID应该在范围之内,这是前端还是后端的活?
         Map<String, Object> result = new HashMap<>();
         String token = request.getHeader("Authorization");
         try {
@@ -66,15 +65,13 @@ public class BookController {
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", e.getMessage());
-            result.put("error", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }
 
     @GetMapping("/allService")
     @Operation(summary = "查看所有预约")
     public ResponseEntity<Map<String, Object>> getBook(HttpServletRequest request) {
-        //TODO: 这里查询前需要检查数据库的状态,如果数据库中的服务已经改成了取消预约的状态码,在查询时就不应该显示取消的服务
         Map<String, Object> result = new HashMap<>();
         try {
             Long userId = getUserIdViaTokenApi.getUserId(request);

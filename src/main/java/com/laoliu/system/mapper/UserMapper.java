@@ -1,6 +1,7 @@
 package com.laoliu.system.mapper;
 
 import com.laoliu.system.entity.User;
+import com.laoliu.system.vo.response.UserResponse;
 import org.apache.ibatis.annotations.MapKey;
 
 import java.util.List;
@@ -37,4 +38,6 @@ public interface UserMapper {
     String getEncodePasswordByEmail(String email);
 
     Long getUserIdByEmail(String email);
+
+    List<UserResponse> getAllUsers();
 }

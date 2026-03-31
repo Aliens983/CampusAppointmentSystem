@@ -43,10 +43,7 @@ public class RegisterController {
      */
     @PostMapping("/verify-code")
     public ResponseEntity<String> verifyEmailCode(@RequestBody UserRegisterRequest userRegisterRequest) {
-        //TODO:如果邮箱不匹配的话报错信息显示的是验证码的问题,没指出是邮箱的问题,这里可能需要改一下,
-        // 要不要把邮箱存在Redis的键中呢?Redis在此项目还有哪些可以使用的地方?
-        // 这里还需要检查数据库中是否已经有当前校验的用户，然后是要校验当前注册的邮箱是否已经在数据库中有了,
-        // 有了就直接提醒登录
+        //TODO: Redis在此项目还有哪些可以使用的地方?
         try {
             String email = userRegisterRequest.getEmail();
             String code = userRegisterRequest.getCode();
@@ -62,7 +59,7 @@ public class RegisterController {
             }
 
             // 从Redis获取存储的验证码
-            String storedCode = redisUtil.getVerificationCode("verification_code:" + email);
+            String storedCode = redisUtil.getVerificationCode(email);
 
             if (storedCode == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("验证码不存在或已过期");
@@ -87,9 +84,8 @@ public class RegisterController {
             // 生成JWT Token
 
             Long userId = user.getId();
-            Integer role = user.getRole() != null ? user.getRole() : 0;
 
-            String token = jwtUtils.generateToken(userId, role);
+            String token = jwtUtils.generateToken(userId);
 
             return ResponseEntity.ok(token);
 

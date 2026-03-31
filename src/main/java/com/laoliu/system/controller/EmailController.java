@@ -73,7 +73,7 @@ public class EmailController {
             String verificationCode = CodeGenerator.generateCode();
             
             // 将验证码存储到Redis，设置过期时间
-            redisUtil.setVerificationCode("verification_code:" + to, verificationCode, codeExpiration);
+            redisUtil.setVerificationCode(to, verificationCode, codeExpiration);
             
             // 设置频率限制标记，防止在指定时间内重复发送
             redisUtil.setVerificationCode(frequencyKey, "sent", frequencyLimit);

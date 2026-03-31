@@ -40,6 +40,9 @@
     <select id="getUserIdByEmail" resultType="java.lang.Long">
         select id from user where email = #{email}
     </select>
+    <select id="getAllUsers" resultType="com.laoliu.system.vo.response.UserResponse">
+        select name, email, role from user
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from user

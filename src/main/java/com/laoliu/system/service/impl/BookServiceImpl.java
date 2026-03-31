@@ -28,9 +28,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public User bookService(Long userId,List<Integer> serviceId) {
-//        itemMapper.insert(new Item(null,userId,serviceId,new Date(),new Date()));
-        itemMapper.insertServices(userId,serviceId);
+    public User bookService(Long userId, List<Integer> serviceId) {
+
+        //itemMapper.insert(new Item(null,userId,serviceId,new Date(),new Date()));
         // this maybe has the null pointer problem!!!
 //        user.getServices().add(serviceMapper.selectByPrimaryKey(Long.valueOf(serviceId)));
         // suggestion: don't select the service from a database, just add it to the user's services
@@ -38,7 +38,28 @@ public class BookServiceImpl implements BookService {
 //        List<com.laoliu.system.entity.Service> services = user.getServices();
 //        services.add(serviceMapper.selectByPrimaryKey(Long.valueOf(serviceId)));
 //        user.setServices(services);
-        return userMapper.selectByPrimaryKey(userId);
+
+        if (serviceId == null || serviceId.isEmpty()) {
+            throw new RuntimeException("服务ID列表不能为空");
+        }
+
+        // 验证所有服务ID是否有效
+        for (Integer sid : serviceId) {
+            com.laoliu.system.entity.Service service = serviceMapper.selectByPrimaryKey(Long.valueOf(sid));
+            if (service == null) {
+                throw new RuntimeException("服务ID " + sid + " 不存在");
+            }
+            if (service.getServiceState() != 1) {
+                throw new RuntimeException("服务ID " + sid + " 已被禁用");
+            }
+        }
+
+        try {
+            itemMapper.insertServices(userId, serviceId);
+            return userMapper.selectByPrimaryKey(userId);
+        } catch (Exception e) {
+            throw new RuntimeException("预约失败: " + e.getCause(), e);
+        }
     }
 
     @Override
@@ -47,13 +68,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public boolean cancelBookings(Long userId,List<Long> bookingIds) {
+    public boolean cancelBookings(Long userId, List<Long> bookingIds) {
         //直接把list传递进入性能会更好一点
         try {
 //            for (Long bookingId : bookingIds) {
 //                itemMapper.setBookingStatus(userId,bookingId);
 //            }
-            itemMapper.setBookingStatusByParts(userId,bookingIds);
+            itemMapper.setBookingStatusByParts(userId, bookingIds);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

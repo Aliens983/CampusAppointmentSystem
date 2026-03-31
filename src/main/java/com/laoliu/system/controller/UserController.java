@@ -70,4 +70,19 @@ public class UserController {
         }
 
     }
+
+    @GetMapping("/all_users")
+    @RequireRole(UserRoleEnum.ADMIN)
+    public ResponseEntity<Map<String, Object>> getAllUsers(HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            result.put("success", true);
+            result.put("users", userMapper.getAllUsers());
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
