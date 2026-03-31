@@ -17,7 +17,7 @@ public class Hello {
 
     @GetMapping
     public String hello(Model model) {
-        // TODO：最好检查一下全项目的 REST API的编写规范，注意@PathVariable和@RequestParam的使用
+        // TODO：最好检查一下全项目的 REST API的编写规范，注意@PathVariable(指定使用)和@RequestParam(筛选使用)的使用
         model.addAttribute("name", "laoliu");
         model.addAttribute("hello");
         log.info("hello world!!!!");

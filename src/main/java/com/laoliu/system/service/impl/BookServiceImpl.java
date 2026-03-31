@@ -7,6 +7,7 @@ import com.laoliu.system.mapper.ServiceMapper;
 import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.service.BookService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -68,14 +69,22 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public boolean cancelBookings(Long userId, List<Long> bookingIds) {
-        //直接把list传递进入性能会更好一点
+        if (bookingIds == null || bookingIds.isEmpty()) {
+            throw new RuntimeException("取消的预约ID列表不能为空");
+        }
+        
+        // 检查这些预约是否确实属于当前用户
+        int affectedRows = itemMapper.setBookingStatusByParts(userId, bookingIds);
+        
+        // 如果影响的行数与要取消的预约数量不一致，说明有些预约不属于当前用户
+        if (affectedRows != bookingIds.size()) {
+            throw new RuntimeException("部分预约不属于您或不存在，无法取消");
+        }
+        
         try {
-//            for (Long bookingId : bookingIds) {
-//                itemMapper.setBookingStatus(userId,bookingId);
-//            }
-            itemMapper.setBookingStatusByParts(userId, bookingIds);
-            return true;
+            return affectedRows > 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

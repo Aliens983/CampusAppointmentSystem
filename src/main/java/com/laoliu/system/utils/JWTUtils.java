@@ -16,9 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.util.Base64;
-import java.util.Date;
 
 /**
  * @author 25516
@@ -33,22 +30,13 @@ public class JWTUtils {
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    /**
-     * 生成JWT Token（向后兼容，默认角色为普通用户）
-     * @param userId 用户ID，作为用户标识
-     * @return JWT Token字符串
-     */
-    public String generateToken(Long userId) {
-        return generateToken(userId, 0);
-    }
 
     /**
      * 生成JWT Token（带角色信息）
      * @param userId 用户ID，作为用户标识
-     * @param role 用户角色 (0-普通用户, 1-管理员, 2-超级管理员)
      * @return JWT Token字符串
      */
-    public String generateToken(Long userId, Integer role) {
+    public String generateToken(Long userId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
 
@@ -60,15 +48,13 @@ public class JWTUtils {
                 .subject(String.valueOf(userId))
                 // 在payload中添加用户ID信息
                 .claim("userId", userId)
-                // 在payload中添加用户角色信息
-                .claim("role", role)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 // 使用HS512算法签名
                 .signWith(secretKey, SignatureAlgorithm.HS512);
 
         String jwtToken = jwtBuilder.compact();
-        log.info("Successfully generated JWT token for userId: {}, role: {}", userId, role);
+        log.info("Successfully generated JWT token for userId: {}", userId);
         log.info("JWT Token: {}", jwtToken);
         return jwtToken;
     }

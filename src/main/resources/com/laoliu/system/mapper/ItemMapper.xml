@@ -107,4 +107,73 @@
         </foreach>
         and user_id = #{userId}
     </update>
+
+    <!-- 获取服务状态列表（管理员专用） -->
+    <select id="getServiceStatus" resultType="com.laoliu.system.vo.response.ServiceStatusResponse">
+        SELECT 
+            i.order_id AS orderId,
+            i.user_id AS userId,
+            u.name AS username,
+            s.service_name AS serviceName,
+            s.service_describe AS serviceDescribe,
+            i.create_time AS createTime,
+            i.update_time AS updateTime,
+            i.manage_status AS manageStatus
+        FROM item i
+        LEFT JOIN user u ON i.user_id = u.id
+        LEFT JOIN service s ON i.service_id = s.service_id
+        ORDER BY i.create_time DESC
+    </select>
+
+    <!-- 根据用户ID获取服务状态 -->
+    <select id="getServiceStatusByUserId" resultType="com.laoliu.system.vo.response.ServiceStatusResponse">
+        SELECT 
+            i.order_id AS orderId,
+            i.user_id AS userId,
+            u.name AS username,
+            s.service_name AS serviceName,
+            s.service_describe AS serviceDescribe,
+            i.create_time AS createTime,
+            i.update_time AS updateTime,
+            i.manage_status AS manageStatus
+        FROM item i
+        LEFT JOIN user u ON i.user_id = u.id
+        LEFT JOIN service s ON i.service_id = s.service_id
+        WHERE i.user_id = #{userId}
+        ORDER BY i.create_time DESC
+    </select>
+
+    <!-- 审核服务预约 -->
+    <update id="auditService">
+        UPDATE item 
+        SET manage_status = #{status},
+            update_time = NOW()
+        WHERE order_id = #{orderId}
+    </update>
+
+    <!-- 根据订单ID获取服务状态信息 -->
+    <select id="getServiceStatusByOrderId" parameterType="java.lang.Long" resultType="com.laoliu.system.vo.response.ServiceStatusResponse">
+        SELECT 
+            i.order_id AS orderId,
+            i.user_id AS userId,
+            i.service_id AS serviceId,
+            i.create_time AS createTime,
+            i.update_time AS updateTime,
+            i.manage_status AS manageStatus,
+            u.name AS userName,
+            u.email AS userEmail,
+            s.service_name AS serviceName,
+            s.service_describe AS serviceDescribe
+        FROM item i
+        LEFT JOIN user u ON i.user_id = u.id
+        LEFT JOIN service s ON i.service_id = s.service_id
+        WHERE i.order_id = #{orderId}
+    </select>
+
+    <select id="getUserEmailByOrderId" parameterType="java.lang.Long" resultType="java.lang.String">
+        SELECT u.email
+        FROM item i
+        LEFT JOIN user u ON i.user_id = u.id
+        WHERE i.order_id = #{orderId}
+    </select>
 </mapper>

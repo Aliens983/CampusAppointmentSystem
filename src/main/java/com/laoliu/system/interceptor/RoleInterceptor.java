@@ -2,7 +2,9 @@ package com.laoliu.system.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laoliu.system.annotation.RequireRole;
+import com.laoliu.system.api.GetUserIdViaTokenApi;
 import com.laoliu.system.enums.UserRoleEnum;
+import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.utils.JWTUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,10 +31,14 @@ public class RoleInterceptor implements HandlerInterceptor {
 
     private final JWTUtils jwtUtils;
     private final ObjectMapper objectMapper;
+    private final GetUserIdViaTokenApi getUserIdViaTokenApi;
+    private final UserMapper userMapper;
 
-    public RoleInterceptor(JWTUtils jwtUtils, ObjectMapper objectMapper) {
+    public RoleInterceptor(JWTUtils jwtUtils, ObjectMapper objectMapper, GetUserIdViaTokenApi getUserIdViaTokenApi, UserMapper userMapper) {
         this.jwtUtils = jwtUtils;
         this.objectMapper = objectMapper;
+        this.getUserIdViaTokenApi = getUserIdViaTokenApi;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -48,19 +54,11 @@ public class RoleInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String token = request.getHeader("Authorization");
-        if (token == null || token.isEmpty()) {
-            sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "未登录，请先登录");
-            return false;
-        }
-
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-
         try {
-            Claims claims = jwtUtils.parseToken(token);
-            Integer userRole = claims.get("role", Integer.class);
+
+            Long userId = getUserIdViaTokenApi.getUserId(request);
+
+            String userRole = userMapper.getRoleByUserId(userId);
 
             if (userRole == null) {
                 sendErrorResponse(response, HttpStatus.FORBIDDEN, "无法获取用户角色信息");
@@ -72,13 +70,13 @@ public class RoleInterceptor implements HandlerInterceptor {
 
             if (!hasPermission) {
                 log.warn("用户权限不足，当前角色: {}, 需要角色: {}", 
-                        UserRoleEnum.getByCode(userRole).getDescription(), 
+                        UserRoleEnum.getByCode(Integer.parseInt(userRole)).getDescription(),
                         java.util.Arrays.toString(requiredRoles));
                 sendErrorResponse(response, HttpStatus.FORBIDDEN, "权限不足，无法访问该接口");
                 return false;
             }
 
-            log.debug("权限验证通过，用户角色: {}", UserRoleEnum.getByCode(userRole).getDescription());
+            log.debug("权限验证通过，用户角色: {}", UserRoleEnum.getByCode(Integer.parseInt(userRole)).getDescription());
             return true;
 
         } catch (RuntimeException e) {

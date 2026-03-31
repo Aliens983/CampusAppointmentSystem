@@ -90,7 +90,6 @@ public class BookController {
     @PostMapping("/cancel")
     @Operation(summary = "取消预约")
     public ResponseEntity<Map<String, Object>> cancelBooking(HttpServletRequest request, @RequestParam List<Long> bookingIds) {
-        //TODO: 这里取消预约时,要先检查当前用户到底有没有预约到此要取消的预约服务ID,现在是取消用户未预约的服务ID也返回取消预约成功
         Map<String, Object> result = new HashMap<>();
         try {
             Long userId = getUserIdViaTokenApi.getUserId(request);

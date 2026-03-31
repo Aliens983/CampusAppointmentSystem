@@ -34,11 +34,11 @@ public enum UserRoleEnum {
         return USER;
     }
 
-    public static boolean hasPermission(Integer userRole, UserRoleEnum... requiredRoles) {
+    public static boolean hasPermission(String userRole, UserRoleEnum... requiredRoles) {
         if (userRole == null) {
             return false;
         }
-        UserRoleEnum userRoleEnum = getByCode(userRole);
+        UserRoleEnum userRoleEnum = getByCode(Integer.parseInt(userRole));
         for (UserRoleEnum requiredRole : requiredRoles) {
             if (userRoleEnum.code >= requiredRole.code) {
                 return true;
