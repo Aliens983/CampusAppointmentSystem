@@ -1,6 +1,6 @@
 package com.laoliu.system.controller;
 
-import com.laoliu.system.common.CodeGenerator;
+import com.laoliu.system.common.enums.CodeGenerator;
 import com.laoliu.system.service.EmailSendService;
 import com.laoliu.system.utils.RedisUtil;
 import com.laoliu.system.vo.request.EmailRequest;

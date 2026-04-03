@@ -1,4 +1,4 @@
-package com.laoliu.system.common;
+package com.laoliu.system.common.enums;
 
 import lombok.Getter;
 
