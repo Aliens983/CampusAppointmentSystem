@@ -1,6 +1,6 @@
 package com.laoliu.system.mapper;
 
-import com.laoliu.system.entity.Service;
+import com.laoliu.system.entity.Services;
 import com.laoliu.system.vo.request.ServiceAddRequest;
 
 import java.util.List;
@@ -9,21 +9,21 @@ import java.util.List;
 * @author 25516
 * @description 针对表【service】的数据库操作Mapper
 * @createDate 2026-03-16 10:31:25
-* @Entity com.laoliu.system.entity.Service
+* @Entity com.laoliu.system.entity.Services
 */
 public interface ServiceMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(Service record);
+    int insert(Services record);
 
     int insertSelective(ServiceAddRequest record);
 
-    Service selectByPrimaryKey(Long id);
+    Services selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKeySelective(Service record);
+    int updateByPrimaryKeySelective(Services record);
 
-    int updateByPrimaryKey(Service record);
+    int updateByPrimaryKey(Services record);
 
-    List<Service> selectAll();
+    List<Services> selectAll();
 }

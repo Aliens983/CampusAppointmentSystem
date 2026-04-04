@@ -1,7 +1,7 @@
 -- Campus Appointment System - User Table
 -- 创建用户表
 
-USE campus_appointment;
+USE cas_db;
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (

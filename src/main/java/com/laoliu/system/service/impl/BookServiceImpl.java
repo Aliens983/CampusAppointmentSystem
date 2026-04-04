@@ -1,6 +1,6 @@
 package com.laoliu.system.service.impl;
 
-import com.laoliu.system.entity.Item;
+import com.laoliu.system.entity.Services;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.mapper.ItemMapper;
 import com.laoliu.system.mapper.ServiceMapper;
@@ -9,7 +9,6 @@ import com.laoliu.system.service.BookService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +35,7 @@ public class BookServiceImpl implements BookService {
 //        user.getServices().add(serviceMapper.selectByPrimaryKey(Long.valueOf(serviceId)));
         // suggestion: don't select the service from a database, just add it to the user's services
         // 仅仅把相关的条目加入到数据库, 不需要再把相关的服务查询出来展示在前端
-//        List<com.laoliu.system.entity.Service> services = user.getServices();
+//        List<com.laoliu.system.entity.Services> services = user.getServices();
 //        services.add(serviceMapper.selectByPrimaryKey(Long.valueOf(serviceId)));
 //        user.setServices(services);
 
@@ -46,11 +45,11 @@ public class BookServiceImpl implements BookService {
 
         // 验证所有服务ID是否有效
         for (Integer sid : serviceId) {
-            com.laoliu.system.entity.Service service = serviceMapper.selectByPrimaryKey(Long.valueOf(sid));
-            if (service == null) {
+            Services services = serviceMapper.selectByPrimaryKey(Long.valueOf(sid));
+            if (services == null) {
                 throw new RuntimeException("服务ID " + sid + " 不存在");
             }
-            if (service.getServiceState() != 1) {
+            if (services.getServiceState() != 1) {
                 throw new RuntimeException("服务ID " + sid + " 已被禁用");
             }
         }

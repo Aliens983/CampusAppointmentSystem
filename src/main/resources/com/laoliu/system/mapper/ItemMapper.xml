@@ -23,15 +23,15 @@
         where  order_id = #{orderId} 
     </select>
 
-<!--    <resultMap id="MyServiceResult" type="com.laoliu.system.entity.Service">-->
+<!--    <resultMap id="MyServiceResult" type="com.laoliu.system.entity.Servicess">-->
 <!--        <id property="serviceId" column="service_id" />-->
 <!--        <result property="serviceName" column="service_name" />-->
 <!--        <result property="serviceDescribe" column="service_describe" />-->
 <!--        <result property="serviceState" column="service_state" />-->
 <!--    </resultMap>-->
 <!--    <select id="selectUserServices" resultMap="MyServiceResult">-->
-    <select id="selectUserServices" resultType="com.laoliu.system.entity.Service">
-        select s.service_id,s.service_name,s.service_describe,s.service_state from service s left join item on s.service_id = item.service_id where item.user_id = #{userId}
+    <select id="selectUserServices" resultType="com.laoliu.system.entity.Services">
+        select s.service_id,s.service_name,s.service_describe,s.service_state from services s left join item on s.service_id = item.service_id where item.user_id = #{userId}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -62,8 +62,8 @@
     </insert>
     <insert id="insertServices">
         insert into item(user_id,service_id) values
-        <foreach collection="serviceId" item="service" separator=",">
-            (#{userId},#{service})
+        <foreach collection="serviceId" item="services" separator=",">
+            (#{userId},#{services})
         </foreach>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.laoliu.system.entity.Item">
@@ -121,7 +121,7 @@
             i.manage_status AS manageStatus
         FROM item i
         LEFT JOIN user u ON i.user_id = u.id
-        LEFT JOIN service s ON i.service_id = s.service_id
+        LEFT JOIN services s ON i.service_id = s.service_id
         ORDER BY i.create_time DESC
     </select>
 
@@ -138,7 +138,7 @@
             i.manage_status AS manageStatus
         FROM item i
         LEFT JOIN user u ON i.user_id = u.id
-        LEFT JOIN service s ON i.service_id = s.service_id
+        LEFT JOIN services s ON i.service_id = s.service_id
         WHERE i.user_id = #{userId}
         ORDER BY i.create_time DESC
     </select>
@@ -166,7 +166,7 @@
             s.service_describe AS serviceDescribe
         FROM item i
         LEFT JOIN user u ON i.user_id = u.id
-        LEFT JOIN service s ON i.service_id = s.service_id
+        LEFT JOIN services s ON i.service_id = s.service_id
         WHERE i.order_id = #{orderId}
     </select>
 

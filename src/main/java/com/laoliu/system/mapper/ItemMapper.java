@@ -1,8 +1,7 @@
 package com.laoliu.system.mapper;
 
 import com.laoliu.system.entity.Item;
-import com.laoliu.system.entity.Service;
-import com.laoliu.system.vo.request.AuditRequest;
+import com.laoliu.system.entity.Services;
 import com.laoliu.system.vo.response.ServiceStatusResponse;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,7 +27,7 @@ public interface ItemMapper {
 
     int updateByPrimaryKey(Item record);
 
-    List<Service> selectUserServices(Long userId);
+    List<Services> selectUserServices(Long userId);
 
     /**
      * 获取服务状态列表（管理员专用）

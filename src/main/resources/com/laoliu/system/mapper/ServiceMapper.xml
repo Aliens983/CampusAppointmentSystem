@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.laoliu.system.mapper.ServiceMapper">
 
-    <resultMap id="BaseResultMap" type="com.laoliu.system.entity.Service">
+    <resultMap id="BaseResultMap" type="com.laoliu.system.entity.Services">
             <id property="serviceId" column="service_id" />
             <result property="serviceName" column="service_name" />
             <result property="serviceDescribe" column="service_describe" />
@@ -18,38 +18,38 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
-        from service
+        from services
         where  service_id = #{serviceId} 
     </select>
 
-    <resultMap id="MyServiceResult" type="com.laoliu.system.entity.Service">
+    <resultMap id="MyServiceResult" type="com.laoliu.system.entity.Services">
         <id property="serviceId" column="service_id" />
         <result property="serviceName" column="service_name" />
         <result property="serviceDescribe" column="service_describe" />
         <result property="serviceState" column="service_state" />
     </resultMap>
     <select id="selectAll" resultMap="MyServiceResult" >
-        select service_id,service_name,service_describe,service_state from service
+        select service_id,service_name,service_describe,service_state from services
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        delete from service
+        delete from services
         where  service_id = #{serviceId} 
     </delete>
-    <insert id="insert" keyColumn="service_id" keyProperty="serviceId" parameterType="com.laoliu.system.entity.Service" useGeneratedKeys="true">
-        insert into service
+    <insert id="insert" keyColumn="service_id" keyProperty="serviceId" parameterType="com.laoliu.system.entity.Services" useGeneratedKeys="true">
+        insert into services
         ( service_id,service_name,service_describe,service_state)
         values (#{serviceId},#{serviceName},#{serviceDescribe},#{serviceState})
     </insert>
     <insert id="insertSelective" parameterType="com.laoliu.system.vo.request.ServiceAddRequest">
-        insert into service
+        insert into services
         ( service_name,service_describe)
         values (#{serviceName},#{serviceDescribe})
     </insert>
 
 
-    <update id="updateByPrimaryKeySelective" parameterType="com.laoliu.system.entity.Service">
-        update service
+    <update id="updateByPrimaryKeySelective" parameterType="com.laoliu.system.entity.Services">
+        update services
         <set>
                 <if test="serviceName != null">
                     service_name = #{serviceName},
@@ -63,8 +63,8 @@
         </set>
         where   service_id = #{serviceId} 
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.laoliu.system.entity.Service">
-        update service
+    <update id="updateByPrimaryKey" parameterType="com.laoliu.system.entity.Services">
+        update services
         set 
             service_name =  #{serviceName},
             service_describe =  #{serviceDescribe},

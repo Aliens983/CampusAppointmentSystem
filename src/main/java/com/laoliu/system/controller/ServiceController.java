@@ -1,7 +1,7 @@
 package com.laoliu.system.controller;
 
 import com.laoliu.system.annotation.RequireRole;
-import com.laoliu.system.entity.Service;
+import com.laoliu.system.entity.Services;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.enums.UserRoleEnum;
 import com.laoliu.system.mapper.ItemMapper;
@@ -9,7 +9,6 @@ import com.laoliu.system.mapper.ServiceMapper;
 import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.vo.request.ServiceAddRequest;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -43,9 +42,9 @@ public class ServiceController {
     public ResponseEntity<Map<String, Object>> getService() {
         try {
             Map<String, Object> result = new HashMap<>();
-            List<Service> services = serviceMapper.selectAll();
+            List<Services> services = serviceMapper.selectAll();
             // 只返回启用状态的服务
-            List<Service> enabledServices = services.stream()
+            List<Services> enabledServices = services.stream()
                     .filter(s -> s.getServiceState() == 1)
                     .toList();
             result.put("services", enabledServices);
@@ -109,7 +108,7 @@ public class ServiceController {
             }
 
             Map<String, Object> result = new HashMap<>();
-            List<Service> services = itemMapper.selectUserServices(userId);
+            List<Services> services = itemMapper.selectUserServices(userId);
 
 
             result.put("user:", user.getName() );

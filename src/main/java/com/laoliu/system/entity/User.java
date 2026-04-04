@@ -52,7 +52,7 @@ public class User {
 
     // there is no need to store the service in the user,just select by controller is ok.
     //add an attribute to store the service
-//    List<Service> services;
+//    List<Services> services;
 
     /**
      * Primary key, auto-increment

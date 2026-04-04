@@ -1,21 +1,21 @@
-package com.laoliu.system.interceptor;
+package com.laoliu.system.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laoliu.system.annotation.RequireRole;
 import com.laoliu.system.api.GetUserIdViaTokenApi;
 import com.laoliu.system.enums.UserRoleEnum;
 import com.laoliu.system.mapper.UserMapper;
-import com.laoliu.system.utils.JWTUtils;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,37 +24,52 @@ import java.util.Map;
 /**
  * @author forever-king
  */
+@Aspect
 @Component
 @Slf4j
-public class RoleInterceptor implements HandlerInterceptor {
+public class RoleAspect {
 
-
-    private final JWTUtils jwtUtils;
     private final ObjectMapper objectMapper;
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
     private final UserMapper userMapper;
 
-    public RoleInterceptor(JWTUtils jwtUtils, ObjectMapper objectMapper, GetUserIdViaTokenApi getUserIdViaTokenApi, UserMapper userMapper) {
-        this.jwtUtils = jwtUtils;
+    public RoleAspect(ObjectMapper objectMapper, GetUserIdViaTokenApi getUserIdViaTokenApi, UserMapper userMapper) {
         this.objectMapper = objectMapper;
         this.getUserIdViaTokenApi = getUserIdViaTokenApi;
         this.userMapper = userMapper;
     }
 
-    @Override
-    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
-        if (!(handler instanceof HandlerMethod handlerMethod)) {
-            return true;
-        }
+    @Pointcut("@annotation(com.laoliu.system.annotation.RequireRole)")
+    public void requireRolePointcut() {
+    }
 
-        // here is the code that gets the RequireRole annotation
-        RequireRole requireRole = handlerMethod.getMethodAnnotation(RequireRole.class);
+    @Around("requireRolePointcut()")
+    public Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
+        // 获取注解信息
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        RequireRole requireRole = signature.getMethod().getAnnotation(RequireRole.class);
 
+        // 如果没有注解，则直接执行方法
         if (requireRole == null) {
-            return true;
+            return joinPoint.proceed();
         }
 
         try {
+            Object[] args = joinPoint.getArgs();
+            HttpServletRequest request = null;
+            HttpServletResponse response = null;
+            for (Object arg : args) {
+                if (arg instanceof HttpServletRequest httpServletRequest) {
+                    request = httpServletRequest;
+                }
+                if (arg instanceof HttpServletResponse httpServletResponse) {
+                    response = httpServletResponse;
+                }
+            }
+
+            if (request == null || response == null) {
+                return joinPoint.proceed();
+            }
 
             Long userId = getUserIdViaTokenApi.getUserId(request);
 
@@ -62,7 +77,7 @@ public class RoleInterceptor implements HandlerInterceptor {
 
             if (userRole == null) {
                 sendErrorResponse(response, HttpStatus.FORBIDDEN, "无法获取用户角色信息");
-                return false;
+                return null;
             }
 
             UserRoleEnum[] requiredRoles = requireRole.value();
@@ -73,16 +88,22 @@ public class RoleInterceptor implements HandlerInterceptor {
                         UserRoleEnum.getByCode(Integer.parseInt(userRole)).getDescription(),
                         java.util.Arrays.toString(requiredRoles));
                 sendErrorResponse(response, HttpStatus.FORBIDDEN, "权限不足，无法访问该接口");
-                return false;
+                return null;
             }
 
             log.debug("权限验证通过，用户角色: {}", UserRoleEnum.getByCode(Integer.parseInt(userRole)).getDescription());
-            return true;
+            return joinPoint.proceed();
 
         } catch (RuntimeException e) {
             log.error("Token解析失败: {}", e.getMessage());
-            sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Token无效或已过期");
-            return false;
+            Object[] args = joinPoint.getArgs();
+            for (Object arg : args) {
+                if (arg instanceof HttpServletResponse response) {
+                    sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Token无效或已过期");
+                    break;
+                }
+            }
+            return null;
         }
     }
 

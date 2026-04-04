@@ -3,9 +3,9 @@ package com.laoliu.system.entity;
 /**
  * 
  * @author 25516
- * @TableName service
+ * @TableName services
  */
-public class Service {
+public class Services {
     /**
      *
      */
@@ -27,7 +27,7 @@ public class Service {
     private Integer serviceState;
 
     /**
-     * 
+     *
      */
     public Integer getServiceId() {
         return serviceId;
@@ -41,7 +41,7 @@ public class Service {
     }
 
     /**
-     * 
+     *
      */
     public String getServiceName() {
         return serviceName;
@@ -55,7 +55,7 @@ public class Service {
     }
 
     /**
-     * 
+     *
      */
     public String getServiceDescribe() {
         return serviceDescribe;
@@ -69,7 +69,7 @@ public class Service {
     }
 
     /**
-     * 
+     *
      */
     public Integer getServiceState() {
         return serviceState;
@@ -93,7 +93,7 @@ public class Service {
         if (getClass() != that.getClass()) {
             return false;
         }
-        Service other = (Service) that;
+        Services other = (Services) that;
         return (this.getServiceId() == null ? other.getServiceId() == null : this.getServiceId().equals(other.getServiceId()))
             && (this.getServiceName() == null ? other.getServiceName() == null : this.getServiceName().equals(other.getServiceName()))
             && (this.getServiceDescribe() == null ? other.getServiceDescribe() == null : this.getServiceDescribe().equals(other.getServiceDescribe()))

@@ -20,8 +20,8 @@
 
 3. 服务管理完整化
 
-- 更新服务：PUT /service/{id} 修改服务信息
-- 删除服务：DELETE /service/{id}（注意关联的预约记录）
+- 更新服务：PUT /services/{id} 修改服务信息
+- 删除服务：DELETE /services/{id}（注意关联的预约记录）
 - 服务状态：利用 ServiceStatus 枚举控制服务开启/关闭
 
 4. 用户管理完善
@@ -44,7 +44,7 @@
 7. 日程与可用性
 
 - 为服务添加时间槽（time_slot 表）
-- GET /service/{id}/slots 查询可用时间段
+- GET /services/{id}/slots 查询可用时间段
 - 预约时检查时间冲突
 
 8. 安全与配置
