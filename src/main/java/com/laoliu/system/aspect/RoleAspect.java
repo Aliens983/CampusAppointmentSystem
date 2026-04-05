@@ -59,9 +59,11 @@ public class RoleAspect {
             HttpServletRequest request = null;
             HttpServletResponse response = null;
             for (Object arg : args) {
+                // 截取请求，获得token
                 if (arg instanceof HttpServletRequest httpServletRequest) {
                     request = httpServletRequest;
                 }
+                // 截取响应，返回错误信息
                 if (arg instanceof HttpServletResponse httpServletResponse) {
                     response = httpServletResponse;
                 }

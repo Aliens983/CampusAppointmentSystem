@@ -1,6 +1,7 @@
 package com.laoliu.system.controller;
 
 import com.laoliu.system.annotation.RequireRole;
+import com.laoliu.system.common.result.CommonResult;
 import com.laoliu.system.converter.UserConverter;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.enums.UserRoleEnum;
@@ -9,18 +10,12 @@ import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.vo.response.UserResponse;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author 25516
@@ -42,47 +37,33 @@ public class UserController {
 
     @GetMapping
     @RequireRole(UserRoleEnum.USER)
-    public ResponseEntity<Map<String, Object>> getUserByParseToken(HttpServletRequest request) {
-        Map<String, Object> result = new HashMap<>();
+    public CommonResult<UserResponse> getUserByParseToken(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         try {
-            // 移除 "Bearer " 前缀
             if (token != null && token.startsWith("Bearer ")) {
                 token = token.substring(7);
             }
             Claims claims = jwtUtils.parseToken(token);
-            result.put("success", true);
-            // 获取用户ID
             String userId = claims.getSubject();
-            result.put("userId", userId);
-            result.put("claims", claims);
-            log.info("Token解析成功，用户ID：{}", userId);
-            User user;
-            user = userMapper.selectByPrimaryKey(Long.valueOf(userId));
-            log.info("User :{}",user);
+            log.info("Token 解析成功，用户 ID：{}", userId);
+            User user = userMapper.selectByPrimaryKey(Long.valueOf(userId));
+            log.info("User :{}", user);
             UserResponse userResponse = userConverter.convertUserToUserResponse(user);
-            result.put("user", userResponse);
-            return ResponseEntity.ok(result);
+            return CommonResult.success(userResponse);
         } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            log.error("获取用户信息失败", e);
+            return CommonResult.internalServerError("获取用户信息失败：" + e.getMessage());
         }
-
     }
 
     @GetMapping("/all_users")
     @RequireRole(UserRoleEnum.ADMIN)
-    public ResponseEntity<Map<String, Object>> getAllUsers(HttpServletRequest request) {
-        Map<String, Object> result = new HashMap<>();
+    public CommonResult<List<UserResponse>> getAllUsers(HttpServletRequest request) {
         try {
-            result.put("success", true);
-            result.put("users", userMapper.getAllUsers());
-            return ResponseEntity.ok(result);
+            return CommonResult.success(userMapper.getAllUsers());
         } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            log.error("获取所有用户失败", e);
+            return CommonResult.internalServerError("获取所有用户失败：" + e.getMessage());
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.laoliu.system.controller;
 
+import com.laoliu.system.common.exception.enums.LoginErrorCode;
+import com.laoliu.system.common.result.CommonResult;
 import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.utils.PasswordUtils;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/login")
 public class LoginController {
+    // TODO: 登录的时候可以新增一个忘记密码的功能，提供原始邮箱并且输入验证码重置登入账号返回token
 
     private final UserMapper userMapper;
 
@@ -29,24 +32,22 @@ public class LoginController {
         this.passwordUtils = passwordUtils;
     }
 
-
     @PostMapping
-    public String login(@RequestBody UserLoginRequest userLoginRequest) {
-
+    public CommonResult<String> login(@RequestBody UserLoginRequest userLoginRequest) {
         String email = userLoginRequest.getEmail();
         String password = userLoginRequest.getPassword();
-        if (email == null || password == null){
-            return "邮箱和秘密都不能为空！！！";
+        if (email == null || password == null) {
+            return CommonResult.badRequest("邮箱和密码都不能为空");
         }
 
         String encodePassword = userMapper.getEncodePasswordByEmail(email);
-        if (encodePassword == null){
-            return "邮箱未注册！！！请先注册";
+        if (encodePassword == null) {
+            return CommonResult.error(LoginErrorCode.USER_NOT_EXIST);
         }
-        Long userId = userMapper.getUserIdByEmail(email);
-        if (passwordUtils.matches(password, encodePassword)){
-            return jwtUtils.generateToken(userId);
+        if (passwordUtils.matches(password, encodePassword)) {
+            Long userId = userMapper.getUserIdByEmail(email);
+            return CommonResult.success(jwtUtils.generateToken(userId));
         }
-        return "邮箱或密码错误！！！";
+        return CommonResult.error(LoginErrorCode.PASSWORD_ERROR);
     }
 }

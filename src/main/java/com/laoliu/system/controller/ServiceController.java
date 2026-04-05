@@ -1,6 +1,8 @@
 package com.laoliu.system.controller;
 
 import com.laoliu.system.annotation.RequireRole;
+import com.laoliu.system.common.exception.enums.ServiceErrorCode;
+import com.laoliu.system.common.result.CommonResult;
 import com.laoliu.system.entity.Services;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.enums.UserRoleEnum;
@@ -11,13 +13,16 @@ import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.vo.request.ServiceAddRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 
 /**
  * @author 25516
@@ -39,96 +44,52 @@ public class ServiceController {
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getService() {
+    public CommonResult<List<Services>> getService() {
         try {
-            Map<String, Object> result = new HashMap<>();
             List<Services> services = serviceMapper.selectAll();
-            // 只返回启用状态的服务
             List<Services> enabledServices = services.stream()
                     .filter(s -> s.getServiceState() == 1)
                     .toList();
-            result.put("services", enabledServices);
-            result.put("success", true);
-            result.put("message", "获取服务成功");
-            result.put("total", enabledServices.size());
-            return ResponseEntity.ok(result);
+            return CommonResult.success(enabledServices);
         } catch (Exception e) {
-            e.printStackTrace();
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", false);
-            result.put("message", "获取服务失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            return CommonResult.internalServerError("获取服务失败：" + e.getMessage());
         }
     }
 
     @PostMapping
     @RequireRole(UserRoleEnum.ADMIN)
-    public ResponseEntity<Map<String, Object>> addService(@RequestBody ServiceAddRequest serviceAddRequest) {
+    public CommonResult<Void> addService(@RequestBody ServiceAddRequest serviceAddRequest) {
         try {
-            Map<String, Object> result = new HashMap<>();
             int rowsAffected = serviceMapper.insertSelective(serviceAddRequest);
             if (rowsAffected > 0) {
-                result.put("success", true);
-                result.put("message", "添加服务成功");
+                return CommonResult.success("添加服务成功", null);
             } else {
-                result.put("success", false);
-                result.put("message", "添加服务失败");
+                return CommonResult.error(ServiceErrorCode.SERVICE_BOOK_FAILED);
             }
-            return ResponseEntity.ok(result);
         } catch (Exception e) {
-            e.printStackTrace();
-
-            Map<String, Object> result = new HashMap<>();
-
-            result.put("success", false);
-            result.put("message", "添加服务失败");
-            result.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            return CommonResult.internalServerError("添加服务失败：" + e.getMessage());
         }
     }
 
     @GetMapping("/id")
     @Operation(summary = "获取指定用户的所有已经预约的服务")
     @RequireRole(UserRoleEnum.ADMIN)
-    public ResponseEntity<Map<String, Object>> getUserServices(HttpServletRequest request, @RequestParam Long userId) {
+    public CommonResult<Map<String, Object>> getUserServices(HttpServletRequest request, @RequestParam Long userId) {
         User user = userMapper.selectByPrimaryKey(userId);
+        if (user == null) {
+            return CommonResult.error(ServiceErrorCode.SERVICE_NOT_FOUND);
+        }
         try {
-            if (user == null) {
-                Map<String, Object> result = new HashMap<>();
-//                String token = request.getHeader("Authorization");
-//
-//                if (token != null && token.startsWith("Bearer ")) {
-//                    token = token.substring(7);
-//                }
-//                Claims claims = jwtUtils.parseToken(token);
-//                result.put("success", true);
-                result.put("success", false);
-                result.put("message", "用户不存在");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-            }
-
-            Map<String, Object> result = new HashMap<>();
             List<Services> services = itemMapper.selectUserServices(userId);
-
-
-            result.put("user:", user.getName() );
+            Map<String, Object> result = new HashMap<>();
+            result.put("user", user.getName());
             result.put("userId", userId);
             result.put("userRole", user.getRole());
             result.put("userGrade", user.getEmail());
-
-
             result.put("services", services);
-            result.put("success", true);
-            result.put("message", "获取用户服务成功");
-            return ResponseEntity.ok(result);
+            return CommonResult.success("获取用户服务成功", result);
         } catch (Exception e) {
-            e.printStackTrace();
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", false);
-            result.put("message", "获取用户服务失败");
-            result.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            return CommonResult.internalServerError("获取用户服务失败：" + e.getMessage());
         }
-
     }
 }

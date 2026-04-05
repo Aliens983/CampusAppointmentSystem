@@ -3,7 +3,7 @@ package com.laoliu.system.common.exception;
 import lombok.Data;
 
 /**
- * @author 25516
+ * @author forever-king
  */
 @Data
 public class ErrorCode {
@@ -16,5 +16,5 @@ public class ErrorCode {
         this.code = code;
         this.message = message;
     }
-}
 
+}

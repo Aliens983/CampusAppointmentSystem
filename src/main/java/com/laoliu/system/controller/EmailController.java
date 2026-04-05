@@ -1,6 +1,8 @@
 package com.laoliu.system.controller;
 
 import com.laoliu.system.common.enums.CodeGenerator;
+import com.laoliu.system.common.exception.enums.EmailErrorCode;
+import com.laoliu.system.common.result.CommonResult;
 import com.laoliu.system.service.EmailSendService;
 import com.laoliu.system.utils.RedisUtil;
 import com.laoliu.system.vo.request.EmailRequest;
@@ -8,9 +10,11 @@ import com.laoliu.system.vo.response.EmailResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 
 /**
  * @author 25516
@@ -44,18 +48,17 @@ public class EmailController {
     @Value("${email.send.frequency.limit:60}")
     private int frequencyLimit;
 
-
     @PostMapping
-    public ResponseEntity<EmailResponse> sendEmail(@RequestBody EmailRequest request) {
+    public CommonResult<EmailResponse> sendEmail(@RequestBody EmailRequest request) {
         try {
             // 参数验证
             if (request == null) {
-                return ResponseEntity.badRequest().body(new EmailResponse("请求参数不能为空", false));
+                return CommonResult.badRequest("请求参数不能为空");
             }
             String to = request.getTo();
 
             if (to == null || to.isEmpty()) {
-                return ResponseEntity.badRequest().body(new EmailResponse("收件人邮箱不能为空", false));
+                return CommonResult.badRequest("收件人邮箱不能为空");
             }
 
             // 检查发送频率限制
@@ -63,8 +66,7 @@ public class EmailController {
             String frequencyFlag = redisUtil.getVerificationCode(frequencyKey);
             
             if (frequencyFlag != null) {
-                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                        .body(new EmailResponse("发送过于频繁，请稍后再试", false));
+                return CommonResult.error(EmailErrorCode.EMAIL_SEND_TOO_FREQUENTLY);
             }
 
             String subject = emailSubject;
@@ -78,22 +80,22 @@ public class EmailController {
             // 设置频率限制标记，防止在指定时间内重复发送
             redisUtil.setVerificationCode(frequencyKey, "sent", frequencyLimit);
             
-            String content = emailContent+ " "+verificationCode+" ,打死都不要告诉别人!!!";
+            String content = emailContent + " " + verificationCode + " ,打死都不要告诉别人!!!";
             log.info("邮件发送请求处理开始，收件人：{}，主题：{}，内容：{}", to, subject, content);
 
             // 发送邮件
             emailSendService.sendEmail(to, subject, content);
             log.info("邮件发送请求处理成功，收件人：{}，主题：{}，验证码已存入Redis并设置{}秒后过期，频率限制{}秒", 
                      to, subject, codeExpiration, frequencyLimit);
-            return ResponseEntity.ok(new EmailResponse("邮件发送成功"));
+            
+            EmailResponse emailResponse = new EmailResponse("邮件发送成功");
+            return CommonResult.success(emailResponse);
         } catch (RuntimeException e) {
             log.error("邮件发送请求处理失败，错误信息：{}", e.getCause());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new EmailResponse("邮件发送失败：" + e.getMessage(), false));
+            return CommonResult.internalServerError("邮件发送失败: " + e.getMessage());
         } catch (Exception e) {
             log.error("邮件发送请求处理异常，错误信息：{}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new EmailResponse("邮件发送失败：系统异常", false));
+            return CommonResult.internalServerError("邮件发送失败: 系统异常");
         }
     }
 }

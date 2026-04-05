@@ -2,7 +2,6 @@ package com.laoliu.system.mapper;
 
 import com.laoliu.system.entity.User;
 import com.laoliu.system.vo.response.UserResponse;
-import org.apache.ibatis.annotations.MapKey;
 
 import java.util.List;
 import java.util.Map;

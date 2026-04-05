@@ -2,6 +2,8 @@ package com.laoliu.system.controller;
 
 import com.laoliu.system.annotation.RequireRole;
 import com.laoliu.system.api.GetUserIdViaTokenApi;
+import com.laoliu.system.common.exception.enums.ServiceStatusErrorCode;
+import com.laoliu.system.common.result.CommonResult;
 import com.laoliu.system.enums.UserRoleEnum;
 import com.laoliu.system.mapper.ItemMapper;
 import com.laoliu.system.service.EmailSendService;
@@ -9,13 +11,15 @@ import com.laoliu.system.vo.request.AuditRequest;
 import com.laoliu.system.vo.response.ServiceStatusResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 
 /**
  * 服务状态控制器
@@ -40,28 +44,19 @@ public class ServiceStatusController {
     @Operation(summary = "获取所有服务状态（管理员专用）")
     @GetMapping
     @RequireRole(UserRoleEnum.ADMIN)
-    public ResponseEntity<Map<String, Object>> getServiceStatus(HttpServletRequest request) {
+    public CommonResult<Map<String, Object>> getServiceStatus(HttpServletRequest request) {
         try {
-            Map<String, Object> result = new HashMap<>();
-            
-
             List<ServiceStatusResponse> serviceStatusList = itemMapper.getServiceStatus();
             
             // 设置状态描述
             serviceStatusList.forEach(this::setStatusDescription);
             
+            Map<String, Object> result = new HashMap<>();
             result.put("serviceStatusList", serviceStatusList);
             result.put("total", serviceStatusList.size());
-            result.put("success", true);
-            result.put("message", "获取服务状态成功");
-            
-            return ResponseEntity.ok(result);
+            return CommonResult.success(result);
         } catch (Exception e) {
-            e.printStackTrace();
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", false);
-            result.put("message", "获取服务状态失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            return CommonResult.internalServerError("获取服务状态失败: " + e.getMessage());
         }
     }
 
@@ -91,16 +86,11 @@ public class ServiceStatusController {
 
     @Operation(summary = "获取用户自己的服务状态")
     @GetMapping("/user")
-    public ResponseEntity<Map<String, Object>> getServiceStatusByUser(HttpServletRequest request) {
+    public CommonResult<Map<String, Object>> getServiceStatusByUser(HttpServletRequest request) {
         try {
-            Map<String, Object> result = new HashMap<>();
-            
-            // 从token中解析当前用户的userId
             Long userId = getUserIdViaTokenApi.getUserId(request);
             if (userId == null) {
-                result.put("success", false);
-                result.put("message", "无法获取用户信息，请重新登录");
-                return ResponseEntity.badRequest().body(result);
+                return CommonResult.badRequest("无法获取用户信息，请重新登录");
             }
             
             List<ServiceStatusResponse> serviceStatusList = itemMapper.getServiceStatusByUserId(userId);
@@ -108,115 +98,68 @@ public class ServiceStatusController {
             // 设置状态描述
             serviceStatusList.forEach(this::setStatusDescription);
             
+            Map<String, Object> result = new HashMap<>();
             result.put("serviceStatusList", serviceStatusList);
             result.put("total", serviceStatusList.size());
-            result.put("success", true);
-            result.put("message", "获取服务状态成功");
-            
-            return ResponseEntity.ok(result);
+            return CommonResult.success(result);
         } catch (Exception e) {
-            e.printStackTrace();
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", false);
-            result.put("message", "获取服务状态失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            return CommonResult.internalServerError("获取服务状态失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "审核通过服务预约")
     @PostMapping("/audit/pass")
-    public ResponseEntity<Map<String, Object>> auditPass(@RequestBody AuditRequest auditRequest) {
+    public CommonResult<Void> auditPass(@RequestBody AuditRequest auditRequest) {
         try {
-            Map<String, Object> result = new HashMap<>();
-            
-            // 验证参数
             if (auditRequest.getStatus() == null || auditRequest.getStatus() != 1) {
-                result.put("success", false);
-                result.put("message", "审核状态无效");
-                return ResponseEntity.badRequest().body(result);
+                return CommonResult.badRequest("审核状态无效");
             }
             
-            // 获取服务信息
             ServiceStatusResponse serviceInfo = itemMapper.getServiceStatusByOrderId(auditRequest.getOrderId());
             if (serviceInfo == null) {
-                result.put("success", false);
-                result.put("message", "服务预约不存在");
-                return ResponseEntity.badRequest().body(result);
+                return CommonResult.badRequest("服务预约不存在");
             }
             
-            // 执行审核
             int rows = itemMapper.auditService(auditRequest.getOrderId(), 1, null);
             if (rows > 0) {
-                // 发送通过邮件
                 String emailContent = "您好！您的预约已通过。预约服务：" + serviceInfo.getServiceName();
                 emailSendService.sendEmail(getUserEmail(serviceInfo.getUserId()), "预约审核通过通知", emailContent);
-                
-                result.put("success", true);
-                result.put("message", "审核通过成功");
+                return CommonResult.success("审核通过成功", null);
             } else {
-                result.put("success", false);
-                result.put("message", "审核失败");
+                return CommonResult.error(ServiceStatusErrorCode.AUDIT_FAILED);
             }
-            
-            return ResponseEntity.ok(result);
         } catch (Exception e) {
-            e.printStackTrace();
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", false);
-            result.put("message", "审核失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            return CommonResult.internalServerError("审核失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "审核不通过服务预约")
     @PostMapping("/audit/reject")
-    public ResponseEntity<Map<String, Object>> auditReject(@RequestBody AuditRequest auditRequest) {
+    public CommonResult<Void> auditReject(@RequestBody AuditRequest auditRequest) {
         try {
-            Map<String, Object> result = new HashMap<>();
-            
-            // 验证参数
             if (auditRequest.getStatus() == null || auditRequest.getStatus() != 2) {
-                result.put("success", false);
-                result.put("message", "审核状态无效");
-                return ResponseEntity.badRequest().body(result);
+                return CommonResult.badRequest("审核状态无效");
             }
             
             if (auditRequest.getReason() == null || auditRequest.getReason().trim().isEmpty()) {
-                result.put("success", false);
-                result.put("message", "拒绝原因不能为空");
-                return ResponseEntity.badRequest().body(result);
+                return CommonResult.badRequest("拒绝原因不能为空");
             }
             
-            // 获取服务信息
             ServiceStatusResponse serviceInfo = itemMapper.getServiceStatusByOrderId(auditRequest.getOrderId());
             if (serviceInfo == null) {
-                result.put("success", false);
-                result.put("message", "服务预约不存在");
-                return ResponseEntity.badRequest().body(result);
+                return CommonResult.badRequest("服务预约不存在");
             }
             
-            // 执行审核
             int rows = itemMapper.auditService(auditRequest.getOrderId(), 2, auditRequest.getReason());
             if (rows > 0) {
-                // 发送拒绝邮件
                 String emailContent = "您好！您的预约未通过。\n原因如下：\n" + auditRequest.getReason();
                 emailSendService.sendEmail(getUserEmail(serviceInfo.getUserId()), "预约审核结果通知", emailContent);
-                
-                result.put("success", true);
-                result.put("message", "审核不通过成功");
-                result.put("reason", auditRequest.getReason());
+                return CommonResult.success("审核不通过成功", null);
             } else {
-                result.put("success", false);
-                result.put("message", "审核失败");
+                return CommonResult.error(ServiceStatusErrorCode.AUDIT_FAILED);
             }
-            
-            return ResponseEntity.ok(result);
         } catch (Exception e) {
-            e.printStackTrace();
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", false);
-            result.put("message", "审核失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            return CommonResult.internalServerError("审核失败: " + e.getMessage());
         }
     }
 
