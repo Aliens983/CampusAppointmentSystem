@@ -3,7 +3,7 @@ package com.laoliu.system.aspect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laoliu.system.annotation.RequireRole;
 import com.laoliu.system.api.GetUserIdViaTokenApi;
-import com.laoliu.system.common.enums.UserRoleEnum;
+import com.laoliu.system.enums.UserRoleEnum;
 import com.laoliu.system.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

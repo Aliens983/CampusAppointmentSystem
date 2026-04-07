@@ -1,5 +1,6 @@
 package com.laoliu.system.common.result;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.laoliu.system.common.exception.ErrorCode;
 import java.io.Serializable;
 import lombok.Data;
@@ -79,6 +80,7 @@ public class CommonResult<T> implements Serializable {
         return !isSuccess();
     }
 
+    @JsonIgnore
     public void checkError() {
         if (isSuccess()) {
             return;
@@ -86,6 +88,7 @@ public class CommonResult<T> implements Serializable {
         throw new RuntimeException(message);
     }
 
+    @JsonIgnore
     public T getCheckedData() {
         checkError();
         return data;

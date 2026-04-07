@@ -16,7 +16,6 @@ public class AuditRequest {
     /**
      * 订单ID
      */
-    @NotNull(message = "订单ID不能为空")
     private Long orderId;
     
     /**
@@ -24,7 +23,6 @@ public class AuditRequest {
      * 1: 通过
      * 2: 拒绝
      */
-    @NotNull(message = "审核状态不能为空")
     private Integer status;
     
     /**

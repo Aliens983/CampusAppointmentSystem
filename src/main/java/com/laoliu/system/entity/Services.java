@@ -113,13 +113,15 @@ public class Services {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() +
-                " [" +
-                "Hash = " + hashCode() +
-                ", serviceId=" + serviceId +
-                ", serviceName=" + serviceName +
-                ", serviceDescribe=" + serviceDescribe +
-                ", serviceState=" + serviceState +
-                "]";
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", serviceId=").append(serviceId);
+        sb.append(", serviceName=").append(serviceName);
+        sb.append(", serviceDescribe=").append(serviceDescribe);
+        sb.append(", serviceState=").append(serviceState);
+        sb.append("]");
+        return sb.toString();
     }
 }
