@@ -1,6 +1,6 @@
 package com.laoliu.system.vo.request;
 
-import com.laoliu.system.validator.StatusBasedNotBlank;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -30,6 +30,6 @@ public class AuditRequest {
     /**
      * 审核原因（拒绝时必填）
      */
-    @StatusBasedNotBlank(statusField = "status", statusValue = 2, message = "拒绝原因不能为空")
+    @NotBlank(message = "拒绝原因不能为空")
     private String reason;
 }

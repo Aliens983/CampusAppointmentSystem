@@ -3,7 +3,6 @@ package com.laoliu.system.exception;
 import com.laoliu.system.common.exception.ErrorCode;
 import com.laoliu.system.common.result.CommonResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
@@ -25,20 +24,65 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     /**
-     * 处理数据库异常
+     * 处理所有异常的兜底方法
      */
-    @ExceptionHandler(DataAccessException.class)
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public CommonResult<?> handleDataAccessException(DataAccessException e) {
-        log.error("数据库访问异常: ", e);
-        return CommonResult.internalServerError("数据库操作失败: " + e.getMessage());
+    public CommonResult<?> handleException(Exception e, HttpServletRequest request) {
+        log.error("全局异常处理: ", e);
+        String requestUri = request.getRequestURI();
+        log.error("请求URL: {}", requestUri);
+        return CommonResult.internalServerError("服务器内部错误: " + e.getMessage());
+    }
+
+    /**
+     * 处理运行时异常
+     */
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResult<?> handleRuntimeException(RuntimeException e, HttpServletRequest request) {
+        log.error("运行时异常: ", e);
+        String requestUri = request.getRequestURI();
+        log.error("请求URL: {}", requestUri);
+        return CommonResult.internalServerError("服务器内部错误: " + e.getMessage());
+    }
+
+    /**
+     * 处理参数校验异常 (MethodArgumentNotValidException)
+     * 用于处理 @Valid 注解触发的校验
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResult<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.warn("参数校验失败: {}", e.getMessage());
+        List<ObjectError> allErrors = e.getBindingResult().getAllErrors();
+        StringBuilder message = new StringBuilder();
+        for (ObjectError error : allErrors) {
+            message.append(error.getDefaultMessage()).append(";");
+        }
+        return CommonResult.badRequest(message.toString());
+    }
+
+    /**
+     * 处理参数校验异常 (BindException)
+     * 用于处理 @Validated 注解触发的校验
+     */
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResult<?> handleBindException(BindException e) {
+        log.warn("参数校验失败: {}", e.getMessage());
+        List<ObjectError> allErrors = e.getBindingResult().getAllErrors();
+        StringBuilder message = new StringBuilder();
+        for (ObjectError error : allErrors) {
+            message.append(error.getDefaultMessage()).append(";");
+        }
+        return CommonResult.badRequest(message.toString());
     }
 
     /**
      * 处理自定义业务异常
      */
     @ExceptionHandler(BusinessException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CommonResult<?> handleBusinessException(BusinessException e, HttpServletRequest request) {
         log.warn("业务异常: {}", e.getMessage());
         ErrorCode errorCode = e.getErrorCode();
@@ -92,59 +136,13 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理运行时异常
+     * 处理数据库异常
      */
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(org.springframework.dao.DataAccessException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public CommonResult<?> handleRuntimeException(RuntimeException e, HttpServletRequest request) {
-        log.error("运行时异常: ", e);
-        String requestUri = request.getRequestURI();
-        log.error("请求URL: {}", requestUri);
-        return CommonResult.internalServerError("服务器内部错误: " + e.getMessage());
-    }
-
-    /**
-     * 处理参数校验异常 (MethodArgumentNotValidException)
-     * 用于处理 @Valid 注解触发的校验
-     */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public CommonResult<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.warn("参数校验失败: {}", e.getMessage());
-        List<ObjectError> allErrors = e.getBindingResult().getAllErrors();
-        StringBuilder message = new StringBuilder();
-        for (ObjectError error : allErrors) {
-            message.append(error.getDefaultMessage()).append("; ");
-        }
-        return CommonResult.badRequest(message.toString());
-    }
-
-    /**
-     * 处理参数校验异常 (BindException)
-     * 用于处理 @Validated 注解触发的校验
-     */
-    @ExceptionHandler(BindException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public CommonResult<?> handleBindException(BindException e) {
-        log.warn("参数校验失败: {}", e.getMessage());
-        List<ObjectError> allErrors = e.getBindingResult().getAllErrors();
-        StringBuilder message = new StringBuilder();
-        for (ObjectError error : allErrors) {
-            message.append(error.getDefaultMessage()).append("; ");
-        }
-        return CommonResult.badRequest(message.toString());
-    }
-
-    /**
-     * 处理所有异常的兜底方法
-     */
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public CommonResult<?> handleException(Exception e, HttpServletRequest request) {
-        log.error("全局异常处理: ", e);
-        String requestUri = request.getRequestURI();
-        log.error("请求URL: {}", requestUri);
-        return CommonResult.internalServerError("服务器内部错误: " + e.getMessage());
+    public CommonResult<?> handleDataAccessException(org.springframework.dao.DataAccessException e) {
+        log.error("数据库访问异常: ", e);
+        return CommonResult.internalServerError("数据库访问异常: " + e.getMessage());
     }
 
     /**
