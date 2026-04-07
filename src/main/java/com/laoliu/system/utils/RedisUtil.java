@@ -1,9 +1,9 @@
 package com.laoliu.system.utils;
 
+import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author 25516

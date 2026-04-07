@@ -131,6 +131,13 @@
         where
             id = #{userId}
     </update>
+    <update id="updatePasswordByEmail">
+        update user
+        set
+            password = #{password}
+        where
+            email = #{email}
+    </update>
 
 
 </mapper>

@@ -17,4 +17,10 @@ public interface LoginErrorCode {
 
     ErrorCode TOKEN_INVALID = new ErrorCode(401, "token无效");
 
+    ErrorCode VERIFICATION_CODE_ERROR = new ErrorCode(400, "验证码错误");
+
+    ErrorCode VERIFICATION_CODE_EXPIRED = new ErrorCode(400, "验证码已过期");
+
+    ErrorCode USER_NOT_EXIST_BY_EMAIL = new ErrorCode(404, "该邮箱未注册");
+
 }

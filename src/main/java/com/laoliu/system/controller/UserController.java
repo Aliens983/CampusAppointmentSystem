@@ -7,12 +7,16 @@ import com.laoliu.system.entity.User;
 import com.laoliu.system.enums.UserRoleEnum;
 import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.utils.JWTUtils;
+import com.laoliu.system.utils.PasswordUtils;
+import com.laoliu.system.vo.request.AdminCreateUserRequest;
 import com.laoliu.system.vo.response.UserResponse;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,11 +32,13 @@ public class UserController {
     private final JWTUtils jwtUtils;
     private final UserMapper userMapper;
     private final UserConverter userConverter;
+    private final PasswordUtils passwordUtils;
 
-    public UserController(JWTUtils jwtUtils, UserMapper userMapper, UserConverter userConverter) {
+    public UserController(JWTUtils jwtUtils, UserMapper userMapper, UserConverter userConverter, PasswordUtils passwordUtils) {
         this.jwtUtils = jwtUtils;
         this.userMapper = userMapper;
         this.userConverter = userConverter;
+        this.passwordUtils = passwordUtils;
     }
 
     @GetMapping
@@ -64,6 +70,42 @@ public class UserController {
         } catch (Exception e) {
             log.error("获取所有用户失败", e);
             return CommonResult.internalServerError("获取所有用户失败：" + e.getMessage());
+        }
+    }
+
+    @PostMapping("/create")
+    @RequireRole(UserRoleEnum.SUPER_ADMIN)
+    public CommonResult<String> createUser(@RequestBody AdminCreateUserRequest request) {
+        try {
+            if (request.getName() == null || request.getName().isEmpty()) {
+                return CommonResult.badRequest("用户名不能为空");
+            }
+            if (request.getEmail() == null || request.getEmail().isEmpty()) {
+                return CommonResult.badRequest("邮箱不能为空");
+            }
+            if (request.getPassword() == null || request.getPassword().isEmpty()) {
+                return CommonResult.badRequest("密码不能为空");
+            }
+
+            Long existUserId = userMapper.getUserIdByEmail(request.getEmail());
+            if (existUserId != null) {
+                return CommonResult.badRequest("该邮箱已被注册");
+            }
+
+            User user = new User();
+            user.setName(request.getName());
+            user.setEmail(request.getEmail());
+            user.setPassword(passwordUtils.encode(request.getPassword()));
+            user.setGrade(request.getGrade());
+            user.setSex(request.getSex());
+            user.setAge(request.getAge());
+            user.setRole(request.getRole() != null ? request.getRole() : 0);
+
+            userMapper.insert(user);
+
+            return CommonResult.success("创建用户成功");
+        } catch (Exception e) {
+            return CommonResult.internalServerError("创建用户失败：" + e.getMessage());
         }
     }
 }

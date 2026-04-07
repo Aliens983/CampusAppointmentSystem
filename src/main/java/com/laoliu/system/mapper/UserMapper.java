@@ -39,4 +39,6 @@ public interface UserMapper {
     Long getUserIdByEmail(String email);
 
     List<UserResponse> getAllUsers();
+
+    void updatePasswordByEmail(String email, String password);
 }
