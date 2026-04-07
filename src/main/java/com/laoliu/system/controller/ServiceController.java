@@ -5,7 +5,7 @@ import com.laoliu.system.common.exception.enums.ServiceErrorCode;
 import com.laoliu.system.common.result.CommonResult;
 import com.laoliu.system.entity.Services;
 import com.laoliu.system.entity.User;
-import com.laoliu.system.enums.UserRoleEnum;
+import com.laoliu.system.common.enums.UserRoleEnum;
 import com.laoliu.system.mapper.ItemMapper;
 import com.laoliu.system.mapper.ServiceMapper;
 import com.laoliu.system.mapper.UserMapper;

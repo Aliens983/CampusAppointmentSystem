@@ -1,6 +1,6 @@
 package com.laoliu.system.annotation;
 
-import com.laoliu.system.enums.UserRoleEnum;
+import com.laoliu.system.common.enums.UserRoleEnum;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

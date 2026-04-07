@@ -1,5 +1,7 @@
 package com.laoliu.system.vo.request;
 
+import com.laoliu.system.validator.StatusBasedNotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
@@ -14,6 +16,7 @@ public class AuditRequest {
     /**
      * 订单ID
      */
+    @NotNull(message = "订单ID不能为空")
     private Long orderId;
     
     /**
@@ -21,10 +24,12 @@ public class AuditRequest {
      * 1: 通过
      * 2: 拒绝
      */
+    @NotNull(message = "审核状态不能为空")
     private Integer status;
     
     /**
      * 审核原因（拒绝时必填）
      */
+    @StatusBasedNotBlank(statusField = "status", statusValue = 2, message = "拒绝原因不能为空")
     private String reason;
 }
