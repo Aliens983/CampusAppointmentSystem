@@ -112,6 +112,7 @@ public class ServiceStatusController {
     @PostMapping("/audit/pass")
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<Void> auditPass(@RequestBody AuditRequest auditRequest) {
+        // TODO：There still need to test the api interface.
         try {
             if (auditRequest.getStatus() == null || auditRequest.getStatus() != 1) {
                 return CommonResult.badRequest("审核状态无效");
@@ -124,8 +125,8 @@ public class ServiceStatusController {
             
             int rows = itemMapper.auditService(auditRequest.getOrderId(), 1, null);
             if (rows > 0) {
-                String emailContent = "您好！您的预约已通过。预约服务：" + serviceInfo.getServiceName();
-                emailSendService.sendEmail(getUserEmail(serviceInfo.getUserId()), "预约审核通过通知", emailContent);
+                String emailContent = "您好！您的预约已通过。\n预约服务：" + serviceInfo.getServiceName()+"\n服务描述："+serviceInfo.getServiceDescribe()+(auditRequest.getReason()==null?"":"\n备注："+auditRequest.getReason());
+                emailSendService.sendEmail(getUserEmail(auditRequest.getOrderId()), "预约审核通过通知", emailContent);
                 return CommonResult.success("审核通过成功", null);
             } else {
                 return CommonResult.error(ServiceStatusErrorCode.AUDIT_FAILED);
@@ -156,7 +157,7 @@ public class ServiceStatusController {
             int rows = itemMapper.auditService(auditRequest.getOrderId(), 2, auditRequest.getReason());
             if (rows > 0) {
                 String emailContent = "您好！您的预约未通过。\n原因如下：\n" + auditRequest.getReason();
-                emailSendService.sendEmail(getUserEmail(serviceInfo.getUserId()), "预约审核结果通知", emailContent);
+                emailSendService.sendEmail(getUserEmail(auditRequest.getOrderId()), "预约审核结果通知", emailContent);
                 return CommonResult.success("审核不通过成功", null);
             } else {
                 return CommonResult.error(ServiceStatusErrorCode.AUDIT_FAILED);
@@ -174,6 +175,9 @@ public class ServiceStatusController {
      */
     private String getUserEmail(Long orderId) {
         String email = itemMapper.getUserEmailByOrderId(orderId);
-        return email != null ? email : "user" + orderId + "@example.com";
+        if (email == null){
+            throw new BusinessException(ServiceStatusErrorCode.USER_EMAIL_NOT_FOUND);
+        }
+        return email;
     }
 }

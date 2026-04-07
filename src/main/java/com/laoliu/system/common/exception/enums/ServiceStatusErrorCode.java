@@ -15,4 +15,6 @@ public interface ServiceStatusErrorCode {
 
     ErrorCode INVALID_AUDIT_STATUS = new ErrorCode(400, "无效的审核状态");
 
+    ErrorCode USER_EMAIL_NOT_FOUND = new ErrorCode(404404404, "用户邮箱未找到");
+
 }
