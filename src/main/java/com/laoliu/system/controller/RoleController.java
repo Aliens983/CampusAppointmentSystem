@@ -4,7 +4,7 @@ import com.laoliu.system.annotation.RequireRole;
 import com.laoliu.system.common.exception.enums.RoleErrorCode;
 import com.laoliu.system.common.result.CommonResult;
 import com.laoliu.system.entity.User;
-import com.laoliu.system.common.enums.UserRoleEnum;
+import com.laoliu.system.enums.UserRoleEnum;
 import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.service.RoleService;
 import com.laoliu.system.utils.JWTUtils;

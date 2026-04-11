@@ -69,7 +69,7 @@ public interface ItemMapper {
      * @param orderId 订单ID
      * @return 用户邮箱
      */
-    String getUserEmailByOrderId(Long orderId);
+    String getUserEmailByOrderId(@Param("orderId") Long orderId);
 
     void setBookingStatus(Long userId,Long bookingId);
 

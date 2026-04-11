@@ -1,4 +1,4 @@
-package com.laoliu.system.common.enums;
+package com.laoliu.system.enums;
 
 /**
  * @author forever-king

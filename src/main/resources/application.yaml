@@ -31,7 +31,7 @@ springdoc:
 # 阿里云OSS配置
 aliyun:
   oss:
-    endpoint: oss-cn-hangzhou.aliyuncs.com
-    access-key-id: LTAI5tALGhLsFLQMv2ks5ZCs
-    access-key-secret: dC7bIFErSMEeGtdSMTBzGpj2c4Q8W1
-    bucket-name: coding-king-liu
+    endpoint: YourEndpoint
+    access-key-id: YourAccessKeyId
+    access-key-secret: YourAccessKeySecret
+    bucket-name: YourBucketName

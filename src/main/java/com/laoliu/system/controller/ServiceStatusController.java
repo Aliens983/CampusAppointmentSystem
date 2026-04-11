@@ -2,23 +2,19 @@ package com.laoliu.system.controller;
 
 import com.laoliu.system.annotation.RequireRole;
 import com.laoliu.system.api.GetUserIdViaTokenApi;
-import com.laoliu.system.exception.BusinessException;
-import com.laoliu.system.exception.ResourceNotFoundException;
 import com.laoliu.system.common.exception.enums.ServiceStatusErrorCode;
 import com.laoliu.system.common.result.CommonResult;
-import com.laoliu.system.common.enums.UserRoleEnum;
+import com.laoliu.system.enums.UserRoleEnum;
+import com.laoliu.system.exception.BusinessException;
 import com.laoliu.system.mapper.ItemMapper;
 import com.laoliu.system.service.EmailSendService;
 import com.laoliu.system.vo.request.AuditRequest;
 import com.laoliu.system.vo.response.ServiceStatusResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
  * 
  * @author 25516
  */
-@Slf4j
 @RestController
 @RequestMapping("/service-status")
 public class ServiceStatusController {
@@ -117,6 +112,7 @@ public class ServiceStatusController {
     @PostMapping("/audit/pass")
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<Void> auditPass(@RequestBody AuditRequest auditRequest) {
+        // TODO：There still need to test the api interface.
         try {
             if (auditRequest.getStatus() == null || auditRequest.getStatus() != 1) {
                 return CommonResult.badRequest("审核状态无效");
@@ -129,8 +125,8 @@ public class ServiceStatusController {
             
             int rows = itemMapper.auditService(auditRequest.getOrderId(), 1, null);
             if (rows > 0) {
-                String emailContent = "您好！您的预约已通过。预约服务：" + serviceInfo.getServiceName();
-                emailSendService.sendEmail(getUserEmail(serviceInfo.getUserId()), "预约审核通过通知", emailContent);
+                String emailContent = "您好！您的预约已通过。\n预约服务：" + serviceInfo.getServiceName()+"\n服务描述："+serviceInfo.getServiceDescribe()+(auditRequest.getReason()==null?"":"\n备注："+auditRequest.getReason());
+                emailSendService.sendEmail(getUserEmail(auditRequest.getOrderId()), "预约审核通过通知", emailContent);
                 return CommonResult.success("审核通过成功", null);
             } else {
                 return CommonResult.error(ServiceStatusErrorCode.AUDIT_FAILED);
@@ -143,26 +139,32 @@ public class ServiceStatusController {
     @Operation(summary = "审核不通过服务预约")
     @PostMapping("/audit/reject")
     @RequireRole(UserRoleEnum.ADMIN)
-    public CommonResult<?> auditReject(@Valid @RequestBody AuditRequest auditRequest) {
-        log.info("审核拒绝请求: orderId={}, status={}", auditRequest.getOrderId(), auditRequest.getStatus());
-        
-        // 检查服务预约是否存在
-        ServiceStatusResponse serviceInfo = itemMapper.getServiceStatusByOrderId(auditRequest.getOrderId());
-        if (serviceInfo == null) {
-            throw new ResourceNotFoundException("服务预约不存在");
+    public CommonResult<Void> auditReject(@RequestBody AuditRequest auditRequest) {
+        try {
+            if (auditRequest.getStatus() == null || auditRequest.getStatus() != 2) {
+                return CommonResult.badRequest("审核状态无效");
+            }
+            
+            if (auditRequest.getReason() == null || auditRequest.getReason().trim().isEmpty()) {
+                throw new BusinessException(ServiceStatusErrorCode.AUDIT_REASON_REQUIRED);
+            }
+            
+            ServiceStatusResponse serviceInfo = itemMapper.getServiceStatusByOrderId(auditRequest.getOrderId());
+            if (serviceInfo == null) {
+                return CommonResult.badRequest("服务预约不存在");
+            }
+            
+            int rows = itemMapper.auditService(auditRequest.getOrderId(), 2, auditRequest.getReason());
+            if (rows > 0) {
+                String emailContent = "您好！您的预约未通过。\n原因如下：\n" + auditRequest.getReason();
+                emailSendService.sendEmail(getUserEmail(auditRequest.getOrderId()), "预约审核结果通知", emailContent);
+                return CommonResult.success("审核不通过成功", null);
+            } else {
+                return CommonResult.error(ServiceStatusErrorCode.AUDIT_FAILED);
+            }
+        } catch (Exception e) {
+            return CommonResult.internalServerError("审核失败: " + e.getMessage());
         }
-        
-        // 更新审核状态为拒绝
-        int rows = itemMapper.auditService(auditRequest.getOrderId(), 2, auditRequest.getReason());
-        if (rows == 0) {
-            throw new BusinessException(ServiceStatusErrorCode.AUDIT_FAILED);
-        }
-        
-        // 发送拒绝邮件通知
-        String emailContent = "您好！您的预约未通过。\n原因如下：\n" + auditRequest.getReason();
-        emailSendService.sendEmail(getUserEmail(serviceInfo.getUserId()), "预约审核结果通知", emailContent);
-        
-        return CommonResult.success("审核拒绝成功");
     }
 
     /**
@@ -173,6 +175,9 @@ public class ServiceStatusController {
      */
     private String getUserEmail(Long orderId) {
         String email = itemMapper.getUserEmailByOrderId(orderId);
-        return email != null ? email : "user" + orderId + "@example.com";
+        if (email == null){
+            throw new BusinessException(ServiceStatusErrorCode.USER_EMAIL_NOT_FOUND);
+        }
+        return email;
     }
 }

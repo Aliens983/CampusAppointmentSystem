@@ -172,8 +172,8 @@
 
     <select id="getUserEmailByOrderId" parameterType="java.lang.Long" resultType="java.lang.String">
         SELECT u.email
-        FROM item i
-        LEFT JOIN user u ON i.user_id = u.id
+        FROM user u
+        LEFT JOIN item i ON i.user_id = u.id
         WHERE i.order_id = #{orderId}
     </select>
 </mapper>
