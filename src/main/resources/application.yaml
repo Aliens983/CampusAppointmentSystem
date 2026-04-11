@@ -27,3 +27,11 @@ springdoc:
     - group: 'default'
       paths-to-match: '/**'
       packages-to-scan: com.laoliu.system.controller
+
+# 阿里云OSS配置
+aliyun:
+  oss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    access-key-id: LTAI5tALGhLsFLQMv2ks5ZCs
+    access-key-secret: dC7bIFErSMEeGtdSMTBzGpj2c4Q8W1
+    bucket-name: coding-king-liu
