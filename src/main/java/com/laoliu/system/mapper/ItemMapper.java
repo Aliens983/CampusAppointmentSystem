@@ -1,5 +1,6 @@
 package com.laoliu.system.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.laoliu.system.entity.Item;
 import com.laoliu.system.entity.Services;
 import com.laoliu.system.vo.response.ServiceStatusResponse;
@@ -13,7 +14,7 @@ import java.util.List;
 * @createDate 2026-03-16 11:42:54
 * @Entity com.laoliu.system.entity.Item
 */
-public interface ItemMapper {
+public interface ItemMapper extends BaseMapper<Item> {
 
     int deleteByPrimaryKey(Long id);
 

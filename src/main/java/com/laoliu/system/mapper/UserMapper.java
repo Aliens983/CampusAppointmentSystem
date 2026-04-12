@@ -1,5 +1,6 @@
 package com.laoliu.system.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.vo.response.UserResponse;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 * @createDate 2026-03-16 10:31:02
 * @Entity com.laoliu.system.entity.User
 */
-public interface UserMapper {
+public interface UserMapper extends BaseMapper<User> {
 
     int deleteByPrimaryKey(Long id);
 

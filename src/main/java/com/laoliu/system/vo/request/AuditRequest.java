@@ -1,6 +1,5 @@
 package com.laoliu.system.vo.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -27,6 +26,5 @@ public class AuditRequest {
     /**
      * 审核原因（拒绝时必填）
      */
-    @NotBlank(message = "拒绝原因不能为空")
     private String reason;
 }

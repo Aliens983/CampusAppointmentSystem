@@ -1,5 +1,8 @@
 package com.laoliu.system.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import org.springframework.stereotype.Component;
 
 
@@ -9,10 +12,12 @@ import org.springframework.stereotype.Component;
  * @TableName user
  */
 @Component
+@TableName("user")
 public class User {
     /**
      * Primary key, auto-increment
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

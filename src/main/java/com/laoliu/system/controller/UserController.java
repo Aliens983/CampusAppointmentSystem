@@ -1,16 +1,20 @@
 package com.laoliu.system.controller;
 
 import com.laoliu.system.annotation.RequireRole;
+import com.laoliu.system.api.GetUserIdViaTokenApi;
 import com.laoliu.system.common.result.CommonResult;
 import com.laoliu.system.converter.UserConverter;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.enums.UserRoleEnum;
 import com.laoliu.system.mapper.UserMapper;
+import com.laoliu.system.service.UserService;
 import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.utils.PasswordUtils;
 import com.laoliu.system.vo.request.AdminCreateUserRequest;
+import com.laoliu.system.vo.response.UserInfoAndServicesViaMPRespVO;
 import com.laoliu.system.vo.response.UserResponse;
 import io.jsonwebtoken.Claims;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -33,12 +37,16 @@ public class UserController {
     private final UserMapper userMapper;
     private final UserConverter userConverter;
     private final PasswordUtils passwordUtils;
+    private final GetUserIdViaTokenApi getUserIdViaTokenApi;
+    private final UserService userService;
 
-    public UserController(JWTUtils jwtUtils, UserMapper userMapper, UserConverter userConverter, PasswordUtils passwordUtils) {
+    public UserController(JWTUtils jwtUtils, UserMapper userMapper, UserConverter userConverter, PasswordUtils passwordUtils, GetUserIdViaTokenApi getUserIdViaTokenApi, User user, UserService userService) {
         this.jwtUtils = jwtUtils;
         this.userMapper = userMapper;
         this.userConverter = userConverter;
         this.passwordUtils = passwordUtils;
+        this.getUserIdViaTokenApi = getUserIdViaTokenApi;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -107,5 +115,12 @@ public class UserController {
         } catch (Exception e) {
             return CommonResult.internalServerError("创建用户失败：" + e.getMessage());
         }
+    }
+
+    @GetMapping("/get_all_bookings")
+    @Operation(summary = "用户查看自己预约的所有服务")
+    public CommonResult<UserInfoAndServicesViaMPRespVO> getAllBookings(HttpServletRequest request) {
+        Long userId = getUserIdViaTokenApi.getUserId(request);
+        return CommonResult.success(userService.getUserInfoAndBookings(userId));
     }
 }

@@ -1,5 +1,6 @@
 package com.laoliu.system.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.laoliu.system.entity.Services;
 import com.laoliu.system.vo.request.ServiceAddRequest;
 
@@ -11,7 +12,7 @@ import java.util.List;
 * @createDate 2026-03-16 10:31:25
 * @Entity com.laoliu.system.entity.Services
 */
-public interface ServiceMapper {
+public interface ServiceMapper extends BaseMapper<Services> {
 
     int deleteByPrimaryKey(Long id);
 

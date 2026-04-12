@@ -1,11 +1,13 @@
 package com.laoliu.system.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.laoliu.system.entity.Services;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.mapper.ItemMapper;
 import com.laoliu.system.mapper.ServiceMapper;
 import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.service.BookService;
+import com.laoliu.system.vo.response.UserInfoAndServicesViaMPRespVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +18,7 @@ import java.util.Map;
  * @author 25516
  */
 @Service
-public class BookServiceImpl implements BookService {
+public class BookServiceImpl extends ServiceImpl<ServiceMapper,Services> implements BookService {
     private final ItemMapper itemMapper;
     private final UserMapper userMapper;
     private final ServiceMapper serviceMapper;
@@ -85,8 +87,7 @@ public class BookServiceImpl implements BookService {
         try {
             return affectedRows > 0;
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new RuntimeException("取消预约失败: " + e.getCause(), e);
         }
     }
 }

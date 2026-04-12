@@ -7,6 +7,7 @@ import com.laoliu.system.exception.ResourceNotFoundException;
 import com.laoliu.system.service.BookService;
 import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.vo.response.BookResultResponse;
+import com.laoliu.system.vo.response.UserInfoAndServicesViaMPRespVO;
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -70,4 +71,5 @@ public class BookController {
         }
         return CommonResult.success("取消预约成功", null);
     }
+
 }
