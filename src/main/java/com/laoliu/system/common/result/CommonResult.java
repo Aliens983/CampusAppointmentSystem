@@ -72,6 +72,10 @@ public class CommonResult<T> implements Serializable {
         return error(500, message);
     }
 
+    public static <T> CommonResult<T> methodNotAllowed(String message) {
+        return error(405, message);
+    }
+
     public boolean isSuccess() {
         return code != null && code == 200;
     }

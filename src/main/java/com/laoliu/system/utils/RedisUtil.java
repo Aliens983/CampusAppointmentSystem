@@ -19,7 +19,7 @@ public class RedisUtil {
 
     /**
      * 存储验证码到Redis
-     * @param key 邮箱地址作为key
+     * @param key Redis键（可以是UUID或邮箱地址）
      * @param value 验证码值
      * @param timeout 过期时间（秒）
      */
@@ -29,7 +29,7 @@ public class RedisUtil {
 
     /**
      * 获取验证码
-     * @param key 邮箱地址作为key
+     * @param key Redis键
      * @return 验证码值
      */
     public String getVerificationCode(String key) {
@@ -39,8 +39,7 @@ public class RedisUtil {
 
     /**
      * 删除验证码
-     *
-     * @param key 邮箱地址作为key
+     * @param key Redis键
      */
     public void removeVerificationCode(String key) {
         redisTemplate.delete(key);
