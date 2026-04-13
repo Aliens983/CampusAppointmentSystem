@@ -35,3 +35,10 @@ aliyun:
     access-key-id: YourAccessKeyId
     access-key-secret: YourAccessKeySecret
     bucket-name: YourBucketName
+
+# Qwen API 配置
+qwen:
+  # 请在此处填入您的DashScope API Key
+  api-key: ${QWEN_API_KEY:Your_Key_here}
+  api-url: https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation
+  timeout: 30000
