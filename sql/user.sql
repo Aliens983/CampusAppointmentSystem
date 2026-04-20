@@ -1,21 +1,16 @@
--- Campus Appointment System - User Table
--- 创建用户表
+create table cas_db.user
+(
+    id       bigint auto_increment comment 'Primary key, auto-increment'
+        primary key,
+    name     varchar(64)      null comment 'User name, cannot be null',
+    grade    varchar(32)      null comment 'Academic grade or class, optional',
+    sex      varchar(8)       null comment 'Gender: male/female/other',
+    age      tinyint unsigned null comment 'Age, unsigned (0–127), optional',
+    email    varchar(128)     not null comment 'Email, must be unique if provided',
+    password varchar(255)     not null comment 'Hashed password (e.g., BCrypt), never store plain text!',
+    role     int default 0    not null comment 'Your role in this system.1 is admin,0 is user.'
+)
+collate=utf8mb4_unicode_ci;
 
-USE cas_db;
-
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'Primary key, auto-increment',
-  `name` VARCHAR(64) DEFAULT NULL COMMENT 'User name, cannot be null',
-  `grade` VARCHAR(32) DEFAULT NULL COMMENT 'Academic grade or class, optional',
-  `sex` VARCHAR(8) DEFAULT NULL COMMENT 'Gender: male/female/other',
-  `age` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Age, unsigned (0-127), optional',
-  `email` VARCHAR(128) NOT NULL COMMENT 'Email, must be unique if provided',
-  `password` VARCHAR(255) NOT NULL COMMENT 'Hashed password (e.g., BCrypt), never store plain text!',
-  `role` INT NOT NULL DEFAULT 0 COMMENT 'Your role in this system. 1 is admin, 0 is user.',
-  `create_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Record creation time',
-  `update_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Record update time',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_email` (`email`) USING BTREE,
-  KEY `idx_name` (`name`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='User table - stores student and admin information';
+create index email
+    on cas_db.user (email);
