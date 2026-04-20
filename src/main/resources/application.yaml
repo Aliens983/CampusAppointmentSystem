@@ -15,6 +15,11 @@ spring:
           starttls:
             enable: false
 
+file:
+  upload:
+    path: ./uploads
+    max-size: 10485760
+
 # springdoc-openapi项目配置
 springdoc:
   swagger-ui:
