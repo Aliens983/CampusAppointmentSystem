@@ -14,6 +14,18 @@ spring:
             required: true
           starttls:
             enable: false
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+# 文件上传配置
+file:
+  upload:
+    path: ./upload/
+    prefix: /api/files/
+    server-address: http://localhost:8080
 
 # springdoc-openapi项目配置
 springdoc:

@@ -1,9 +1,14 @@
 package com.laoliu.system.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * @author forever-king
  */
 
+@Getter
+@AllArgsConstructor
 public enum UserRoleEnum {
     USER(0, "普通用户"),
     ADMIN(1, "管理员"),
@@ -11,19 +16,6 @@ public enum UserRoleEnum {
 
     private final int code;
     private final String description;
-
-    UserRoleEnum(int code, String description) {
-        this.code = code;
-        this.description = description;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 
     public static UserRoleEnum getByCode(int code) {
         for (UserRoleEnum role : values()) {

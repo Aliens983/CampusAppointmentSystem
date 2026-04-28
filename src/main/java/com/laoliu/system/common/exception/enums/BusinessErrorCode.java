@@ -37,6 +37,7 @@ public interface BusinessErrorCode {
     ErrorCode BOOKING_TIME_CONFLICT = new ErrorCode(1306, "预约时间冲突");
 
     // 文件相关错误码 1400-1499
+    ErrorCode FILE_EMPTY = new ErrorCode(1400, "文件不能为空");
     ErrorCode FILE_UPLOAD_FAILED = new ErrorCode(1401, "文件上传失败");
     ErrorCode FILE_NOT_FOUND = new ErrorCode(1402, "文件不存在");
     ErrorCode FILE_SIZE_EXCEEDED = new ErrorCode(1403, "文件大小超出限制");
