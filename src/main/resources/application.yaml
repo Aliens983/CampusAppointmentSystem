@@ -27,10 +27,6 @@ file:
     prefix: /api/files/
     server-address: http://localhost:8080
 
-file:
-  upload:
-    path: ./uploads
-    max-size: 10485760
 
 # springdoc-openapi项目配置
 springdoc:
