@@ -43,12 +43,32 @@ public class FileServiceImpl implements FileService {
         return saveFile(file, subDirectory);
     }
 
+    @Override
+    public String uploadFile(File file) {
+        if (file == null || !file.exists()) {
+            throw new BusinessException(BusinessErrorCode.FILE_EMPTY);
+        }
+        String subDirectory = getSubDirectory(file);
+        return saveFile(file, subDirectory);
+    }
+
     private String getSubDirectory(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null) {
             return "files";
         }
+        return getSubDirectoryByExtension(originalFilename);
+    }
 
+    private String getSubDirectory(File file) {
+        String originalFilename = file.getName();
+        if (originalFilename == null) {
+            return "files";
+        }
+        return getSubDirectoryByExtension(originalFilename);
+    }
+
+    private String getSubDirectoryByExtension(String originalFilename) {
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
 
         for (String imgExt : IMAGE_EXTENSIONS) {
@@ -84,6 +104,31 @@ public class FileServiceImpl implements FileService {
 
         try {
             Files.write(filePath, file.getBytes());
+        } catch (IOException e) {
+            throw new BusinessException(BusinessErrorCode.FILE_UPLOAD_FAILED);
+        }
+
+        return serverAddress + prefix + subDirectory + "/" + newFileName;
+    }
+
+    private String saveFile(File file, String subDirectory) {
+        String originalFilename = file.getName();
+        String extension = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        String newFileName = UUID.randomUUID().toString().replace("-", "") + extension;
+
+        File directory = new File(uploadPath + subDirectory);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        Path filePath = Paths.get(uploadPath, subDirectory, newFileName);
+
+        try {
+            Files.copy(file.toPath(), filePath);
         } catch (IOException e) {
             throw new BusinessException(BusinessErrorCode.FILE_UPLOAD_FAILED);
         }
