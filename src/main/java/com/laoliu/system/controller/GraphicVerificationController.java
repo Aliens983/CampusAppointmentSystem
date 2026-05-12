@@ -11,10 +11,14 @@ import com.laoliu.system.utils.RedisUtil;
 import com.laoliu.system.vo.request.VerifyCodeReqVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -30,6 +34,15 @@ import java.util.UUID;
 public class GraphicVerificationController {
 
     private final RedisUtil redisUtil;
+
+    @Value("${file.upload.path}")
+    private String uploadPath;
+
+    @Value("${file.upload.prefix}")
+    private String prefix;
+
+    @Value("${file.upload.server-address}")
+    private String serverAddress;
 
     public GraphicVerificationController(RedisUtil redisUtil) {
         this.redisUtil = redisUtil;
@@ -48,13 +61,6 @@ public class GraphicVerificationController {
         // 重新生成code
         captcha.createCode();
 
-        // 将图片转换为Base64字符串
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        captcha.write(outputStream);
-        outputStream.close();
-        byte[] imageBytes = outputStream.toByteArray();
-        String base64Image = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(imageBytes);
-
         String code = captcha.getCode();
         String expr = code.replace("=", "").trim();
 
@@ -65,11 +71,24 @@ public class GraphicVerificationController {
         // 将验证码存储到Redis，使用UUID作为key
         redisUtil.setVerificationCode(redisKey, end, 300);
 
+        // 保存验证码图片到本地文件
+        String captchaDir = uploadPath + "captcha/";
+        Path captchaPath = Paths.get(captchaDir);
+        if (!Files.exists(captchaPath)) {
+            Files.createDirectories(captchaPath);
+        }
+
+        String fileName = uuid + ".png";
+        File imageFile = new File(captchaDir + fileName);
+        captcha.write(imageFile);
+
+        String imageUrl = serverAddress + prefix + "captcha/" + fileName;
+
         // 返回UUID和图片数据给前端
         Map<String, String> result = new HashMap<>();
         result.put("uuid", uuid);
-        result.put("image", base64Image);
-        
+        result.put("image", imageUrl);
+
         return CommonResult.success(result);
     }
 

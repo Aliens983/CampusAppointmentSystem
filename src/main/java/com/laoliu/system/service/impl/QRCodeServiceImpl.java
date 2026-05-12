@@ -8,7 +8,6 @@ import com.laoliu.system.service.FileService;
 import com.laoliu.system.service.QRCodeService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
@@ -22,6 +21,7 @@ public class QRCodeServiceImpl implements QRCodeService {
     private final FileService fileService;
 
     @Override
+    // TODO: 这里以后可以补充上传其他文件比如图片视频等也可生成二维码现在仅仅实现了文本二维码,后面完善
     public String generateQrCode(String content) {
         if (content == null || content.trim().isEmpty()) {
             throw new BusinessException(CommonErrorCode.BAD_REQUEST);
