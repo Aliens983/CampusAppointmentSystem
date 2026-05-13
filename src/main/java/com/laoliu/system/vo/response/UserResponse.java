@@ -8,8 +8,9 @@ import lombok.Data;
 @Data
 public class UserResponse {
 
-    private String email;
+    private Long id;
     private String name;
+    private String email;
     private String role;
-
+    private String grade;
 }
