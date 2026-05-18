@@ -15,6 +15,7 @@ import com.laoliu.system.vo.response.UserInfoAndServicesViaMPRespVO;
 import com.laoliu.system.vo.response.UserResponse;
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author 25516
  */
+@Tag(name = "用户接口")
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -49,6 +51,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(summary = "获取用户信息")
     @GetMapping
     @RequireRole(UserRoleEnum.USER)
     public CommonResult<UserResponse> getUserByParseToken(HttpServletRequest request) {
@@ -70,6 +73,7 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "获取所有用户")
     @GetMapping("/all_users")
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<List<UserResponse>> getAllUsers(HttpServletRequest request) {
@@ -81,6 +85,7 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "创建用户")
     @PostMapping("/create")
     @RequireRole(UserRoleEnum.SUPER_ADMIN)
     public CommonResult<String> createUser(@RequestBody AdminCreateUserRequest request) {

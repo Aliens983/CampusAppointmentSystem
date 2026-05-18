@@ -12,6 +12,7 @@ import com.laoliu.system.mapper.UserMapper;
 import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.vo.request.ServiceAddRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author 25516
  */
+@Tag(name = "服务管理")
 @RestController
 @RequestMapping("/service")
 public class ServiceController {
@@ -43,6 +45,7 @@ public class ServiceController {
         this.jwtUtils = jwtUtils;
     }
 
+    @Operation(summary = "获取所有服务")
     @GetMapping
     public CommonResult<List<Services>> getService() {
         try {
@@ -56,6 +59,7 @@ public class ServiceController {
         }
     }
 
+    @Operation(summary = "添加服务")
     @PostMapping
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<Void> addService(@RequestBody ServiceAddRequest serviceAddRequest) {

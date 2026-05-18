@@ -9,6 +9,8 @@ import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.utils.PasswordUtils;
 import com.laoliu.system.utils.RedisUtil;
 import com.laoliu.system.vo.request.UserRegisterRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author 25516
  */
+@Tag(name = "用户注册")
 @RestController
 @RequestMapping("/register")
 public class RegisterController {
@@ -43,6 +46,7 @@ public class RegisterController {
     /**
      * 验证邮箱验证码并登录
      */
+    @Operation(summary = "验证邮箱验证码并登录")
     @PostMapping("/verify-code")
     public CommonResult<String> verifyEmailCode(@RequestBody UserRegisterRequest userRegisterRequest) {
         //TODO: Redis在此项目还有哪些可以使用的地方?这里还需要修改逻辑，如果注册的是管理员则需要填写管理员邀请码，如果注册的是不需要填写，还是说直接由超级管理员来创建管理员用户？

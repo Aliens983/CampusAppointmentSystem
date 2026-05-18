@@ -1,5 +1,6 @@
 package com.laoliu.system.vo.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -8,12 +9,14 @@ import lombok.Data;
  * 
  * @author 25516
  */
+@Schema(description = "审核请求类")
 @Data
 public class AuditRequest {
     
     /**
      * 订单ID
      */
+    @Schema(description = "订单ID", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long orderId;
     
     /**
@@ -21,10 +24,12 @@ public class AuditRequest {
      * 1: 通过
      * 2: 拒绝
      */
+    @Schema(description = "审核状态", requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer status;
     
     /**
      * 审核原因（拒绝时必填）
      */
+    @Schema(description = "审核原因（拒绝时必填）", requiredMode = Schema.RequiredMode.REQUIRED)
     private String reason;
 }

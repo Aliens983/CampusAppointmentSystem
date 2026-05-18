@@ -8,6 +8,8 @@ import com.laoliu.system.utils.PasswordUtils;
 import com.laoliu.system.utils.RedisUtil;
 import com.laoliu.system.vo.request.ResetPasswordRequest;
 import com.laoliu.system.vo.request.UserLoginRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author forever-king
  */
+@Tag(name = "登录接口")
 @RestController
 @RequestMapping("/login")
 public class LoginController {
@@ -34,6 +37,7 @@ public class LoginController {
     }
 
     @PostMapping
+    @Operation(summary = "用户登录")
     public CommonResult<String> login(@RequestBody UserLoginRequest userLoginRequest) {
         String email = userLoginRequest.getEmail();
         String password = userLoginRequest.getPassword();
@@ -53,6 +57,7 @@ public class LoginController {
     }
 
     @PostMapping("/reset")
+    @Operation(summary = "重置密码")
     public CommonResult<String> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         String email = resetPasswordRequest.getEmail();
         String code = resetPasswordRequest.getCode();

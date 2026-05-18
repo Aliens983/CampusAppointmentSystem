@@ -1,6 +1,7 @@
 package com.laoliu.system.vo.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -10,41 +11,49 @@ import lombok.Data;
  * @since 2026-04-13
  */
 @Data
+@Schema(description = "天气响应VO")
 public class WeatherResponse {
 
     /**
      * 响应状态码
      */
+    @Schema(description = "响应状态码")
     private Integer code;
 
     /**
      * 国家
      */
+    @Schema(description = "国家")
     private String guo;
 
     /**
      * 省份
      */
+    @Schema(description = "省份")
     private String sheng;
 
     /**
      * 城市
      */
+    @Schema(description = "城市")
     private String shi;
 
     /**
      * 区县
      */
+    @Schema(description = "区县")
     private String qu;
 
     /**
      * 天气名称
      */
+    @Schema(description = "天气名称")
     private String name;
 
     /**
      * 当前天气
      */
+    @Schema(description = "当前天气")
     private String weather1;
 
     /**

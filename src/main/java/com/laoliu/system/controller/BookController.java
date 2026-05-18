@@ -9,6 +9,7 @@ import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.vo.response.BookResultResponse;
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * @author 25516
  */
+@Tag(name = "预约服务")
 @RestController
 @RequestMapping("/book")
 public class BookController {

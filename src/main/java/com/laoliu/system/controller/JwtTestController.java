@@ -5,6 +5,9 @@ import com.laoliu.system.utils.JWTUtils;
 import io.jsonwebtoken.Claims;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author 25516
  */
+@Tag(name = "JWT测试接口")
 @Slf4j
 @RestController
 @RequestMapping("/api/jwt")
@@ -27,6 +31,7 @@ public class JwtTestController {
     }
 
     @PostMapping("/parse")
+    @Operation(summary = "解析JWT")
     public CommonResult<Map<String, Object>> parseToken(@RequestBody Map<String, String> request) {
         String token = request.get("token");
         try {

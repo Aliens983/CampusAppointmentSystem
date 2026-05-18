@@ -1,10 +1,17 @@
 package com.laoliu.system.vo.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * @author 25516
  */
+@Schema(description = "聊天请求类")
 public class ChatReqVO {
+
+    @Schema(description = "发送给大模型的消息")
     private String message;
+
+    @Schema(description = "模型名称")
     private String model;
 
     // 默认构造函数

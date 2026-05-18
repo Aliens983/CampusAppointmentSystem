@@ -1,5 +1,6 @@
 package com.laoliu.system.vo.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -9,15 +10,23 @@ import java.time.LocalDateTime;
  * 用于统一API响应格式
  * @author 25516
  */
+@Schema(description = "邮件发送响应VO")
 @Getter
 public class EmailResponse {
     // 响应消息
+    @Schema(description = "响应消息")
     private final String message;
+
     // 发送结果：true表示成功，false表示失败
+    @Schema(description = "发送结果")
     private final boolean success;
+
     // 响应时间戳
+    @Schema(description = "响应时间戳")
     private final LocalDateTime timestamp;
+
     // 响应数据
+    @Schema(description = "响应数据")
     private final Object data;
 
     // 构造函数：成功响应

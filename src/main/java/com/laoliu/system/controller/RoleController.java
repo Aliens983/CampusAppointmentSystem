@@ -10,6 +10,7 @@ import com.laoliu.system.service.RoleService;
 import com.laoliu.system.utils.JWTUtils;
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author 25516
  */
+@Tag(name = "用户角色管理")
 @RestController
 @RequestMapping("/role")
 public class RoleController {
@@ -36,6 +38,7 @@ public class RoleController {
         this.userMapper = userMapper;
     }
 
+    @Operation(summary = "获取用户角色")
     @GetMapping
     @RequireRole(UserRoleEnum.USER)
     public CommonResult<String> getRole(HttpServletRequest request) {

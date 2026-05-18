@@ -11,6 +11,7 @@ import com.laoliu.system.service.EmailSendService;
 import com.laoliu.system.vo.request.AuditRequest;
 import com.laoliu.system.vo.response.ServiceStatusResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 
  * @author 25516
  */
+@Tag(name = "服务状态")
 @RestController
 @RequestMapping("/service-status")
 public class ServiceStatusController {

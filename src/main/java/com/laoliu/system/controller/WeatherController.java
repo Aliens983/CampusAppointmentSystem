@@ -6,6 +6,8 @@ import com.laoliu.system.exception.BusinessException;
 import com.laoliu.system.vo.response.WeatherResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author System
  * @since 2026-04-13
  */
+@Tag(name = "天气接口")
 @RestController
 @RequestMapping("/api/weather")
 @Api(tags = "天气接口")
@@ -34,7 +37,7 @@ public class WeatherController {
     }
 
     @GetMapping
-    @ApiOperation("获取天气信息")
+    @Operation(summary = "获取天气信息")
     public CommonResult<WeatherResponse> getWeatherInfo(
             @RequestParam String sheng,
             @RequestParam String place) {

@@ -7,6 +7,8 @@ import com.laoliu.system.service.EmailSendService;
 import com.laoliu.system.utils.RedisUtil;
 import com.laoliu.system.vo.request.EmailRequest;
 import com.laoliu.system.vo.response.EmailResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author 25516
  */
+@Tag(name = "邮件发送")
 @RestController
 @RequestMapping("email")
 public class EmailController {
@@ -49,6 +52,7 @@ public class EmailController {
     private int frequencyLimit;
 
     @PostMapping
+    @Operation(summary = "发送邮件")
     public CommonResult<EmailResponse> sendEmail(@RequestBody EmailRequest request) {
         try {
             // 参数验证
