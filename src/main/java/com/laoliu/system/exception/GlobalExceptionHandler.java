@@ -2,6 +2,8 @@ package com.laoliu.system.exception;
 
 import com.laoliu.system.common.exception.ErrorCode;
 import com.laoliu.system.common.result.CommonResult;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -11,18 +13,24 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * 全局异常处理器
- * 
+ *
  * @author 25516
  */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public CommonResult<?> handleNoResourceFoundException(NoResourceFoundException e, HttpServletRequest request) {
+        log.warn("静态资源未找到: {} -> {}", request.getRequestURI(), e.getMessage());
+        return CommonResult.notFound("资源未找到");
+    }
 
     /**
      * 处理所有异常的兜底方法

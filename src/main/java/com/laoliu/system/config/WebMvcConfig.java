@@ -21,5 +21,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:" + captchaPath);
         registry.addResourceHandler("/api/files/**")
                 .addResourceLocations("file:" + uploadPath);
+        registry.addResourceHandler("/favicon.ico")
+                .addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/");
     }
 }
