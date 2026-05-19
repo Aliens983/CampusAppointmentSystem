@@ -3,7 +3,7 @@ package com.laoliu.system.controller;
 import com.laoliu.system.common.enums.CodeGenerator;
 import com.laoliu.system.common.exception.enums.EmailErrorCode;
 import com.laoliu.system.common.result.CommonResult;
-import com.laoliu.system.service.EmailSendService;
+import com.laoliu.system.mq.EmailMQProducer;
 import com.laoliu.system.utils.RedisUtil;
 import com.laoliu.system.vo.request.EmailRequest;
 import com.laoliu.system.vo.response.EmailResponse;
@@ -28,12 +28,12 @@ public class EmailController {
 
     private static final Logger log = LoggerFactory.getLogger(EmailController.class);
 
-    private final EmailSendService emailSendService;
-    
+    private final EmailMQProducer emailMQProducer;
+
     private final RedisUtil redisUtil;
 
-    public EmailController(EmailSendService emailSendService, RedisUtil redisUtil) {
-        this.emailSendService = emailSendService;
+    public EmailController(EmailMQProducer emailMQProducer, RedisUtil redisUtil) {
+        this.emailMQProducer = emailMQProducer;
         this.redisUtil = redisUtil;
     }
     
@@ -87,8 +87,8 @@ public class EmailController {
             String content = emailContent + " " + verificationCode + " ,打死都不要告诉别人!!!";
             log.info("邮件发送请求处理开始，收件人：{}，主题：{}，内容：{}", to, subject, content);
 
-            // 发送邮件
-            emailSendService.sendEmail(to, subject, content);
+            // 发送邮件（通过MQ异步发送）
+            emailMQProducer.sendEmailTask(to, subject, content);
             log.info("邮件发送请求处理成功，收件人：{}，主题：{}，验证码已存入Redis并设置{}秒后过期，频率限制{}秒", 
                      to, subject, codeExpiration, frequencyLimit);
             
