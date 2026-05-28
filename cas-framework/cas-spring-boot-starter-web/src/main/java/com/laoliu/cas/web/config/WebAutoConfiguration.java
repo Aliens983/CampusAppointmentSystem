@@ -5,19 +5,17 @@ import com.laoliu.cas.common.result.CommonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
-@Configuration
 @RestControllerAdvice
 @AutoConfiguration
-public class WebAutoConfiguration implements WebMvcConfigurer {
+public class WebAutoConfiguration {
 
     @Bean
     public CorsFilter corsFilter() {
@@ -43,6 +41,12 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
     public CommonResult<?> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error("Illegal argument exception: {}", e.getMessage());
         return CommonResult.badRequest(e.getMessage());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public CommonResult<?> handleNoResourceFoundException(NoResourceFoundException e) {
+        log.warn("Resource not found: {}", e.getMessage());
+        return CommonResult.notFound("资源不存在: " + e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

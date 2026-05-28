@@ -20,4 +20,11 @@ public interface LoginErrorCode {
 
     ErrorCode USER_NOT_EXIST_BY_EMAIL = new ErrorCode(404, "该邮箱未注册");
 
+    ErrorCode EMAIL_OR_PASSWORD_EMPTY = new ErrorCode(400, "邮箱和密码不能为空");
+
+    ErrorCode EMAIL_EMPTY = new ErrorCode(400, "邮箱不能为空");
+
+    ErrorCode VERIFICATION_CODE_EMPTY = new ErrorCode(400, "验证码不能为空");
+
+    ErrorCode PASSWORD_EMPTY = new ErrorCode(400, "密码不能为空");
 }

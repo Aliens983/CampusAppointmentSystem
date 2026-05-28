@@ -5,11 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
 @TableName("services")
-public class ServicesDO implements Serializable {
+public class ServicesDO {
 
     @TableId(type = IdType.AUTO)
     private Integer serviceId;

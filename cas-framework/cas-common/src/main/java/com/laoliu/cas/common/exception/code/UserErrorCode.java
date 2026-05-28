@@ -12,4 +12,9 @@ public interface UserErrorCode {
 
     ErrorCode USER_ROLE_ERROR = new ErrorCode(403, "用户角色权限不足");
 
+    ErrorCode EMAIL_OR_CODE_EMPTY = new ErrorCode(400, "邮箱和验证码不能为空");
+
+    ErrorCode VERIFICATION_CODE_EXPIRED = new ErrorCode(400, "验证码不存在或已过期");
+
+    ErrorCode VERIFICATION_CODE_ERROR = new ErrorCode(400, "验证码错误");
 }

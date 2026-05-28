@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @TableName("ai_chat_history")
@@ -16,73 +17,30 @@ public class AiChatHistory implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
-    private Integer userId;
+    private Long userId;
 
-    private String userQuestion;
+    private String model;
+
+    private String userMessage;
 
     private String aiResponse;
 
-    private String chatTime;
+    private Integer responseTimeMs;
 
-    public Integer getId() {
-        return id;
-    }
+    private LocalDateTime createdAt;
 
-    public void setId(Integer id) {
+    private LocalDateTime updatedAt;
+
+    public AiChatHistory(Long id, Long userId, String model, String userMessage, String aiResponse, Integer responseTimeMs, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
         this.userId = userId;
-    }
-
-    public String getUserQuestion() {
-        return userQuestion;
-    }
-
-    public void setUserQuestion(String userQuestion) {
-        this.userQuestion = userQuestion;
-    }
-
-    public String getAiResponse() {
-        return aiResponse;
-    }
-
-    public void setAiResponse(String aiResponse) {
+        this.model = model;
+        this.userMessage = userMessage;
         this.aiResponse = aiResponse;
-    }
-
-    public String getChatTime() {
-        return chatTime;
-    }
-
-    public void setChatTime(String chatTime) {
-        this.chatTime = chatTime;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass() != that.getClass()) {
-            return false;
-        }
-        AiChatHistory other = (AiChatHistory) that;
-        return (this.getId() != null ? this.getId().equals(other.getId()) : other.getId() == null);
-    }
-
-    @Override
-    public int hashCode() {
-        return (id != null ? id.hashCode() : 0);
+        this.responseTimeMs = responseTimeMs;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }
