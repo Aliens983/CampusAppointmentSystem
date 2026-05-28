@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: CampusAppointmentSystem
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/campus_appointment?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.laoliu.cas.**.dataobject
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+jwt:
+  secret: dXBzZWNyZXR0aGF0aXN2ZXJ5bG9uZ3RoYW5rYXNkZmdoamtscXh6Y3Zibm0xMjM0NTY3OA==
+  expiration: 86400000
+
+file:
+  upload:
+    dir: uploads
+    url-prefix: /uploads
+
+logging:
+  level:
+    com.laoliu: debug
