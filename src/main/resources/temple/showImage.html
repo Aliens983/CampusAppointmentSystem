@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 图片显示示例</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .image-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .image-container {
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .preview-image.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .placeholder {
+            color: #999;
+            font-size: 16px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            background: #fadbd8;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #31708f;
+        }
+
+        .info strong {
+            color: #31708f;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .success {
+            color: #27ae60;
+        }
+
+        .failed {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎨 Base64 图片显示工具</h1>
+
+    <div class="info">
+        <strong>使用说明：</strong>
+        <p>1. 将后端返回的 Base64 图片数据（包含 "data:image/jpeg;base64," 前缀）粘贴到下方文本框</p>
+        <p>2. 点击"显示图片"按钮即可预览验证码图片</p>
+        <p>3. 点击"清空"按钮清除输入和图片</p>
+    </div>
+
+    <div class="input-section">
+        <label for="base64Input">Base64 图片数据：</label>
+        <textarea
+                id="base64Input"
+                placeholder="在此粘贴 Base64 图片数据...
+例如：data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+        ></textarea>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-primary" onclick="showImage()">🖼️ 显示图片</button>
+        <button class="btn-secondary" onclick="clearAll()">🗑️ 清空</button>
+    </div>
+
+    <div class="image-section">
+        <div class="image-container">
+            <div id="placeholder" class="placeholder">
+                ⬇️ 点击"显示图片"按钮查看验证码 ⬇️
+            </div>
+            <img
+                    id="previewImage"
+                    class="preview-image"
+                    alt="验证码预览"
+            />
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+        <div id="status" class="status"></div>
+    </div>
+</div>
+
+<script>
+    // 页面加载时聚焦到文本框
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('base64Input').focus();
+    });
+
+    /**
+     * 显示图片
+     */
+    function showImage() {
+        const base64Input = document.getElementById('base64Input').value.trim();
+        const previewImage = document.getElementById('previewImage');
+        const placeholder = document.getElementById('placeholder');
+        const errorMessage = document.getElementById('errorMessage');
+        const status = document.getElementById('status');
+
+        // 清除之前的错误信息和状态
+        errorMessage.classList.remove('show');
+        status.textContent = '';
+        status.className = 'status';
+
+        // 验证输入是否为空
+        if (!base64Input) {
+            showError('请输入 Base64 数据');
+            return;
+        }
+
+        // 验证是否包含 data:image 前缀
+        if (!base64Input.startsWith('data:image')) {
+            showError('数据格式错误：缺少 "data:image" 前缀');
+            return;
+        }
+
+        try {
+            // 设置图片源
+            previewImage.src = base64Input;
+
+            // 等待图片加载
+            previewImage.onload = function() {
+                placeholder.style.display = 'none';
+                previewImage.classList.add('show');
+                status.textContent = '✅ 图片加载成功';
+                status.classList.add('success');
+            };
+
+            previewImage.onerror = function() {
+                showError('图片加载失败：Base64 数据可能已损坏或格式不正确');
+            };
+        } catch (error) {
+            showError('处理图片时发生错误：' + error.message);
+        }
+    }
+
+    /**
+     * 清空所有内容
+     */
+    function clearAll() {
+        document.getElementById('base64Input').value = '';
+        const previewImage = document.getElementById('previewImage');
+        const placeholder = document.getElementById('placeholder');
+        const errorMessage = document.getElementById('errorMessage');
+        const status = document.getElementById('status');
+
+        previewImage.src = '';
+        previewImage.classList.remove('show');
+        placeholder.style.display = 'block';
+        errorMessage.classList.remove('show');
+        status.textContent = '';
+        status.className = 'status';
+
+        document.getElementById('base64Input').focus();
+    }
+
+    /**
+     * 显示错误信息
+     */
+    function showError(message) {
+        const errorMessage = document.getElementById('errorMessage');
+        const status = document.getElementById('status');
+
+        errorMessage.textContent = message;
+        errorMessage.classList.add('show');
+        status.textContent = '❌ ' + message;
+        status.classList.add('failed');
+    }
+
+    // 添加键盘快捷键支持
+    document.addEventListener('keydown', function(event) {
+        // Ctrl + Enter 或 Cmd + Enter 触发显示图片
+        if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+            showImage();
+        }
+
+        // Escape 键清空
+        if (event.key === 'Escape') {
+            clearAll();
+        }
+    });
+</script>
+</body>
+</html>
