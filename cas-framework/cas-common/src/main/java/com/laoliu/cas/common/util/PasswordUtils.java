@@ -1,7 +1,9 @@
 package com.laoliu.cas.common.util;
 
+import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+@Component
 public class PasswordUtils {
 
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

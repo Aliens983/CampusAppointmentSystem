@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.laoliu.cas.redis.util.RedisUtil;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -36,5 +37,10 @@ public class RedisAutoConfiguration {
         template.afterPropertiesSet();
 
         return template;
+    }
+
+    @Bean
+    public RedisUtil redisUtil(RedisTemplate<String, Object> redisTemplate) {
+        return new RedisUtil(redisTemplate);
     }
 }

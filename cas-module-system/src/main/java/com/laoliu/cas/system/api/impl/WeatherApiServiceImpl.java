@@ -3,6 +3,7 @@ package com.laoliu.cas.system.api.impl;
 import com.laoliu.cas.common.exception.BusinessException;
 import com.laoliu.cas.system.api.WeatherApiService;
 import com.laoliu.cas.system.interfaces.dto.response.WeatherResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class WeatherApiServiceImpl implements WeatherApiService {
 
     private final RestTemplate restTemplate;
@@ -25,10 +27,6 @@ public class WeatherApiServiceImpl implements WeatherApiService {
 
     @Value("${weather.api.key}")
     private String apiKey;
-
-    public WeatherApiServiceImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
 
     @Override
     public WeatherResponse getWeather(String sheng, String place) {
