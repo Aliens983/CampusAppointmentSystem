@@ -1,7 +1,7 @@
 package com.laoliu.cas.system.api.impl;
 
+import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.security.util.JWTUtils;
-import com.laoliu.cas.system.api.GetUserIdViaTokenApi;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

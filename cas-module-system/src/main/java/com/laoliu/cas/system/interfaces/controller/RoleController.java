@@ -6,7 +6,7 @@ import com.laoliu.cas.common.enums.UserRoleEnum;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.security.util.JWTUtils;
 import com.laoliu.cas.system.application.service.RoleService;
-import com.laoliu.cas.system.api.GetUserIdViaTokenApi;
+import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

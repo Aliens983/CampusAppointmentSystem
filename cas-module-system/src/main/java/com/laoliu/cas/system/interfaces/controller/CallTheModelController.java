@@ -4,7 +4,7 @@ import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.service.CallModelService;
 import com.laoliu.cas.common.vo.request.ChatReqVO;
 import com.laoliu.cas.common.vo.response.ChatRespVO;
-import com.laoliu.cas.system.api.GetUserIdViaTokenApi;
+import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
