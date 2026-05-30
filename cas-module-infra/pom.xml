@@ -37,12 +37,6 @@
 
         <dependency>
             <groupId>com.laoliu</groupId>
-            <artifactId>cas-spring-boot-starter-mq</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.laoliu</groupId>
             <artifactId>cas-thirdparty-aliyun</artifactId>
             <version>${project.version}</version>
         </dependency>

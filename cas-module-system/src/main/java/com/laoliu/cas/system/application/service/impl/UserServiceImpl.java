@@ -17,6 +17,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = this.getById(userId);
         UserInfoAndServicesViaMPRespVO respVO = new UserInfoAndServicesViaMPRespVO();
         respVO.setUser(user);
+        respVO.setBookings(this.getBaseMapper().getAllBookings(userId));
         return respVO;
     }
 }

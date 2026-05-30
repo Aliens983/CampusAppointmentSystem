@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laoliu.cas.appointment.infrastructure.persistence.mapper.ItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ItemDO">
+        <id property="orderId" column="order_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="serviceId" column="service_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="manageStatus" column="manage_status"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        order_id,user_id,service_id,create_time,update_time,manage_status
+    </sql>
+
+    <insert id="insertServices">
+        INSERT INTO item(user_id,service_id) VALUES
+        <foreach collection="serviceId" item="services" separator=",">
+            (#{userId},#{services})
+        </foreach>
+    </insert>
+
+</mapper>

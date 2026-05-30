@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ItemDO;
 import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+@Mapper
 public interface ItemMapper extends BaseMapper<ItemDO> {
 
     void setBookingStatus(@Param("userId") Long userId, @Param("bookingId") Long bookingId);

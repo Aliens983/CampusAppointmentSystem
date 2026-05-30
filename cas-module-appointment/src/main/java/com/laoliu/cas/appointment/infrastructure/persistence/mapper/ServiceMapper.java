@@ -2,10 +2,12 @@ package com.laoliu.cas.appointment.infrastructure.persistence.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+@Mapper
 public interface ServiceMapper extends BaseMapper<ServicesDO> {
 
     ServicesDO selectByPrimaryKey(Long id);
