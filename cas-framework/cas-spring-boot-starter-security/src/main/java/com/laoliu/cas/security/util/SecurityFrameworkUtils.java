@@ -10,6 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * @author forever-king
+ */
 public class SecurityFrameworkUtils {
 
     private SecurityFrameworkUtils() {

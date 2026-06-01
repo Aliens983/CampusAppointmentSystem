@@ -8,22 +8,22 @@ import lombok.NoArgsConstructor;
 /**
  * @author forever-king
  */
-@Schema(description = "聊天响应参数")
+@Schema(description = "聊天响应")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRespVO {
 
-    @Schema(description = "响应内容")
+    @Schema(description = "大模型返回的响应内容")
     private String response;
 
-    @Schema(description = "响应成功与否")
+    @Schema(description = "请求是否成功")
     private boolean success;
 
-    @Schema(description = "错误信息")
+    @Schema(description = "错误信息（请求失败时返回）")
     private String errorMessage;
 
-    @Schema(description = "模型名称")
+    @Schema(description = "使用的模型名称")
     private String model;
 
     @Schema(description = "响应时间（毫秒）")

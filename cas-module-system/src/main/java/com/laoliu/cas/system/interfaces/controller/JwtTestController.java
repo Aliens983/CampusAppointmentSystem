@@ -4,7 +4,10 @@ import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.security.util.JWTUtils;
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author forever-king
@@ -27,9 +28,9 @@ public class JwtTestController {
 
     private final JWTUtils jwtUtils;
 
+    @Operation(summary = "解析JWT", description = "解析JWT令牌并提取用户ID和声明信息，支持Bearer前缀或不带前缀的令牌")
     @PostMapping("/parse")
-    @Operation(summary = "解析JWT")
-    public CommonResult<Map<String, Object>> parseToken(@RequestBody Map<String, String> request) {
+    public CommonResult<Map<String, Object>> parseToken(@Parameter(description = "JWT令牌", required = true) @RequestBody Map<String, String> request) {
         String token = request.get("token");
         try {
             if (token != null && token.startsWith("Bearer ")) {

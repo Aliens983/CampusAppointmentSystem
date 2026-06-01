@@ -11,12 +11,12 @@ import com.laoliu.cas.common.exception.code.ServiceErrorCode;
 import com.laoliu.cas.common.result.CommonResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
 
 /**
  * @author forever-king
@@ -30,7 +30,7 @@ public class ServiceController {
     private final ServiceService serviceService;
     private final UserInfoApi userInfoApi;
 
-    @Operation(summary = "获取所有服务")
+    @Operation(summary = "获取所有服务", description = "获取所有可用的服务列表，仅返回状态为启用（serviceState=1）的服务")
     @GetMapping
     public CommonResult<List<ServicesDO>> getService() {
         try {
@@ -44,7 +44,7 @@ public class ServiceController {
         }
     }
 
-    @Operation(summary = "添加服务")
+    @Operation(summary = "添加服务", description = "管理员添加新的服务项目，包含服务名称、描述和状态")
     @PostMapping
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<Void> addService(@RequestBody ServiceAddRequest serviceAddRequest) {
@@ -60,10 +60,11 @@ public class ServiceController {
         }
     }
 
+    @Operation(summary = "获取指定用户的所有已预约服务", description = "管理员根据用户ID查询该用户预约的所有服务详情")
     @GetMapping("/id")
-    @Operation(summary = "获取指定用户的所有已经预约的服务")
     @RequireRole(UserRoleEnum.ADMIN)
-    public CommonResult<Map<String, Object>> getUserServices(@RequestParam Long userId) {
+    public CommonResult<Map<String, Object>> getUserServices(
+            @io.swagger.v3.oas.annotations.Parameter(description = "用户ID", required = true) @RequestParam Long userId) {
         User user = userInfoApi.getUserById(userId);
         if (user == null) {
             return CommonResult.error(ServiceErrorCode.SERVICE_NOT_FOUND);

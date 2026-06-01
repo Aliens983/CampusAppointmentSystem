@@ -9,7 +9,7 @@ import java.util.Map;
  * @author forever-king
  */
 @Data
-@Schema(description = "预约图书查询结果")
+@Schema(description = "预约结果响应")
 public class BookResultResponse {
 
     @Schema(description = "用户名")
@@ -21,6 +21,6 @@ public class BookResultResponse {
     @Schema(description = "用户年级")
     private String grade;
 
-    @Schema(description = "用户预约的图书")
+    @Schema(description = "用户预约的服务列表")
     private List<Map<String, Object>> allBookedServices;
 }

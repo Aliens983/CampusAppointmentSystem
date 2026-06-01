@@ -4,6 +4,9 @@ import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.security.util.SecurityFrameworkUtils;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author forever-king
+ */
 @Component
 public class GetUserIdViaTokenApiImpl implements GetUserIdViaTokenApi {
 

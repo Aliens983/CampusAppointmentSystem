@@ -7,30 +7,30 @@ import lombok.Data;
  * @author forever-king
  */
 @Data
-@Schema(description = "用户注册请求类")
+@Schema(description = "用户注册请求")
 public class UserRegisterRequest {
 
-    @Schema(description = "用户名", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "用户名", requiredMode = Schema.RequiredMode.REQUIRED, example = "张三")
     private String name;
 
-    @Schema(description = "年级", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "年级", requiredMode = Schema.RequiredMode.REQUIRED, example = "大一")
     private String grade;
 
-    @Schema(description = "性别", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "性别", requiredMode = Schema.RequiredMode.REQUIRED, example = "男")
     private String sex;
 
-    @Schema(description = "年龄", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "年龄", requiredMode = Schema.RequiredMode.REQUIRED, example = "18")
     private Integer age;
 
-    @Schema(description = "角色", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "角色（1-普通用户，2-管理员，3-超级管理员）", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private Integer role;
 
-    @Schema(description = "邮箱", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "邮箱", requiredMode = Schema.RequiredMode.REQUIRED, example = "user@example.com")
     private String email;
 
-    @Schema(description = "验证码", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "邮箱验证码", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456")
     private String code;
 
-    @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED, example = "password123")
     private String password;
 }

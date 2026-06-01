@@ -22,8 +22,8 @@ public class FileController {
 
     private final FileService fileService;
 
+    @Operation(summary = "上传文件", description = "上传本地文件并获取文件的访问URL地址")
     @PostMapping("/upload")
-    @Operation(summary = "上传文件,并且获取上传文件的URL")
     public CommonResult<String> uploadFile(@Validated FileUploadReqVO fileUploadReqVO) {
         String fileUrl = fileService.uploadFile(fileUploadReqVO.getFile());
         return CommonResult.success(fileUrl);

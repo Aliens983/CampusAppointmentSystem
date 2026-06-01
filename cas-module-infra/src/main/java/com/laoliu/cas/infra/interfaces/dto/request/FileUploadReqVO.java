@@ -13,6 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUploadReqVO {
 
     @NotNull(message = "文件不能为空")
-    @Schema(description = "文件")
+    @Schema(description = "待上传的文件")
     private MultipartFile file;
 }

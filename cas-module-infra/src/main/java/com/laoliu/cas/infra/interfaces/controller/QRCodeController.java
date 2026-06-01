@@ -22,9 +22,9 @@ public class QRCodeController {
 
     private final QRCodeService qRCodeService;
 
-    @Operation(summary = "生成二维码")
+    @Operation(summary = "生成二维码", description = "根据提供的文本内容生成对应的二维码图片，返回Base64编码的图片数据")
     @GetMapping("/generate")
-    public CommonResult<String> generateQrCode(@RequestParam @Parameter(description = "二维码内容") String content) {
+    public CommonResult<String> generateQrCode(@RequestParam @Parameter(description = "二维码内容", required = true) String content) {
         return CommonResult.success(qRCodeService.generateQrCode(content));
     }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * @author forever-king
  */
 @Data
-@Schema(description = "服务状态响应类")
+@Schema(description = "服务状态响应")
 public class ServiceStatusResponse {
 
     @Schema(description = "订单ID")
@@ -32,7 +32,7 @@ public class ServiceStatusResponse {
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 
-    @Schema(description = "请求状态（manage_status）")
+    @Schema(description = "请求状态（0-待审核，1-通过，2-拒绝，3-取消）")
     private Integer manageStatus;
 
     @Schema(description = "服务状态码描述")

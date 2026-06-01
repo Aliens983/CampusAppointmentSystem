@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "邮件响应类")
+@Schema(description = "邮件响应")
 public class EmailResponse {
 
-    @Schema(description = "响应消息")
+    @Schema(description = "响应消息", example = "邮件发送成功")
     private String message;
 }

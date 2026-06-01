@@ -20,15 +20,15 @@ public class LoginController {
 
     private final AuthService authService;
 
+    @Operation(summary = "用户登录", description = "用户通过邮箱和密码登录，返回JWT令牌")
     @PostMapping
-    @Operation(summary = "用户登录")
     public CommonResult<String> login(@RequestBody UserLoginRequest userLoginRequest) {
         String token = authService.login(userLoginRequest.getEmail(), userLoginRequest.getPassword());
         return CommonResult.success(token);
     }
 
+    @Operation(summary = "重置密码", description = "通过邮箱验证码重置密码，验证成功后返回新的JWT令牌")
     @PostMapping("/reset")
-    @Operation(summary = "重置密码")
     public CommonResult<String> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         String token = authService.resetPassword(
                 resetPasswordRequest.getEmail(),

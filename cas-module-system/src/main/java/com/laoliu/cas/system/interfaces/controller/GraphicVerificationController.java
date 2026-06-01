@@ -9,6 +9,7 @@ import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.redis.util.RedisUtil;
 import com.laoliu.cas.system.interfaces.dto.request.VerifyCodeReqVO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,8 +44,8 @@ public class GraphicVerificationController {
     @Value("${file.upload.server-address}")
     private String serverAddress;
 
+    @Operation(summary = "获取图形验证码", description = "获取数学计算类型的图形验证码，返回uuid和验证码图片URL，验证码5分钟内有效")
     @GetMapping("/get")
-    @Operation(summary = "获取图形验证码")
     public CommonResult<Map<String, String>> getGraphicCaptcha() throws IOException {
         String uuid = UUID.randomUUID().toString();
         String redisKey = "captcha:" + uuid;
@@ -79,8 +80,8 @@ public class GraphicVerificationController {
         return CommonResult.success(result);
     }
 
+    @Operation(summary = "验证图形验证码", description = "提交UUID和验证码进行验证，验证成功后验证码自动失效")
     @GetMapping("/verify")
-    @Operation(summary = "验证图形验证码")
     public CommonResult<String> verifyGraphicCaptcha(@RequestBody VerifyCodeReqVO reqVO) {
         String uuid = reqVO.getUuid();
         String code = reqVO.getCode();

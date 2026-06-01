@@ -42,7 +42,7 @@ public class UserController {
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
     private final UserService userService;
 
-    @Operation(summary = "获取用户信息")
+    @Operation(summary = "获取当前用户信息", description = "获取当前登录用户的基本信息，包含用户名、邮箱、角色等")
     @GetMapping
     @RequireRole(UserRoleEnum.USER)
     public CommonResult<UserResponse> getUserByParseToken() {
@@ -62,7 +62,7 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "获取所有用户")
+    @Operation(summary = "获取所有用户列表", description = "管理员获取系统中所有用户的信息列表")
     @GetMapping("/all_users")
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<List<UserResponse>> getAllUsers() {
@@ -76,7 +76,7 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "创建用户")
+    @Operation(summary = "创建新用户", description = "超级管理员创建新用户，需要提供用户名、邮箱、密码等基本信息")
     @PostMapping("/create")
     @RequireRole(UserRoleEnum.SUPER_ADMIN)
     public CommonResult<String> createUser(@RequestBody AdminCreateUserRequest request) {

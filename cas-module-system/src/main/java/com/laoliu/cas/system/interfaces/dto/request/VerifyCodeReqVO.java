@@ -7,12 +7,12 @@ import lombok.Data;
  * @author forever-king
  */
 @Data
-@Schema(description = "验证码请求类")
+@Schema(description = "验证码校验请求")
 public class VerifyCodeReqVO {
 
-    @Schema(description = "UUID", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "图形验证码UUID（从获取图形验证码接口获得）", requiredMode = Schema.RequiredMode.REQUIRED)
     private String uuid;
 
-    @Schema(description = "验证码", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "用户输入的验证码答案", requiredMode = Schema.RequiredMode.REQUIRED, example = "25")
     private String code;
 }

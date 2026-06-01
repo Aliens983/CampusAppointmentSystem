@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "聊天请求类")
+@Schema(description = "聊天请求")
 public class ChatReqVO {
 
-    @Schema(description = "发送给大模型的消息")
+    @Schema(description = "发送给大模型的消息", requiredMode = Schema.RequiredMode.REQUIRED, example = "你好，请介绍一下你自己")
     private String message;
 
-    @Schema(description = "模型名称")
+    @Schema(description = "模型名称（可选，默认qwen-plus）", example = "qwen-plus")
     private String model;
 
     public ChatReqVO(String message) {

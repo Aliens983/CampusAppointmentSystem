@@ -20,8 +20,8 @@ public class RegisterController {
 
     private final AuthService authService;
 
+    @Operation(summary = "验证邮箱验证码并注册", description = "用户通过邮箱验证码完成注册流程，验证成功后自动创建用户并返回用户ID")
     @PostMapping("/verify-code")
-    @Operation(summary = "验证邮箱验证码并登录")
     public CommonResult<Long> verifyEmailCode(@RequestBody UserRegisterRequest request) {
         UserRegisterVO vo = new UserRegisterVO();
         vo.setName(request.getName());

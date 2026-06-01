@@ -39,8 +39,8 @@ public class EmailController {
     @Value("${email.send.frequency.limit:60}")
     private int frequencyLimit;
 
+    @Operation(summary = "发送验证码邮件", description = "向指定邮箱发送验证码，验证码5分钟内有效，同一邮箱60秒内只能发送一次")
     @PostMapping
-    @Operation(summary = "发送邮件")
     public CommonResult<EmailResponse> sendEmail(@RequestBody EmailRequest request) {
         try {
             if (request == null) {

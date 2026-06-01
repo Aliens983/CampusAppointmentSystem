@@ -26,7 +26,7 @@ public class ServiceStatusController {
     private final ServiceStatusService serviceStatusService;
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
 
-    @Operation(summary = "获取所有服务状态（管理员专用）")
+    @Operation(summary = "获取所有服务状态（管理员专用）", description = "管理员查看所有用户的服务预约状态列表，包含待审核、通过、拒绝、取消等状态")
     @GetMapping
     public CommonResult<Map<String, Object>> getServiceStatus() {
         try {
@@ -86,7 +86,7 @@ public class ServiceStatusController {
         }
     }
 
-    @Operation(summary = "审核通过服务预约")
+    @Operation(summary = "审核通过服务预约", description = "管理员审核通过用户的服务预约申请，状态码为1")
     @PostMapping("/audit/pass")
     public CommonResult<Void> auditPass(@RequestBody AuditRequest auditRequest) {
         try {
@@ -114,7 +114,7 @@ public class ServiceStatusController {
         }
     }
 
-    @Operation(summary = "审核不通过服务预约")
+    @Operation(summary = "审核不通过服务预约", description = "管理员审核拒绝用户的服务预约申请，状态码为2，需要填写拒绝原因")
     @PostMapping("/audit/reject")
     public CommonResult<Void> auditReject(@RequestBody AuditRequest auditRequest) {
         try {

@@ -7,9 +7,9 @@ import lombok.Data;
  * @author forever-king
  */
 @Data
-@Schema(description = "邮件请求类")
+@Schema(description = "邮件发送请求")
 public class EmailRequest {
 
-    @Schema(description = "收件人邮箱", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "收件人邮箱", requiredMode = Schema.RequiredMode.REQUIRED, example = "user@example.com")
     private String to;
 }

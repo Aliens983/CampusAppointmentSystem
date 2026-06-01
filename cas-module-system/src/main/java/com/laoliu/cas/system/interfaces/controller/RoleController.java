@@ -1,20 +1,20 @@
 package com.laoliu.cas.system.interfaces.controller;
 
 import com.laoliu.cas.common.annotation.RequireRole;
+import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.common.domain.entity.User;
 import com.laoliu.cas.common.enums.UserRoleEnum;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.security.util.JWTUtils;
 import com.laoliu.cas.system.application.service.RoleService;
-import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author forever-king
@@ -30,7 +30,7 @@ public class RoleController {
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
     private final UserMapper userMapper;
 
-    @Operation(summary = "获取用户角色")
+    @Operation(summary = "获取用户角色", description = "获取当前登录用户的角色信息")
     @GetMapping
     @RequireRole(UserRoleEnum.USER)
     public CommonResult<String> getRole() {
@@ -47,8 +47,8 @@ public class RoleController {
         }
     }
 
+    @Operation(summary = "修改用户角色", description = "管理员修改用户角色，返回修改后的用户信息和新的角色（仅限修改非普通用户）")
     @PutMapping
-    @Operation(summary = "修改用户角色，并且显示用户信息")
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<Map<String, Object>> changeRole() {
         try {

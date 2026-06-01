@@ -2,16 +2,17 @@ package com.laoliu.cas.appointment.interfaces.controller;
 
 import com.laoliu.cas.appointment.application.service.BookService;
 import com.laoliu.cas.appointment.interfaces.dto.response.BookResultResponse;
+import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.common.domain.entity.User;
 import com.laoliu.cas.common.result.CommonResult;
-import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author forever-king
@@ -25,9 +26,10 @@ public class BookController {
     private final BookService bookService;
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
 
+    @Operation(summary = "预定服务", description = "用户预约多个服务，传入服务ID列表")
     @PostMapping
-    @Operation(summary = "预定服务")
-    public CommonResult<BookResultResponse> bookService(@RequestParam List<Integer> serviceIds) {
+    public CommonResult<BookResultResponse> bookService(
+            @Parameter(description = "服务ID列表", required = true) @RequestParam List<Integer> serviceIds) {
         Long userId = getUserIdViaTokenApi.getUserId();
         User user = bookService.bookService(userId, serviceIds);
 
@@ -39,8 +41,8 @@ public class BookController {
         return CommonResult.success("预约成功", response);
     }
 
+    @Operation(summary = "查看所有预约", description = "获取当前用户的所有预约记录")
     @GetMapping("/allService")
-    @Operation(summary = "查看所有预约")
     public CommonResult<List<Map<String, Object>>> getBook() {
         Long userId = getUserIdViaTokenApi.getUserId();
         List<Map<String, Object>> bookings = bookService.getAllBookings(userId);
@@ -50,9 +52,10 @@ public class BookController {
         return CommonResult.success(bookings);
     }
 
+    @Operation(summary = "取消预约", description = "取消用户已预约的服务，传入预约ID列表")
     @PostMapping("/cancel")
-    @Operation(summary = "取消预约")
-    public CommonResult<Void> cancelBooking(@RequestParam List<Long> bookingIds) {
+    public CommonResult<Void> cancelBooking(
+            @Parameter(description = "预约ID列表", required = true) @RequestParam List<Long> bookingIds) {
         Long userId = getUserIdViaTokenApi.getUserId();
         boolean success = bookService.cancelBookings(userId, bookingIds);
         if (!success) {
