@@ -2,6 +2,9 @@ package com.laoliu.cas.common.exception.code;
 
 import com.laoliu.cas.common.exception.ErrorCode;
 
+/**
+ * @author forever-king
+ */
 public interface CommonErrorCode {
 
     ErrorCode SUCCESS = new ErrorCode(200, "操作成功");

@@ -3,6 +3,9 @@ package com.laoliu.cas.common.exception;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * @author forever-king
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class BusinessException extends RuntimeException {

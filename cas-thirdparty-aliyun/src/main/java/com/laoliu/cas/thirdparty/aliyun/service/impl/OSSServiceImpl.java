@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+/**
+ * @author forever-king
+ */
 @Slf4j
 @Service
 public class OSSServiceImpl implements OSSService {

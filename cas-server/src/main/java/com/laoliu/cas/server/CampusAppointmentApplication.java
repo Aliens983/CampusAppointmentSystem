@@ -5,6 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+/**
+ * @author forever-king
+ */
 @SpringBootApplication
 @MapperScan({"com.laoliu.cas.**.mapper"})
 @ComponentScan(basePackages = {"com.laoliu.cas"})

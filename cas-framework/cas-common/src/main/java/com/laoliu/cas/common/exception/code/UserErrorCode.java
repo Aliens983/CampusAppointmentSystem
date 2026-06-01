@@ -2,6 +2,9 @@ package com.laoliu.cas.common.exception.code;
 
 import com.laoliu.cas.common.exception.ErrorCode;
 
+/**
+ * @author forever-king
+ */
 public interface UserErrorCode {
 
     ErrorCode USER_NOT_EXIST = new ErrorCode(404, "用户不存在");

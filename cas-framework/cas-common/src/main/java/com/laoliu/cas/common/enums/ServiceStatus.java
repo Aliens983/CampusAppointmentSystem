@@ -2,6 +2,10 @@ package com.laoliu.cas.common.enums;
 
 import lombok.Getter;
 
+/**
+ * @author forever-king
+ */
+
 @Getter
 public enum ServiceStatus {
     ONLINE(1, "已开启"),

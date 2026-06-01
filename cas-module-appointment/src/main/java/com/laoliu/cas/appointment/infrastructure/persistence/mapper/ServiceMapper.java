@@ -7,6 +7,9 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * @author forever-king
+ */
 @Mapper
 public interface ServiceMapper extends BaseMapper<ServicesDO> {
 

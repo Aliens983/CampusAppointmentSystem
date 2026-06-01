@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import java.time.LocalDateTime;
 
+/**
+ * @author forever-king
+ */
 @Data
 @Schema(description = "服务状态响应类")
 public class ServiceStatusResponse {
@@ -34,4 +37,7 @@ public class ServiceStatusResponse {
 
     @Schema(description = "服务状态码描述")
     private String statusDescription;
+
+    @Schema(description = "审核拒绝原因")
+    private String reason;
 }

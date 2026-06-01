@@ -11,6 +11,26 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="manageStatus" column="manage_status"/>
+        <result property="reason" column="reason"/>
+    </resultMap>
+
+    <resultMap id="ServiceStatusResultMap" type="com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse">
+        <id property="orderId" column="order_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="serviceName" column="service_name"/>
+        <result property="serviceDescribe" column="service_describe"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="manageStatus" column="manage_status"/>
+        <result property="reason" column="reason"/>
+    </resultMap>
+
+    <resultMap id="ServicesDOResultMap" type="com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO">
+        <id property="serviceId" column="service_id"/>
+        <result property="serviceName" column="service_name"/>
+        <result property="serviceDescribe" column="service_describe"/>
+        <result property="serviceState" column="service_state"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -23,5 +43,69 @@
             (#{userId},#{services})
         </foreach>
     </insert>
+
+    <select id="getServiceStatus" resultMap="ServiceStatusResultMap">
+        SELECT i.order_id, i.user_id, u.name AS username,
+               s.service_name, s.service_describe, i.reason,
+               i.create_time, i.update_time, i.manage_status
+        FROM item i
+        JOIN user u ON i.user_id = u.id
+        JOIN services s ON i.service_id = s.service_id
+        ORDER BY i.create_time DESC
+    </select>
+
+    <select id="getServiceStatusByUserId" resultMap="ServiceStatusResultMap">
+        SELECT i.order_id, i.user_id, u.name AS username,
+               s.service_name, s.service_describe, i.reason,
+               i.create_time, i.update_time, i.manage_status
+        FROM item i
+        JOIN user u ON i.user_id = u.id
+        JOIN services s ON i.service_id = s.service_id
+        WHERE i.user_id = #{userId}
+        ORDER BY i.create_time DESC
+    </select>
+
+    <select id="getServiceStatusByOrderId" resultMap="ServiceStatusResultMap">
+        SELECT i.order_id, i.user_id, u.name AS username,
+               s.service_name, s.service_describe, i.reason,
+               i.create_time, i.update_time, i.manage_status
+        FROM item i
+        JOIN user u ON i.user_id = u.id
+        JOIN services s ON i.service_id = s.service_id
+        WHERE i.order_id = #{orderId}
+    </select>
+
+    <select id="getUserEmailByOrderId" resultType="String">
+        SELECT u.email
+        FROM item i
+        JOIN user u ON i.user_id = u.id
+        WHERE i.order_id = #{orderId}
+    </select>
+
+    <select id="selectUserServices" resultMap="ServicesDOResultMap">
+        SELECT s.service_id, s.service_name, s.service_describe, s.service_state
+        FROM item i
+        JOIN services s ON i.service_id = s.service_id
+        WHERE i.user_id = #{userId}
+    </select>
+
+    <update id="setBookingStatusByParts">
+        UPDATE item
+        SET manage_status = 3
+        WHERE user_id = #{userId}
+        AND order_id IN
+        <foreach collection="bookingIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="auditService">
+        UPDATE item
+        SET manage_status = #{status}
+        <if test="reason != null and reason != ''">
+            , reason = #{reason}
+        </if>
+        WHERE order_id = #{orderId}
+    </update>
 
 </mapper>

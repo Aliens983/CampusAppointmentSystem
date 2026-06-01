@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * @author forever-king
+ */
 @RestController
 @RequestMapping("/graphic")
 @Tag(name = "图形验证码")

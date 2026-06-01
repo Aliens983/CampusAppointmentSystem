@@ -1,5 +1,9 @@
 package com.laoliu.cas.common.exception;
 
+
+/**
+ * @author forever-king
+ */
 public class ResourceNotFoundException extends BusinessException {
 
     public ResourceNotFoundException(Integer code, String message) {

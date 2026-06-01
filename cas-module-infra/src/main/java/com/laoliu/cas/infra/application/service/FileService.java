@@ -4,6 +4,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
+/**
+ * @author forever-king
+ */
 public interface FileService {
     String uploadFile(MultipartFile file);
 

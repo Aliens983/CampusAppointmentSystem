@@ -2,6 +2,9 @@ package com.laoliu.cas.system.application.service.vo;
 
 import lombok.Data;
 
+/**
+ * @author forever-king
+ */
 @Data
 public class UserRegisterVO {
 

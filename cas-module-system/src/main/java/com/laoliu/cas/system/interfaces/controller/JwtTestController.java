@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author forever-king
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/jwt")

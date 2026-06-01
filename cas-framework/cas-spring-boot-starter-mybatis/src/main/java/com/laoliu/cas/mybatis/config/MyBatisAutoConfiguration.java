@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * @author forever-king
+ */
 @AutoConfiguration
 public class MyBatisAutoConfiguration {
 

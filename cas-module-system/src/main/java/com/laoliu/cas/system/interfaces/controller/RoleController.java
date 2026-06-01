@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author forever-king
+ */
 @Tag(name = "用户角色管理")
 @RestController
 @RequestMapping("/role")

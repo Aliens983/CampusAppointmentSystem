@@ -2,6 +2,10 @@ package com.laoliu.cas.common.exception.code;
 
 import com.laoliu.cas.common.exception.ErrorCode;
 
+
+/**
+ * @author forever-king
+ */
 public interface EmailErrorCode {
 
     ErrorCode EMAIL_NOT_PROVIDED = new ErrorCode(400, "邮箱不能为空");

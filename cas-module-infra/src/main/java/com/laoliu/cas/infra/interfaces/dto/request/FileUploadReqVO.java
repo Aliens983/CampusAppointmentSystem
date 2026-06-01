@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * @author forever-king
+ */
 @Data
 @Schema(description = "文件上传请求")
 public class FileUploadReqVO {

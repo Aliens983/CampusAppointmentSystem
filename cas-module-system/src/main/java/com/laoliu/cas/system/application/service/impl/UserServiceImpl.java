@@ -8,6 +8,9 @@ import com.laoliu.cas.system.interfaces.dto.response.UserInfoAndServicesViaMPRes
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author forever-king
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {

@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author forever-king
+ */
 @Service
 public class BookServiceImpl extends ServiceImpl<ServiceMapper, ServicesDO> implements BookService {
 

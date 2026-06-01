@@ -1,12 +1,6 @@
 package com.laoliu.cas.security.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +10,9 @@ import java.util.Base64;
 import java.util.Date;
 import javax.crypto.SecretKey;
 
+/**
+ * @author forever-king
+ */
 @Slf4j
 @Component
 public class JWTUtils {

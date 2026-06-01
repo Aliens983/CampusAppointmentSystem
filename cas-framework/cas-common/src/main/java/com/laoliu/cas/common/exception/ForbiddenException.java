@@ -1,5 +1,9 @@
 package com.laoliu.cas.common.exception;
 
+
+/**
+ * @author forever-king
+ */
 public class ForbiddenException extends BusinessException {
 
     public ForbiddenException(Integer code, String message) {

@@ -2,6 +2,10 @@ package com.laoliu.cas.common.enums;
 
 import lombok.Getter;
 
+/**
+ * @author forever-king
+ */
+
 @Getter
 public enum ManageStatus {
     SUBMIT(0, "已提交,待审核"),

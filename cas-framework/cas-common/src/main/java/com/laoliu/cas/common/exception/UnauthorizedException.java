@@ -1,5 +1,9 @@
 package com.laoliu.cas.common.exception;
 
+
+/**
+ * @author forever-king
+ */
 public class UnauthorizedException extends BusinessException {
 
     public UnauthorizedException(Integer code, String message) {

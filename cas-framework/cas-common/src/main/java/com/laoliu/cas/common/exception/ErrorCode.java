@@ -2,6 +2,9 @@ package com.laoliu.cas.common.exception;
 
 import lombok.Data;
 
+/**
+ * @author forever-king
+ */
 @Data
 public class ErrorCode {
 

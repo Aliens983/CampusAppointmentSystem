@@ -4,6 +4,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author forever-king
+ */
 public class RedisUtil {
 
     private final RedisTemplate<String, Object> redisTemplate;

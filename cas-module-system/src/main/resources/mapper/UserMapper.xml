@@ -18,5 +18,9 @@
     <sql id="Base_Column_List">
         id,name,grade,sex,age,email,password,role
     </sql>
+    <insert id="insert" parameterType="com.laoliu.cas.common.domain.entity.User">
+        insert into user (name, grade, sex, age, email, password, role)
+        values (#{name}, #{grade}, #{sex}, #{age}, #{email}, #{password}, #{role})
+    </insert>
 
 </mapper>

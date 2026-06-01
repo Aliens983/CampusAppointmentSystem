@@ -5,6 +5,9 @@ import com.laoliu.cas.appointment.interfaces.dto.request.ServiceAddRequest;
 
 import java.util.List;
 
+/**
+ * @author forever-king
+ */
 public interface ServiceService {
 
     List<ServicesDO> getAllServices();

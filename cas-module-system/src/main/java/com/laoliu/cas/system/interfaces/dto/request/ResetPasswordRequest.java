@@ -3,6 +3,9 @@ package com.laoliu.cas.system.interfaces.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+/**
+ * @author forever-king
+ */
 @Data
 @Schema(description = "重置密码请求类")
 public class ResetPasswordRequest {

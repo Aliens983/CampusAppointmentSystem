@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * @author forever-king
+ */
 @Data
 @TableName("user")
 public class UserDO implements Serializable {

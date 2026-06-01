@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * @author forever-king
+ */
 @Data
 public class CommonResult<T> implements Serializable {
 

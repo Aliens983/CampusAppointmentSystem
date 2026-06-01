@@ -3,6 +3,9 @@ package com.laoliu.cas.common.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * @author forever-king
+ */
 @Getter
 @AllArgsConstructor
 public enum UserRoleEnum {

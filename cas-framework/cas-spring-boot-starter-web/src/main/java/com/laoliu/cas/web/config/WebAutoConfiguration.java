@@ -13,6 +13,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+/**
+ * @author forever-king
+ */
 @Slf4j
 @RestControllerAdvice
 @AutoConfiguration

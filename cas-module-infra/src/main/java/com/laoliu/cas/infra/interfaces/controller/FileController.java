@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author forever-king
+ */
 @Tag(name = "文件上传接口")
 @RestController
 @RequestMapping("/file")

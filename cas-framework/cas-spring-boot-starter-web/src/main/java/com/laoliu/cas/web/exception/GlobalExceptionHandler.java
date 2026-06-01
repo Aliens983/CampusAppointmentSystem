@@ -20,6 +20,9 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 
+/**
+ * @author forever-king
+ */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {

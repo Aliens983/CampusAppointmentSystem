@@ -5,6 +5,9 @@ import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author forever-king
+ */
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {

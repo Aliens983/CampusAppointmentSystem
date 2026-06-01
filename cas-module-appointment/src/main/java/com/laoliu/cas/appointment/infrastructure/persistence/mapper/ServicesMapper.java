@@ -9,6 +9,9 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
+/**
+ * @author forever-king
+ */
 @Mapper
 public interface ServicesMapper extends BaseMapper<Services> {
 

@@ -4,6 +4,9 @@ import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 
 import java.util.List;
 
+/**
+ * @author forever-king
+ */
 public interface ServiceStatusService {
 
     List<ServiceStatusResponse> getServiceStatus();

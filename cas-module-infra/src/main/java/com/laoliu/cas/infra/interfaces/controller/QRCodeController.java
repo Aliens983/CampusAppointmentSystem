@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author forever-king
+ */
 @Tag(name = "二维码生成接口")
 @RestController
 @RequestMapping("/qr_code")

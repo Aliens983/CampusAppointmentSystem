@@ -1,7 +1,16 @@
 package com.laoliu.cas.common.vo.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+/**
+ * @author forever-king
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "聊天请求类")
 public class ChatReqVO {
 
@@ -11,31 +20,9 @@ public class ChatReqVO {
     @Schema(description = "模型名称")
     private String model;
 
-    public ChatReqVO() {}
-
     public ChatReqVO(String message) {
         this.message = message;
         this.model = "qwen-plus";
     }
 
-    public ChatReqVO(String message, String model) {
-        this.message = message;
-        this.model = model;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
 }

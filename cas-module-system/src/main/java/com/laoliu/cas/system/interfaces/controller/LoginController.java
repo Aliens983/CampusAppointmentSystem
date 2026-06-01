@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author forever-king
+ */
 @Tag(name = "登录接口")
 @RestController
 @RequestMapping("/login")

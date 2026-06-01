@@ -3,6 +3,9 @@ package com.laoliu.cas.system.interfaces.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+/**
+ * @author forever-king
+ */
 @Data
 @Schema(description = "用户登录请求参数")
 public class UserLoginRequest {

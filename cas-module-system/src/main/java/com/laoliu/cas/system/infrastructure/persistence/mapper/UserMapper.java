@@ -11,6 +11,9 @@ import org.apache.ibatis.annotations.Update;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author forever-king
+ */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
 

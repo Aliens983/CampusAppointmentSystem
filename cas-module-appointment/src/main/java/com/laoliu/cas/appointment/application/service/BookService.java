@@ -7,6 +7,9 @@ import com.laoliu.cas.common.domain.entity.User;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author forever-king
+ */
 public interface BookService extends IService<ServicesDO> {
 
     User bookService(Long userId, List<Integer> serviceId);

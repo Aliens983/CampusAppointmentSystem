@@ -3,6 +3,9 @@ package com.laoliu.cas.appointment.interfaces.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+/**
+ * @author forever-king
+ */
 @Data
 @Schema(description = "服务添加请求类")
 public class ServiceAddRequest {

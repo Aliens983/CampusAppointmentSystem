@@ -5,6 +5,9 @@ import lombok.Data;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author forever-king
+ */
 @Data
 @Schema(description = "预约图书查询结果")
 public class BookResultResponse {

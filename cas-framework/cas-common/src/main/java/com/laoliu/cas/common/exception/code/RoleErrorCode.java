@@ -2,6 +2,10 @@ package com.laoliu.cas.common.exception.code;
 
 import com.laoliu.cas.common.exception.ErrorCode;
 
+
+/**
+ * @author forever-king
+ */
 public interface RoleErrorCode {
 
     ErrorCode ROLE_NOT_FOUND = new ErrorCode(404, "角色不存在");

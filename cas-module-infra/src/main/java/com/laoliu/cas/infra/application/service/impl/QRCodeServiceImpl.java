@@ -17,6 +17,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
+/**
+ * @author forever-king
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

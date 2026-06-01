@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import java.util.Date;
 
+/**
+ * @author forever-king
+ */
 @Data
 @TableName("item")
 public class ItemDO {
@@ -22,4 +25,6 @@ public class ItemDO {
     private Date updateTime;
 
     private Integer manageStatus;
+
+    private String reason;
 }

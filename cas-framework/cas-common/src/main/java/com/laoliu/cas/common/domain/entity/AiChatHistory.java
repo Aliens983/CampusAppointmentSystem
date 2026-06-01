@@ -3,14 +3,21 @@ package com.laoliu.cas.common.domain.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * @author forever-king
+ */
 @Data
 @TableName("ai_chat_history")
+@AllArgsConstructor
+@NoArgsConstructor
 public class AiChatHistory implements Serializable {
 
     @Serial
@@ -33,14 +40,4 @@ public class AiChatHistory implements Serializable {
 
     private LocalDateTime updatedAt;
 
-    public AiChatHistory(Long id, Long userId, String model, String userMessage, String aiResponse, Integer responseTimeMs, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.userId = userId;
-        this.model = model;
-        this.userMessage = userMessage;
-        this.aiResponse = aiResponse;
-        this.responseTimeMs = responseTimeMs;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 }

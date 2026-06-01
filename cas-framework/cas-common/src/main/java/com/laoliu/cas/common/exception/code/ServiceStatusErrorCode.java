@@ -2,6 +2,9 @@ package com.laoliu.cas.common.exception.code;
 
 import com.laoliu.cas.common.exception.ErrorCode;
 
+/**
+ * @author forever-king
+ */
 public interface ServiceStatusErrorCode {
 
     ErrorCode STATUS_NOT_FOUND = new ErrorCode(404, "状态不存在");
