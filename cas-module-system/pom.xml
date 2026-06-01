@@ -55,7 +55,7 @@
 
         <dependency>
             <groupId>com.laoliu</groupId>
-            <artifactId>cas-thirdparty-aliyun</artifactId>
+            <artifactId>cas-thirdparty</artifactId>
             <version>${project.version}</version>
         </dependency>
 

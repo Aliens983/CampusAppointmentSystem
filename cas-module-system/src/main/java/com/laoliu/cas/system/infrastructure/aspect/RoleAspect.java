@@ -2,10 +2,9 @@ package com.laoliu.cas.system.infrastructure.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laoliu.cas.common.annotation.RequireRole;
-import com.laoliu.cas.common.enums.UserRoleEnum;
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
+import com.laoliu.cas.common.enums.UserRoleEnum;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author forever-king
@@ -50,32 +47,28 @@ public class RoleAspect {
         }
 
         try {
-            Object[] args = joinPoint.getArgs();
-            HttpServletRequest request = null;
             HttpServletResponse response = null;
-            for (Object arg : args) {
-                if (arg instanceof HttpServletRequest httpServletRequest) {
-                    request = httpServletRequest;
-                }
-                if (arg instanceof HttpServletResponse httpServletResponse) {
-                    response = httpServletResponse;
+            for (Object arg : joinPoint.getArgs()) {
+                if (arg instanceof HttpServletResponse httpResponse) {
+                    response = httpResponse;
+                    break;
                 }
             }
 
-            if (request == null || response == null) {
-                return joinPoint.proceed();
-            }
-
-            Long userId = getUserIdViaTokenApi.getUserId(request);
+            Long userId = getUserIdViaTokenApi.getUserId();
             if (userId == null) {
-                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "用户未登录");
+                if (response != null) {
+                    sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "用户未登录");
+                }
                 return null;
             }
 
             String userRole = userMapper.getRoleByUserId(userId);
 
             if (userRole == null) {
-                sendErrorResponse(response, HttpStatus.FORBIDDEN, "无法获取用户角色信息");
+                if (response != null) {
+                    sendErrorResponse(response, HttpStatus.FORBIDDEN, "无法获取用户角色信息");
+                }
                 return null;
             }
 
@@ -86,7 +79,9 @@ public class RoleAspect {
                 log.warn("用户权限不足，当前角色: {}, 需要角色: {}",
                         UserRoleEnum.getByCode(Integer.parseInt(userRole)).getDescription(),
                         Arrays.toString(requiredRoles));
-                sendErrorResponse(response, HttpStatus.FORBIDDEN, "权限不足，无法访问该接口");
+                if (response != null) {
+                    sendErrorResponse(response, HttpStatus.FORBIDDEN, "权限不足，无法访问该接口");
+                }
                 return null;
             }
 
@@ -95,8 +90,7 @@ public class RoleAspect {
 
         } catch (RuntimeException e) {
             log.error("Token解析失败: {}", e.getMessage());
-            Object[] args = joinPoint.getArgs();
-            for (Object arg : args) {
+            for (Object arg : joinPoint.getArgs()) {
                 if (arg instanceof HttpServletResponse httpResponse) {
                     sendErrorResponse(httpResponse, HttpStatus.UNAUTHORIZED, "Token无效或已过期");
                     break;
@@ -119,12 +113,6 @@ public class RoleAspect {
         response.setStatus(status.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("success", false);
-        result.put("message", message);
-        result.put("code", status.value());
-
-        response.getWriter().write(objectMapper.writeValueAsString(result));
+        response.getWriter().write("{\"code\":" + status.value() + ",\"message\":\"" + message + "\"}");
     }
 }

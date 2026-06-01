@@ -1,6 +1,8 @@
 package com.laoliu.cas.security.filter;
 
+import com.laoliu.cas.common.security.LoginUser;
 import com.laoliu.cas.security.util.JWTUtils;
+import com.laoliu.cas.security.util.SecurityFrameworkUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,13 +35,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if (token != null) {
             try {
-                Long userId = jwtUtils.getUserIdFromToken(token);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userId,
-                        null,
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-                );
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                LoginUser loginUser = jwtUtils.getLoginUserFromToken(token);
+                if (loginUser != null) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            loginUser,
+                            null,
+                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    log.debug("用户 {} 认证成功", loginUser.getId());
+                }
             } catch (Exception e) {
                 log.error("JWT authentication failed: {}", e.getMessage());
             }

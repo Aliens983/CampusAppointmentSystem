@@ -10,11 +10,11 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>cas-module-infra</artifactId>
+    <artifactId>cas-thirdparty</artifactId>
     <packaging>jar</packaging>
 
-    <name>cas-module-infra</name>
-    <description>Infrastructure Module - Code Generator, File Service, Job Management, Monitoring</description>
+    <name>cas-thirdparty</name>
+    <description>Thirdparty Integration Module - OSS, SMS, Email, Weather, AI</description>
 
     <dependencies>
         <dependency>
@@ -30,26 +30,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.laoliu</groupId>
-            <artifactId>cas-spring-boot-starter-redis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.laoliu</groupId>
-            <artifactId>cas-thirdparty</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.laoliu</groupId>
-            <artifactId>cas-spring-boot-starter-security</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>com.aliyun</groupId>
+            <artifactId>dysmsapi20170525</artifactId>
         </dependency>
 
         <dependency>
@@ -64,15 +46,13 @@
         </dependency>
 
         <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-extra</artifactId>
-            <version>5.8.25</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>core</artifactId>
-            <version>3.5.3</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
         <dependency>

@@ -10,7 +10,6 @@ import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,9 +33,9 @@ public class RoleController {
     @Operation(summary = "获取用户角色")
     @GetMapping
     @RequireRole(UserRoleEnum.USER)
-    public CommonResult<String> getRole(HttpServletRequest request) {
+    public CommonResult<String> getRole() {
         try {
-            Long userId = getUserIdViaTokenApi.getUserId(request);
+            Long userId = getUserIdViaTokenApi.getUserId();
             String role = roleService.getRoleByUserId(userId);
 
             if (role == null) {
@@ -51,9 +50,9 @@ public class RoleController {
     @PutMapping
     @Operation(summary = "修改用户角色，并且显示用户信息")
     @RequireRole(UserRoleEnum.ADMIN)
-    public CommonResult<Map<String, Object>> changeRole(HttpServletRequest request) {
+    public CommonResult<Map<String, Object>> changeRole() {
         try {
-            Long userId = getUserIdViaTokenApi.getUserId(request);
+            Long userId = getUserIdViaTokenApi.getUserId();
             String role = roleService.getRoleByUserId(userId);
 
             if ("普通用户".equals(role)) {

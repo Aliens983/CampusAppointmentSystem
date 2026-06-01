@@ -1,5 +1,6 @@
 package com.laoliu.cas.security.util;
 
+import com.laoliu.cas.common.security.LoginUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,25 @@ public class JWTUtils {
                 .compact();
     }
 
+    public String generateToken(LoginUser loginUser) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expiration);
+
+        byte[] keyBytes = Base64.getDecoder().decode(secret);
+        SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
+
+        return Jwts.builder()
+                .subject(String.valueOf(loginUser.getId()))
+                .claim("userId", loginUser.getId())
+                .claim("name", loginUser.getName())
+                .claim("role", loginUser.getRole())
+                .claim("email", loginUser.getEmail())
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
+    }
+
     public Claims parseToken(String token) {
         try {
             byte[] keyBytes = Base64.getDecoder().decode(secret);
@@ -70,5 +90,38 @@ public class JWTUtils {
     public Long getUserIdFromToken(String token) {
         Claims claims = parseToken(token);
         return Long.parseLong(claims.get("userId").toString());
+    }
+
+    public LoginUser getLoginUserFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+
+            LoginUser loginUser = new LoginUser();
+            loginUser.setId(Long.parseLong(claims.get("userId").toString()));
+
+            Object nameObj = claims.get("name");
+            if (nameObj != null) {
+                loginUser.setName(nameObj.toString());
+            }
+
+            Object roleObj = claims.get("role");
+            if (roleObj != null) {
+                if (roleObj instanceof Number) {
+                    loginUser.setRole(((Number) roleObj).intValue());
+                } else {
+                    loginUser.setRole(Integer.parseInt(roleObj.toString()));
+                }
+            }
+
+            Object emailObj = claims.get("email");
+            if (emailObj != null) {
+                loginUser.setEmail(emailObj.toString());
+            }
+
+            return loginUser;
+        } catch (Exception e) {
+            log.error("Error extracting user from token: {}", e.getMessage());
+            return null;
+        }
     }
 }

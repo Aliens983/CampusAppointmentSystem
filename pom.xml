@@ -18,7 +18,7 @@
         <module>cas-module-infra</module>
         <module>cas-module-system</module>
         <module>cas-module-appointment</module>
-        <module>cas-thirdparty-aliyun</module>
+        <module>cas-thirdparty</module>
         <module>cas-server</module>
     </modules>
 

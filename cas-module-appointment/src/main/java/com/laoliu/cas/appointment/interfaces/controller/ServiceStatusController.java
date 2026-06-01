@@ -7,7 +7,6 @@ import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +28,7 @@ public class ServiceStatusController {
 
     @Operation(summary = "获取所有服务状态（管理员专用）")
     @GetMapping
-    public CommonResult<Map<String, Object>> getServiceStatus(HttpServletRequest request) {
+    public CommonResult<Map<String, Object>> getServiceStatus() {
         try {
             List<ServiceStatusResponse> serviceStatusList = serviceStatusService.getServiceStatus();
 
@@ -67,9 +66,9 @@ public class ServiceStatusController {
 
     @Operation(summary = "获取用户自己的服务状态")
     @GetMapping("/user")
-    public CommonResult<Map<String, Object>> getServiceStatusByUser(HttpServletRequest request) {
+    public CommonResult<Map<String, Object>> getServiceStatusByUser() {
         try {
-            Long userId = getUserIdViaTokenApi.getUserId(request);
+            Long userId = getUserIdViaTokenApi.getUserId();
             if (userId == null) {
                 return CommonResult.badRequest("无法获取用户信息，请重新登录");
             }
@@ -134,8 +133,10 @@ public class ServiceStatusController {
 
             boolean success = serviceStatusService.auditService(auditRequest.getOrderId(), 2, auditRequest.getReason());
             if (success) {
-                String emailContent = "您好！您的预约未通过。\n原因如下：\n" + auditRequest.getReason();
-                serviceStatusService.sendAuditEmail(auditRequest.getOrderId(), "预约审核结果通知", emailContent);
+                String emailContent = "您好！您的预约未通过。\n预约服务：" + serviceInfo.getServiceName()
+                        + "\n服务描述：" + serviceInfo.getServiceDescribe()
+                        + "\n拒绝原因：" + auditRequest.getReason();
+                serviceStatusService.sendAuditEmail(auditRequest.getOrderId(), "预约审核未通过通知", emailContent);
                 return CommonResult.success("审核不通过成功", null);
             } else {
                 return CommonResult.badRequest("审核失败");

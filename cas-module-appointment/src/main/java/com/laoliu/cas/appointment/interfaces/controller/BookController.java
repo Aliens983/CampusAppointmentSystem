@@ -7,7 +7,6 @@ import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +27,8 @@ public class BookController {
 
     @PostMapping
     @Operation(summary = "预定服务")
-    public CommonResult<BookResultResponse> bookService(HttpServletRequest request, @RequestParam List<Integer> serviceIds) {
-        Long userId = getUserIdViaTokenApi.getUserId(request);
+    public CommonResult<BookResultResponse> bookService(@RequestParam List<Integer> serviceIds) {
+        Long userId = getUserIdViaTokenApi.getUserId();
         User user = bookService.bookService(userId, serviceIds);
 
         BookResultResponse response = new BookResultResponse();
@@ -42,8 +41,8 @@ public class BookController {
 
     @GetMapping("/allService")
     @Operation(summary = "查看所有预约")
-    public CommonResult<List<Map<String, Object>>> getBook(HttpServletRequest request) {
-        Long userId = getUserIdViaTokenApi.getUserId(request);
+    public CommonResult<List<Map<String, Object>>> getBook() {
+        Long userId = getUserIdViaTokenApi.getUserId();
         List<Map<String, Object>> bookings = bookService.getAllBookings(userId);
         if (bookings == null || bookings.isEmpty()) {
             return CommonResult.notFound("暂无预约记录");
@@ -53,8 +52,8 @@ public class BookController {
 
     @PostMapping("/cancel")
     @Operation(summary = "取消预约")
-    public CommonResult<Void> cancelBooking(HttpServletRequest request, @RequestParam List<Long> bookingIds) {
-        Long userId = getUserIdViaTokenApi.getUserId(request);
+    public CommonResult<Void> cancelBooking(@RequestParam List<Long> bookingIds) {
+        Long userId = getUserIdViaTokenApi.getUserId();
         boolean success = bookService.cancelBookings(userId, bookingIds);
         if (!success) {
             return CommonResult.badRequest("取消预约失败");

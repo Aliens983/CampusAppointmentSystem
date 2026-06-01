@@ -4,12 +4,9 @@ import com.laoliu.cas.common.api.UserInfoApi;
 import com.laoliu.cas.common.domain.entity.User;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-/**
- * @author forever-king
- */
-@Service
+@Component
 @RequiredArgsConstructor
 public class UserInfoApiImpl implements UserInfoApi {
 
@@ -17,6 +14,6 @@ public class UserInfoApiImpl implements UserInfoApi {
 
     @Override
     public User getUserById(Long userId) {
-        return userMapper.selectByPrimaryKey(userId);
+        return userMapper.selectById(userId);
     }
 }

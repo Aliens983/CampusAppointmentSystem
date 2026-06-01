@@ -1,23 +1,21 @@
 package com.laoliu.cas.system.interfaces.controller.admin;
 
 import com.laoliu.cas.common.annotation.RequireRole;
+import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.common.domain.entity.User;
 import com.laoliu.cas.common.enums.UserRoleEnum;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.util.PasswordUtils;
-import com.laoliu.cas.security.util.JWTUtils;
-import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.system.application.service.UserService;
 import com.laoliu.cas.system.infrastructure.persistence.dataobject.UserDO;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
+import com.laoliu.cas.system.interfaces.assembler.UserAssembler;
 import com.laoliu.cas.system.interfaces.dto.request.AdminCreateUserRequest;
 import com.laoliu.cas.system.interfaces.dto.response.UserInfoAndServicesViaMPRespVO;
 import com.laoliu.cas.system.interfaces.dto.response.UserResponse;
-import com.laoliu.cas.system.interfaces.assembler.UserAssembler;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+
+
 
 /**
  * @author forever-king
@@ -38,7 +37,6 @@ import java.util.List;
 @Tag(name = "用户接口")
 public class UserController {
 
-    private final JWTUtils jwtUtils;
     private final UserMapper userMapper;
     private final UserAssembler userAssembler;
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
@@ -47,16 +45,14 @@ public class UserController {
     @Operation(summary = "获取用户信息")
     @GetMapping
     @RequireRole(UserRoleEnum.USER)
-    public CommonResult<UserResponse> getUserByParseToken(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
+    public CommonResult<UserResponse> getUserByParseToken() {
         try {
-            if (token != null && token.startsWith("Bearer ")) {
-                token = token.substring(7);
+            Long userId = getUserIdViaTokenApi.getUserId();
+            if (userId == null) {
+                return CommonResult.unauthorized("用户未登录或登录已过期");
             }
-            Claims claims = jwtUtils.parseToken(token);
-            String userId = claims.getSubject();
-            log.info("Token 解析成功，用户 ID：{}", userId);
-            User user = userMapper.selectByPrimaryKey(Long.valueOf(userId));
+            log.info("获取用户信息成功，用户 ID：{}", userId);
+            User user = userMapper.selectByPrimaryKey(userId);
             log.info("User :{}", user);
             UserResponse userResponse = userAssembler.convertToUserResponse(user);
             return CommonResult.success(userResponse);
@@ -69,7 +65,7 @@ public class UserController {
     @Operation(summary = "获取所有用户")
     @GetMapping("/all_users")
     @RequireRole(UserRoleEnum.ADMIN)
-    public CommonResult<List<UserResponse>> getAllUsers(HttpServletRequest request) {
+    public CommonResult<List<UserResponse>> getAllUsers() {
         try {
             List<UserDO> allUsers = userMapper.getAllUsers();
             List<UserResponse> responses = userAssembler.convertToUserResponseList(allUsers);
@@ -119,8 +115,9 @@ public class UserController {
 
     @GetMapping("/get_all_bookings")
     @Operation(summary = "用户查看自己预约的所有服务")
-    public CommonResult<UserInfoAndServicesViaMPRespVO> getAllBookings(HttpServletRequest request) {
-        Long userId = getUserIdViaTokenApi.getUserId(request);
+    @RequireRole(UserRoleEnum.USER)
+    public CommonResult<UserInfoAndServicesViaMPRespVO> getAllBookings() {
+        Long userId = getUserIdViaTokenApi.getUserId();
         return CommonResult.success(userService.getUserInfoAndBookings(userId));
     }
 }
