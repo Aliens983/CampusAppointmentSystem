@@ -7,8 +7,8 @@ spring:
   mail:
     host: smtp.163.com
     port: 465
-    username: dmregy@163.com
-    password: VPbQ2X9N2gM6PANi
+    username: your_email@163.com
+    password: your_email_password_here
     protocol: smtp
     properties:
       mail:
@@ -23,7 +23,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/cas_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: Lcy10194815!
+    password: your_database_password_here
   data:
     redis:
       host: localhost
@@ -41,7 +41,7 @@ mybatis-plus:
       id-type: auto
 
 jwt:
-  secret: dXBzZWNyZXR0aGF0aXN2ZXJ5bG9uZ3RoYW5rYXNkZmdoamtscXh6Y3Zibm0xMjM0NTY3OA==
+  secret: your_jwt_secret_base64_encoded_here_at_least_32_characters
   expiration: 86400000
 
 file:
@@ -68,19 +68,19 @@ logging:
 weather:
   api:
     url: https://cn.apihz.cn/api/tianqi/tqyb.php
-    id: 10015369
-    key: 8ea9cd7dfd4a44bf805891621b69b027
+    id: your_weather_api_id
+    key: your_weather_api_key
 
 aliyun:
   oss:
     endpoint: https://oss-cn-hangzhou.aliyuncs.com
-    access-key-id: your-access-key-id
-    access-key-secret: your-access-key-secret
-    bucket-name: your-bucket-name
+    access-key-id: your_access_key_id
+    access-key-secret: your_access_key_secret
+    bucket-name: your_bucket_name
   sms:
     sign-name: 校园预约系统
-  access-key-id: your-access-key-id
-  access-key-secret: your-access-key-secret
+  access-key-id: your_access_key_id
+  access-key-secret: your_access_key_secret
   region-id: cn-hangzhou
 
 management:
