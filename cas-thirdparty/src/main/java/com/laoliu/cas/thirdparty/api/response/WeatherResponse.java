@@ -1,8 +1,11 @@
-package com.laoliu.cas.common.api;
+package com.laoliu.cas.thirdparty.api.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+/**
+ * @author forever-king
+ */
 @Data
 @Schema(description = "天气响应VO")
 public class WeatherResponse {

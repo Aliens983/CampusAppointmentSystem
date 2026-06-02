@@ -3,7 +3,7 @@ package com.laoliu.cas.system.interfaces.controller;
 import com.laoliu.cas.common.exception.code.EmailErrorCode;
 import com.laoliu.cas.common.util.CodeGenerator;
 import com.laoliu.cas.redis.util.RedisUtil;
-import com.laoliu.cas.common.service.EmailService;
+import com.laoliu.cas.infra.service.EmailService;
 import com.laoliu.cas.system.interfaces.dto.request.EmailRequest;
 import com.laoliu.cas.system.interfaces.dto.response.EmailResponse;
 import com.laoliu.cas.common.result.CommonResult;

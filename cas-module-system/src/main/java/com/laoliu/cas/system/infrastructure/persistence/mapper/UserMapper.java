@@ -1,7 +1,7 @@
 package com.laoliu.cas.system.infrastructure.persistence.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.laoliu.cas.common.domain.entity.User;
+import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.system.infrastructure.persistence.dataobject.UserDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -27,16 +27,16 @@ public interface UserMapper extends BaseMapper<User> {
     String getEncodePasswordByEmail(@Param("email") String email);
 
     @Update("UPDATE user SET password = #{password} WHERE email = #{email}")
-    int updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
+    void updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
 
     @Select("SELECT role FROM user WHERE id = #{userId}")
     String getRoleByUserId(@Param("userId") Long userId);
 
     @Update("UPDATE user SET role = 1 WHERE id = #{userId}")
-    int updateRoleToCommonUser(@Param("userId") Long userId);
+    void updateRoleToCommonUser(@Param("userId") Long userId);
 
     @Update("UPDATE user SET role = 0 WHERE id = #{userId}")
-    int updateRoleToAdmin(@Param("userId") Long userId);
+    void updateRoleToAdmin(@Param("userId") Long userId);
 
     @Select("SELECT * FROM user")
     List<UserDO> getAllUsers();

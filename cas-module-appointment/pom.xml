@@ -25,6 +25,18 @@
 
         <dependency>
             <groupId>com.laoliu</groupId>
+            <artifactId>cas-module-system</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.laoliu</groupId>
+            <artifactId>cas-module-infra</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.laoliu</groupId>
             <artifactId>cas-spring-boot-starter-mybatis</artifactId>
             <version>${project.version}</version>
         </dependency>

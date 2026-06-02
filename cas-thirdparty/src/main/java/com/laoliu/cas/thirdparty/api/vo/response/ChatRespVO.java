@@ -1,4 +1,4 @@
-package com.laoliu.cas.common.vo.response;
+package com.laoliu.cas.thirdparty.api.vo.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

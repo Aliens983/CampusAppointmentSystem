@@ -1,6 +1,6 @@
 package com.laoliu.cas.security.util;
 
-import com.laoliu.cas.common.security.LoginUser;
+import com.laoliu.cas.security.LoginUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;

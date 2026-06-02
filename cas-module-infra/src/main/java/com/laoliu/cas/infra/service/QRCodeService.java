@@ -1,4 +1,4 @@
-package com.laoliu.cas.common.service;
+package com.laoliu.cas.infra.service;
 
 /**
  * @author forever-king

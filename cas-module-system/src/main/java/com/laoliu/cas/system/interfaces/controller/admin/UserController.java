@@ -2,7 +2,7 @@ package com.laoliu.cas.system.interfaces.controller.admin;
 
 import com.laoliu.cas.common.annotation.RequireRole;
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
-import com.laoliu.cas.common.domain.entity.User;
+import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.common.enums.UserRoleEnum;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.util.PasswordUtils;

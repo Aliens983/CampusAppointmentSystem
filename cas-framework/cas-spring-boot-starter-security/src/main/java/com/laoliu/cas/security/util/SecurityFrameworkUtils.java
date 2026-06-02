@@ -1,6 +1,6 @@
 package com.laoliu.cas.security.util;
 
-import com.laoliu.cas.common.security.LoginUser;
+import com.laoliu.cas.security.LoginUser;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

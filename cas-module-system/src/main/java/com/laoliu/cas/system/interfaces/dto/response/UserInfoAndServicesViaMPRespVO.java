@@ -1,6 +1,6 @@
 package com.laoliu.cas.system.interfaces.dto.response;
 
-import com.laoliu.cas.common.domain.entity.User;
+import com.laoliu.cas.system.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.List;

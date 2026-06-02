@@ -1,7 +1,7 @@
 package com.laoliu.cas.infra.interfaces.controller;
 
 import com.laoliu.cas.common.result.CommonResult;
-import com.laoliu.cas.common.service.OSSService;
+import com.laoliu.cas.thirdparty.service.OSSService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

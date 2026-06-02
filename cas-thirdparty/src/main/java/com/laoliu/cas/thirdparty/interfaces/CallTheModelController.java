@@ -2,9 +2,9 @@ package com.laoliu.cas.thirdparty.interfaces;
 
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.common.result.CommonResult;
-import com.laoliu.cas.common.service.CallModelService;
-import com.laoliu.cas.common.vo.request.ChatReqVO;
-import com.laoliu.cas.common.vo.response.ChatRespVO;
+import com.laoliu.cas.thirdparty.service.CallModelService;
+import com.laoliu.cas.thirdparty.api.vo.request.ChatReqVO;
+import com.laoliu.cas.thirdparty.api.vo.response.ChatRespVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

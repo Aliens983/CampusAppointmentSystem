@@ -5,8 +5,8 @@ import com.laoliu.cas.appointment.application.service.BookService;
 import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
 import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ItemMapper;
 import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ServiceMapper;
-import com.laoliu.cas.common.api.UserInfoApi;
-import com.laoliu.cas.common.domain.entity.User;
+import com.laoliu.cas.system.api.UserInfoApi;
+import com.laoliu.cas.system.domain.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

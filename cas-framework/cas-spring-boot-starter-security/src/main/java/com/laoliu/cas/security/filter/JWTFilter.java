@@ -1,6 +1,6 @@
 package com.laoliu.cas.security.filter;
 
-import com.laoliu.cas.common.security.LoginUser;
+import com.laoliu.cas.security.LoginUser;
 import com.laoliu.cas.security.util.JWTUtils;
 import com.laoliu.cas.security.util.SecurityFrameworkUtils;
 import jakarta.servlet.FilterChain;

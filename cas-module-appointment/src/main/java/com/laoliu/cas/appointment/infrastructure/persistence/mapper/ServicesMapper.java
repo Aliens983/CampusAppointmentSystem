@@ -1,7 +1,7 @@
 package com.laoliu.cas.appointment.infrastructure.persistence.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.laoliu.cas.common.domain.entity.Services;
+import com.laoliu.cas.appointment.domain.entity.Services;
 import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

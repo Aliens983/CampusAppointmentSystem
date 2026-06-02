@@ -1,4 +1,4 @@
-package com.laoliu.cas.common.service;
+package com.laoliu.cas.thirdparty.service;
 
 import org.springframework.web.multipart.MultipartFile;
 

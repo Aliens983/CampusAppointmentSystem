@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.laoliu.cas.thirdparty.infrastructure.persistence.mapper.AiChatHistoryMapper">
 
-    <resultMap id="BaseResultMap" type="com.laoliu.cas.common.domain.entity.AiChatHistory">
+    <resultMap id="BaseResultMap" type="com.laoliu.cas.thirdparty.domain.entity.AiChatHistory">
         <id property="id" column="id"/>
         <id property="userId" column="user_id"/>
         <result property="model" column="model"/>
@@ -19,7 +19,7 @@
         id, user_id, model, user_message, ai_response, response_time_ms, created_at, updated_at
     </sql>
 
-    <insert id="insert" parameterType="com.laoliu.cas.common.domain.entity.AiChatHistory"
+    <insert id="insert" parameterType="com.laoliu.cas.thirdparty.domain.entity.AiChatHistory"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO ai_chat_history (user_id, model, user_message, ai_response, response_time_ms, created_at, updated_at)
         VALUES (#{userId}, #{model}, #{userMessage}, #{aiResponse}, #{responseTimeMs}, #{createdAt}, #{updatedAt})

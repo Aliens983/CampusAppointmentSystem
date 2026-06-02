@@ -1,6 +1,6 @@
 package com.laoliu.cas.system.interfaces.assembler;
 
-import com.laoliu.cas.common.domain.entity.User;
+import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.system.infrastructure.persistence.dataobject.UserDO;
 import com.laoliu.cas.system.interfaces.dto.response.UserResponse;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
 package com.laoliu.cas.thirdparty.api.impl;
 
-import com.laoliu.cas.common.api.WeatherApi;
-import com.laoliu.cas.common.api.WeatherResponse;
+import com.laoliu.cas.thirdparty.api.WeatherApi;
+import com.laoliu.cas.thirdparty.api.response.WeatherResponse;
 import com.laoliu.cas.common.exception.BusinessException;
 import java.util.HashMap;
 import java.util.Map;

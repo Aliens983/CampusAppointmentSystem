@@ -1,4 +1,4 @@
-package com.laoliu.cas.common.security;
+package com.laoliu.cas.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -7,9 +7,11 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * @author forever-king
+ */
 @Data
 public class LoginUser implements Serializable {
 

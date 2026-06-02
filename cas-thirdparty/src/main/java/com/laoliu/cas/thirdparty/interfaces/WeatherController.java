@@ -1,7 +1,7 @@
 package com.laoliu.cas.thirdparty.interfaces;
 
-import com.laoliu.cas.common.api.WeatherApi;
-import com.laoliu.cas.common.api.WeatherResponse;
+import com.laoliu.cas.thirdparty.api.WeatherApi;
+import com.laoliu.cas.thirdparty.api.response.WeatherResponse;
 import com.laoliu.cas.common.result.CommonResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

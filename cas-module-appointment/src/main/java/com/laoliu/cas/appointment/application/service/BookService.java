@@ -2,7 +2,7 @@ package com.laoliu.cas.appointment.application.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
-import com.laoliu.cas.common.domain.entity.User;
+import com.laoliu.cas.system.domain.entity.User;
 
 import java.util.List;
 import java.util.Map;

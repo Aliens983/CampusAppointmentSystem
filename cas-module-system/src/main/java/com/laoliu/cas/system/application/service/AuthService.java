@@ -1,6 +1,6 @@
 package com.laoliu.cas.system.application.service;
 
-import com.laoliu.cas.common.domain.entity.User;
+import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.common.exception.BusinessException;
 import com.laoliu.cas.common.exception.code.LoginErrorCode;
 import com.laoliu.cas.common.exception.code.UserErrorCode;

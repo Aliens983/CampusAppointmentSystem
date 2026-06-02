@@ -2,21 +2,21 @@ package com.laoliu.cas.thirdparty.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.laoliu.cas.common.domain.entity.AiChatHistory;
-import com.laoliu.cas.common.service.CallModelService;
-import com.laoliu.cas.common.vo.request.ChatReqVO;
-import com.laoliu.cas.common.vo.response.ChatRespVO;
+import com.laoliu.cas.thirdparty.api.vo.request.ChatReqVO;
+import com.laoliu.cas.thirdparty.api.vo.response.ChatRespVO;
 import com.laoliu.cas.thirdparty.config.QwenConfig;
+import com.laoliu.cas.thirdparty.domain.entity.AiChatHistory;
 import com.laoliu.cas.thirdparty.infrastructure.persistence.mapper.AiChatHistoryMapper;
+import com.laoliu.cas.thirdparty.service.CallModelService;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author forever-king

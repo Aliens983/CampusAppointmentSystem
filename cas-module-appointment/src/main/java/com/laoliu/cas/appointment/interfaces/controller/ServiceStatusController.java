@@ -43,6 +43,10 @@ public class ServiceStatusController {
         }
     }
 
+
+    /**
+     * 设置服务状态描述
+     */
     private void setStatusDescription(ServiceStatusResponse response) {
         if (response.getManageStatus() != null) {
             switch (response.getManageStatus()) {

@@ -1,6 +1,6 @@
-package com.laoliu.cas.infra.application.service.impl;
+package com.laoliu.cas.infra.service.impl;
 
-import com.laoliu.cas.common.service.EmailService;
+import com.laoliu.cas.infra.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -9,9 +9,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-/**
- * @author forever-king
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor

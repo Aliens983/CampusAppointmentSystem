@@ -1,7 +1,7 @@
 package com.laoliu.cas.system.application.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.laoliu.cas.common.domain.entity.User;
+import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.system.application.service.UserService;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
 import com.laoliu.cas.system.interfaces.dto.response.UserInfoAndServicesViaMPRespVO;

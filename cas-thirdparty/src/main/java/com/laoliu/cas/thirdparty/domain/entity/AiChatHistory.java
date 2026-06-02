@@ -1,4 +1,4 @@
-package com.laoliu.cas.common.domain.entity;
+package com.laoliu.cas.thirdparty.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

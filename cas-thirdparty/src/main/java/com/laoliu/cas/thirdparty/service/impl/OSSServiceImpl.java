@@ -3,7 +3,7 @@ package com.laoliu.cas.thirdparty.service.impl;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.PutObjectRequest;
-import com.laoliu.cas.common.service.OSSService;
+import com.laoliu.cas.thirdparty.service.OSSService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

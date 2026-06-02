@@ -1,7 +1,7 @@
 package com.laoliu.cas.appointment.application.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.laoliu.cas.common.domain.entity.Services;
+import com.laoliu.cas.appointment.domain.entity.Services;
 import com.laoliu.cas.appointment.application.service.ServicesService;
 import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ServicesMapper;
 import lombok.RequiredArgsConstructor;

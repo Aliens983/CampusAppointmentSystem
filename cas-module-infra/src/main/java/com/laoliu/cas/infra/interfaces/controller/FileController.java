@@ -1,7 +1,7 @@
 package com.laoliu.cas.infra.interfaces.controller;
 
 import com.laoliu.cas.common.result.CommonResult;
-import com.laoliu.cas.infra.application.service.FileService;
+import com.laoliu.cas.infra.service.FileService;
 import com.laoliu.cas.infra.interfaces.dto.request.FileUploadReqVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

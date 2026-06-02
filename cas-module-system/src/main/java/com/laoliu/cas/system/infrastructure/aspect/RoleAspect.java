@@ -6,6 +6,7 @@ import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.common.enums.UserRoleEnum;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -26,7 +27,7 @@ import java.util.Arrays;
 @Aspect
 @Component
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class RoleAspect {
 
     private final ObjectMapper objectMapper;

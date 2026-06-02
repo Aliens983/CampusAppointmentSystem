@@ -1,10 +1,10 @@
-package com.laoliu.cas.infra.application.service.impl;
+package com.laoliu.cas.infra.service.impl;
 
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import com.laoliu.cas.common.exception.BusinessException;
 import com.laoliu.cas.common.exception.code.CommonErrorCode;
-import com.laoliu.cas.common.service.OSSService;
-import com.laoliu.cas.common.service.QRCodeService;
+import com.laoliu.cas.thirdparty.service.OSSService;
+import com.laoliu.cas.infra.service.QRCodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,9 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-/**
- * @author forever-king
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
