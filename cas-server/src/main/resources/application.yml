@@ -1,0 +1,93 @@
+server:
+  port: 18080
+
+spring:
+  application:
+    name: CampusAppointmentSystem
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: dmregy@163.com
+    password: VPbQ2X9N2gM6PANi
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+            required: true
+          starttls:
+            enable: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/cas_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: Lcy10194815!
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.laoliu.cas.**.dataobject
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+jwt:
+  secret: dXBzZWNyZXR0aGF0aXN2ZXJ5bG9uZ3RoYW5rYXNkZmdoamtscXh6Y3Zibm0xMjM0NTY3OA==
+  expiration: 86400000
+
+file:
+  upload:
+    dir: uploads
+    path: ./uploads/
+    prefix: /api/files/
+    url-prefix: /uploads
+    server-address: http://localhost:8080
+
+email:
+  subject: 验证码
+  content: 您的验证码是：
+  code:
+    expiration: 300
+  send:
+    frequency:
+      limit: 60
+
+logging:
+  level:
+    com.laoliu: debug
+
+weather:
+  api:
+    url: https://cn.apihz.cn/api/tianqi/tqyb.php
+    id: 10015369
+    key: 8ea9cd7dfd4a44bf805891621b69b027
+
+aliyun:
+  oss:
+    endpoint: https://oss-cn-hangzhou.aliyuncs.com
+    access-key-id: your-access-key-id
+    access-key-secret: your-access-key-secret
+    bucket-name: your-bucket-name
+  sms:
+    sign-name: 校园预约系统
+  access-key-id: your-access-key-id
+  access-key-secret: your-access-key-secret
+  region-id: cn-hangzhou
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
