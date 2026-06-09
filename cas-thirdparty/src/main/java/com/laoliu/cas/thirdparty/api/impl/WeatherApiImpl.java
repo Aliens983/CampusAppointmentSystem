@@ -1,17 +1,16 @@
 package com.laoliu.cas.thirdparty.api.impl;
 
-import com.laoliu.cas.thirdparty.api.WeatherApi;
-import com.laoliu.cas.thirdparty.api.response.WeatherResponse;
 import com.laoliu.cas.common.exception.BusinessException;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.laoliu.cas.thirdparty.api.WeatherApi;
+import com.laoliu.cas.thirdparty.interfaces.dto.response.WeatherResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author forever-king

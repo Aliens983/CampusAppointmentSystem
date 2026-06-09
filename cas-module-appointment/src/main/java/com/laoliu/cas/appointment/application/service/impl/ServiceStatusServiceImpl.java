@@ -3,7 +3,7 @@ package com.laoliu.cas.appointment.application.service.impl;
 import com.laoliu.cas.appointment.application.service.ServiceStatusService;
 import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ItemMapper;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
-import com.laoliu.cas.infra.service.EmailService;
+import com.laoliu.cas.infra.application.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

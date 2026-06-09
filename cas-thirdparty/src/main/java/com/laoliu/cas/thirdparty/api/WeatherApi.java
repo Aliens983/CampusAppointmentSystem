@@ -1,8 +1,10 @@
 package com.laoliu.cas.thirdparty.api;
 
-import com.laoliu.cas.thirdparty.api.response.WeatherResponse;
+import com.laoliu.cas.thirdparty.interfaces.dto.response.WeatherResponse;
 
 /**
+ * 天气查询 API。
+ *
  * @author forever-king
  */
 public interface WeatherApi {

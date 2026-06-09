@@ -1,8 +1,7 @@
 package com.laoliu.cas.security.filter;
 
-import com.laoliu.cas.security.LoginUser;
-import com.laoliu.cas.security.util.JWTUtils;
-import com.laoliu.cas.security.util.SecurityFrameworkUtils;
+import com.laoliu.cas.common.security.JWTUtils;
+import com.laoliu.cas.common.security.LoginUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

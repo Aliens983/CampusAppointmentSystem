@@ -1,7 +1,7 @@
 package com.laoliu.cas.security.config;
 
+import com.laoliu.cas.common.security.JWTUtils;
 import com.laoliu.cas.security.filter.JWTFilter;
-import com.laoliu.cas.security.util.JWTUtils;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

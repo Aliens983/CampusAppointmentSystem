@@ -6,7 +6,7 @@ import com.laoliu.cas.common.exception.code.LoginErrorCode;
 import com.laoliu.cas.common.exception.code.UserErrorCode;
 import com.laoliu.cas.common.util.PasswordUtils;
 import com.laoliu.cas.redis.util.RedisUtil;
-import com.laoliu.cas.security.util.JWTUtils;
+import com.laoliu.cas.common.security.JWTUtils;
 import com.laoliu.cas.system.application.service.vo.UserRegisterVO;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
