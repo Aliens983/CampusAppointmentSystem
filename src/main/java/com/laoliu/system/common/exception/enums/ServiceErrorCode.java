@@ -17,4 +17,6 @@ public interface ServiceErrorCode {
 
     ErrorCode SERVICE_NOT_ENABLED = new ErrorCode(400, "服务未启用");
 
+    ErrorCode PAGE_OUT_OF_RANGE = new ErrorCode(400, "页码超出范围，请检查后重试");
+
 }

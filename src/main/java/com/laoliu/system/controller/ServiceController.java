@@ -1,5 +1,6 @@
 package com.laoliu.system.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.laoliu.system.annotation.RequireRole;
 import com.laoliu.system.common.exception.enums.ServiceErrorCode;
 import com.laoliu.system.common.result.CommonResult;
@@ -7,8 +8,8 @@ import com.laoliu.system.entity.Services;
 import com.laoliu.system.entity.User;
 import com.laoliu.system.enums.UserRoleEnum;
 import com.laoliu.system.mapper.ItemMapper;
-import com.laoliu.system.mapper.ServiceMapper;
 import com.laoliu.system.mapper.UserMapper;
+import com.laoliu.system.service.ServicesService;
 import com.laoliu.system.utils.JWTUtils;
 import com.laoliu.system.vo.request.ServiceAddRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,13 +34,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/service")
 public class ServiceController {
 
-    private final ServiceMapper serviceMapper;
+    private final ServicesService servicesService;
     private final ItemMapper itemMapper;
     private final UserMapper userMapper;
     private final JWTUtils jwtUtils;
 
-    public ServiceController(ServiceMapper serviceMapper, ItemMapper itemMapper, UserMapper userMapper, JWTUtils jwtUtils) {
-        this.serviceMapper = serviceMapper;
+    public ServiceController(ServicesService servicesService, ItemMapper itemMapper, UserMapper userMapper, JWTUtils jwtUtils) {
+        this.servicesService = servicesService;
         this.itemMapper = itemMapper;
         this.userMapper = userMapper;
         this.jwtUtils = jwtUtils;
@@ -49,13 +50,22 @@ public class ServiceController {
     @GetMapping
     public CommonResult<List<Services>> getService() {
         try {
-            List<Services> services = serviceMapper.selectAll();
-            List<Services> enabledServices = services.stream()
-                    .filter(s -> s.getServiceState() == 1)
-                    .toList();
-            return CommonResult.success(enabledServices);
+            return CommonResult.success(servicesService.getEnabledServices());
         } catch (Exception e) {
             return CommonResult.internalServerError("获取服务失败：" + e.getMessage());
+        }
+    }
+
+    @Operation(summary = "分页获取服务")
+    @GetMapping("/page")
+    public CommonResult<IPage<Services>> getServicesByPage(
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) Integer serviceState) {
+        try {
+            return CommonResult.success(servicesService.getServicesByPage(pageNum, pageSize, serviceState));
+        } catch (Exception e) {
+            return CommonResult.badRequest("获取服务失败：" + e.getMessage());
         }
     }
 
@@ -64,8 +74,7 @@ public class ServiceController {
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<Void> addService(@RequestBody ServiceAddRequest serviceAddRequest) {
         try {
-            int rowsAffected = serviceMapper.insertSelective(serviceAddRequest);
-            if (rowsAffected > 0) {
+            if (servicesService.addService(serviceAddRequest)) {
                 return CommonResult.success("添加服务成功", null);
             } else {
                 return CommonResult.error(ServiceErrorCode.SERVICE_BOOK_FAILED);
