@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [master]
+    branches: [No_Multiple_Maven_Modules]
   workflow_dispatch:
 
 env:
@@ -57,7 +57,7 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/No_Multiple_Maven_Modules'
 
     steps:
       - uses: actions/checkout@v4
