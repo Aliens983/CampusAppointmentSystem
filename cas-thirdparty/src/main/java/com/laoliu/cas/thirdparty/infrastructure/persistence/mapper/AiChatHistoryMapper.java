@@ -1,6 +1,6 @@
 package com.laoliu.cas.thirdparty.infrastructure.persistence.mapper;
 
-import com.laoliu.cas.thirdparty.domain.entity.AiChatHistory;
+import com.laoliu.cas.thirdparty.infrastructure.persistence.dataobject.AiChatHistoryDO;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -8,5 +8,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface AiChatHistoryMapper {
-    void insert(AiChatHistory aiChatHistory);
+    void insert(AiChatHistoryDO aiChatHistoryDO);
 }

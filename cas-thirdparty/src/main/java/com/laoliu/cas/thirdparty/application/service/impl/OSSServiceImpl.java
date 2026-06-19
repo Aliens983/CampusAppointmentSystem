@@ -3,6 +3,8 @@ package com.laoliu.cas.thirdparty.application.service.impl;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.PutObjectRequest;
+import com.laoliu.cas.common.exception.BusinessException;
+import com.laoliu.cas.common.exception.code.CommonErrorCode;
 import com.laoliu.cas.thirdparty.application.service.OSSService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +49,7 @@ public class OSSServiceImpl implements OSSService {
             return "https://" + bucketName + "." + endpoint + "/" + fileName;
         } catch (IOException e) {
             log.error("文件上传失败", e);
-            throw new RuntimeException("文件上传失败：" + e.getMessage(), e);
+            throw new BusinessException(CommonErrorCode.FILE_UPLOAD_FAILED);
         } finally {
             ossClient.shutdown();
         }

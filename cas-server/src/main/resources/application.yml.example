@@ -1,5 +1,11 @@
+# ============================================
+# Campus Appointment System - 配置文件示例
+# ============================================
+# 复制此文件为 application.yml 并填入真实值
+# 不要将 application.yml 提交到 Git
+
 server:
-  port: 8080
+  port: 18080
 
 spring:
   application:
@@ -7,8 +13,8 @@ spring:
   mail:
     host: smtp.163.com
     port: 465
-    username: your_email@163.com
-    password: your_email_password_here
+    username: your-email@163.com      # 修改为你的邮箱
+    password: your-email-password        # 修改为你的邮箱密码
     protocol: smtp
     properties:
       mail:
@@ -23,7 +29,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/cas_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: your_database_password_here
+    password: your-db-password            # 修改为你的数据库密码
   data:
     redis:
       host: localhost
@@ -41,8 +47,8 @@ mybatis-plus:
       id-type: auto
 
 jwt:
-  secret: your_jwt_secret_base64_encoded_here_at_least_32_characters
-  expiration: 86400000
+  secret: your-jwt-secret-here-change-in-production  # 修改为随机字符串，至少 64 字符
+  expiration: 86400000  # 24 hours in milliseconds
 
 file:
   upload:
@@ -68,19 +74,19 @@ logging:
 weather:
   api:
     url: https://cn.apihz.cn/api/tianqi/tqyb.php
-    id: your_weather_api_id
-    key: your_weather_api_key
+    id: your-api-id       # 修改为你的 API ID
+    key: your-api-key     # 修改为你的 API Key
 
 aliyun:
   oss:
     endpoint: https://oss-cn-hangzhou.aliyuncs.com
-    access-key-id: your_access_key_id
-    access-key-secret: your_access_key_secret
-    bucket-name: your_bucket_name
+    access-key-id: your-access-key-id
+    access-key-secret: your-access-key-secret
+    bucket-name: your-bucket-name
   sms:
     sign-name: 校园预约系统
-  access-key-id: your_access_key_id
-  access-key-secret: your_access_key_secret
+  access-key-id: your-access-key-id
+  access-key-secret: your-access-key-secret
   region-id: cn-hangzhou
 
 management:

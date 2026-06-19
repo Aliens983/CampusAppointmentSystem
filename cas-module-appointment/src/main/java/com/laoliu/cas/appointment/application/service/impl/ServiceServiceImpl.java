@@ -1,41 +1,41 @@
 package com.laoliu.cas.appointment.application.service.impl;
 
 import com.laoliu.cas.appointment.application.service.ServiceService;
-import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
-import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ItemMapper;
-import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ServiceMapper;
+import com.laoliu.cas.appointment.domain.entity.Service;
+import com.laoliu.cas.appointment.domain.repository.ServiceRepository;
 import com.laoliu.cas.appointment.interfaces.dto.request.ServiceAddRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
+ * 服务管理应用服务实现
+ *
  * @author forever-king
  */
-@Service
+@org.springframework.stereotype.Service
 @RequiredArgsConstructor
 public class ServiceServiceImpl implements ServiceService {
 
-    private final ServiceMapper serviceMapper;
-    private final ItemMapper itemMapper;
+    private final ServiceRepository serviceRepository;
 
     @Override
-    public List<ServicesDO> getAllServices() {
-        return serviceMapper.selectAll();
+    public List<Service> getAllServices() {
+        return serviceRepository.findAll();
     }
 
     @Override
     public boolean addService(ServiceAddRequest request) {
-        ServicesDO servicesDO = new ServicesDO();
-        servicesDO.setServiceName(request.getServiceName());
-        servicesDO.setServiceDescribe(request.getServiceDescribe());
-        servicesDO.setServiceState(request.getServiceState());
-        return serviceMapper.insertSelective(servicesDO) > 0;
+        Service service = new Service();
+        service.setServiceName(request.getServiceName());
+        service.setServiceDescribe(request.getServiceDescribe());
+        service.setServiceState(request.getServiceState());
+        serviceRepository.save(service);
+        return true;
     }
 
     @Override
-    public List<ServicesDO> selectUserServices(Long userId) {
-        return serviceMapper.selectUserServices(userId);
+    public List<Service> selectUserServices(Long userId) {
+        return serviceRepository.findByUserId(userId);
     }
 }

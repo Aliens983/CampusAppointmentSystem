@@ -19,4 +19,20 @@ public interface CommonErrorCode {
 
     ErrorCode NOT_FOUND = new ErrorCode(404, "资源不存在");
 
+    ErrorCode TOKEN_EXPIRED = new ErrorCode(401, "Token已过期");
+
+    ErrorCode TOKEN_INVALID = new ErrorCode(401, "Token格式错误或无效");
+
+    ErrorCode FILE_UPLOAD_FAILED = new ErrorCode(500, "文件上传失败");
+
+    ErrorCode SMS_SEND_FAILED = new ErrorCode(500, "短信发送失败");
+
+    ErrorCode EMAIL_SEND_FAILED = new ErrorCode(500, "邮件发送失败");
+
+    ErrorCode QR_CODE_FAILED = new ErrorCode(500, "二维码生成失败");
+
+    ErrorCode WEATHER_QUERY_FAILED = new ErrorCode(500, "天气查询失败");
+
+    ErrorCode FILE_EMPTY = new ErrorCode(400, "文件不能为空");
+
 }

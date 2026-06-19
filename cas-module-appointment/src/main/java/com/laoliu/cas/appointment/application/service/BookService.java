@@ -1,20 +1,29 @@
 package com.laoliu.cas.appointment.application.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
-import com.laoliu.cas.system.domain.entity.User;
+import com.laoliu.cas.appointment.interfaces.dto.response.BookingDTO;
+import com.laoliu.cas.system.api.dto.UserInfoDTO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
+ * 预约业务服务接口
+ *
  * @author forever-king
  */
-public interface BookService extends IService<ServicesDO> {
+public interface BookService {
 
-    User bookService(Long userId, List<Integer> serviceId);
+    /**
+     * 用户预约服务
+     */
+    UserInfoDTO bookService(Long userId, List<Long> serviceIds);
 
-    List<Map<String, Object>> getAllBookings(Long userId);
+    /**
+     * 获取用户所有预约记录
+     */
+    List<BookingDTO> getAllBookings(Long userId);
 
+    /**
+     * 取消预约
+     */
     boolean cancelBookings(Long userId, List<Long> bookingIds);
 }

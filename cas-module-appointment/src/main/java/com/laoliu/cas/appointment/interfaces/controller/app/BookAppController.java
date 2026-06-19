@@ -1,17 +1,19 @@
 package com.laoliu.cas.appointment.interfaces.controller.app;
 
 import com.laoliu.cas.appointment.application.service.BookService;
+import com.laoliu.cas.appointment.interfaces.dto.response.BookingDTO;
 import com.laoliu.cas.appointment.interfaces.dto.response.BookResultResponse;
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.common.result.CommonResult;
-import com.laoliu.cas.system.domain.entity.User;
+import com.laoliu.cas.system.api.dto.UserInfoDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -31,23 +33,23 @@ public class BookAppController {
     @Operation(summary = "预定服务", description = "用户预约多个服务，传入服务ID列表")
     @PostMapping
     public CommonResult<BookResultResponse> bookService(
-            @Parameter(description = "服务ID列表", required = true) @RequestParam List<Integer> serviceIds) {
+            @Parameter(description = "服务ID列表", required = true) @RequestParam List<Long> serviceIds) {
         Long userId = getUserIdViaTokenApi.getUserId();
-        User user = bookService.bookService(userId, serviceIds);
+        UserInfoDTO userInfo = bookService.bookService(userId, serviceIds);
 
         BookResultResponse response = new BookResultResponse();
-        response.setUsername(user.getName());
-        response.setEmail(user.getEmail());
-        response.setGrade(user.getGrade());
+        response.setUsername(userInfo.getName());
+        response.setEmail(userInfo.getEmail());
+        response.setGrade(userInfo.getGrade());
         response.setAllBookedServices(bookService.getAllBookings(userId));
         return CommonResult.success("预约成功", response);
     }
 
     @Operation(summary = "查看所有预约", description = "获取当前用户的所有预约记录")
     @GetMapping("/allService")
-    public CommonResult<List<Map<String, Object>>> getBook() {
+    public CommonResult<List<BookingDTO>> getBook() {
         Long userId = getUserIdViaTokenApi.getUserId();
-        List<Map<String, Object>> bookings = bookService.getAllBookings(userId);
+        List<BookingDTO> bookings = bookService.getAllBookings(userId);
         if (bookings == null || bookings.isEmpty()) {
             return CommonResult.notFound("暂无预约记录");
         }

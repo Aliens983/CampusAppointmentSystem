@@ -7,8 +7,7 @@ import com.laoliu.cas.common.enums.UserRoleEnum;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.util.PasswordUtils;
 import com.laoliu.cas.system.application.service.UserService;
-import com.laoliu.cas.system.infrastructure.persistence.dataobject.UserDO;
-import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
+import com.laoliu.cas.system.domain.repository.UserRepository;
 import com.laoliu.cas.system.interfaces.assembler.UserAssembler;
 import com.laoliu.cas.system.interfaces.dto.request.AdminCreateUserRequest;
 import com.laoliu.cas.system.interfaces.dto.response.UserInfoAndServicesViaMPRespVO;
@@ -37,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "用户接口")
 public class UserController {
 
-    private final UserMapper userMapper;
+    private final UserRepository userRepository;
     private final UserAssembler userAssembler;
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
     private final UserService userService;
@@ -52,7 +51,7 @@ public class UserController {
                 return CommonResult.unauthorized("用户未登录或登录已过期");
             }
             log.info("获取用户信息成功，用户 ID：{}", userId);
-            User user = userMapper.selectByPrimaryKey(userId);
+            User user = userRepository.findById(userId).orElse(null);
             log.info("User :{}", user);
             UserResponse userResponse = userAssembler.convertToUserResponse(user);
             return CommonResult.success(userResponse);
@@ -67,7 +66,7 @@ public class UserController {
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<List<UserResponse>> getAllUsers() {
         try {
-            List<UserDO> allUsers = userMapper.getAllUsers();
+            List<User> allUsers = userRepository.getAllUsers();
             List<UserResponse> responses = userAssembler.convertToUserResponseList(allUsers);
             return CommonResult.success(responses);
         } catch (Exception e) {
@@ -91,7 +90,7 @@ public class UserController {
                 return CommonResult.badRequest("密码不能为空");
             }
 
-            Long existUserId = userMapper.getUserIdByEmail(request.getEmail());
+            Long existUserId = userRepository.getUserIdByEmail(request.getEmail());
             if (existUserId != null) {
                 return CommonResult.badRequest("该邮箱已被注册");
             }
@@ -105,7 +104,7 @@ public class UserController {
             user.setAge(request.getAge());
             user.setRole(request.getRole() != null ? request.getRole() : 0);
 
-            userMapper.insert(user);
+            userRepository.save(user);
 
             return CommonResult.success("创建用户成功");
         } catch (Exception e) {

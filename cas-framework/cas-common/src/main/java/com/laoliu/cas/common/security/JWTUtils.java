@@ -1,5 +1,7 @@
 package com.laoliu.cas.common.security;
 
+import com.laoliu.cas.common.exception.BusinessException;
+import com.laoliu.cas.common.exception.code.CommonErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -72,19 +74,19 @@ public class JWTUtils {
             return claimsJws.getPayload();
         } catch (ExpiredJwtException e) {
             log.error("JWT token has expired: {}", e.getMessage());
-            throw new RuntimeException("Token已过期");
+            throw new BusinessException(CommonErrorCode.TOKEN_EXPIRED);
         } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token: {}", e.getMessage());
-            throw new RuntimeException("不支持的Token类型");
+            throw new BusinessException(CommonErrorCode.TOKEN_INVALID);
         } catch (MalformedJwtException e) {
             log.error("Malformed JWT token: {}", e.getMessage());
-            throw new RuntimeException("Token格式错误");
+            throw new BusinessException(CommonErrorCode.TOKEN_INVALID);
         } catch (IllegalArgumentException e) {
             log.error("JWT token is empty: {}", e.getMessage());
-            throw new RuntimeException("Token不能为空");
+            throw new BusinessException(CommonErrorCode.TOKEN_INVALID);
         } catch (Exception e) {
             log.error("Error parsing JWT token: {}", e.getMessage());
-            throw new RuntimeException("Token解析失败");
+            throw new BusinessException(CommonErrorCode.TOKEN_INVALID);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.laoliu.cas.system.interfaces.assembler;
 
 import com.laoliu.cas.system.domain.entity.User;
-import com.laoliu.cas.system.infrastructure.persistence.dataobject.UserDO;
 import com.laoliu.cas.system.interfaces.dto.response.UserResponse;
 import org.springframework.stereotype.Component;
 
@@ -29,17 +28,8 @@ public class UserAssembler {
         return response;
     }
 
-    public List<UserResponse> convertToUserResponseList(List<UserDO> users) {
-        return users.stream().map(userDO -> {
-            UserResponse response = new UserResponse();
-            response.setId(userDO.getId());
-            response.setName(userDO.getName());
-            response.setGrade(userDO.getGrade());
-            response.setSex(userDO.getSex());
-            response.setAge(userDO.getAge());
-            response.setEmail(userDO.getEmail());
-            response.setRole(userDO.getRole());
-            return response;
-        }).collect(Collectors.toList());
+    public List<UserResponse> convertToUserResponseList(List<User> users) {
+        return users.stream().map(this::convertToUserResponse)
+                .collect(Collectors.toList());
     }
 }

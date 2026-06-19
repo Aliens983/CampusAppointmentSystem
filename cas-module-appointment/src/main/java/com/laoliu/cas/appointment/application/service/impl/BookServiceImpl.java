@@ -1,73 +1,108 @@
 package com.laoliu.cas.appointment.application.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.laoliu.cas.appointment.application.service.BookService;
-import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
-import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ItemMapper;
-import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ServiceMapper;
+import com.laoliu.cas.appointment.domain.repository.BookingRepository;
+import com.laoliu.cas.appointment.domain.repository.ServiceRepository;
+import com.laoliu.cas.appointment.interfaces.dto.response.BookingDTO;
+import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
+import com.laoliu.cas.common.exception.BusinessException;
+import com.laoliu.cas.common.exception.code.BookErrorCode;
 import com.laoliu.cas.system.api.UserInfoApi;
-import com.laoliu.cas.system.domain.entity.User;
+import com.laoliu.cas.system.api.dto.UserInfoDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
+ * 预约业务应用服务实现
+ *
  * @author forever-king
  */
+@Slf4j
 @Service
-public class BookServiceImpl extends ServiceImpl<ServiceMapper, ServicesDO> implements BookService {
+public class BookServiceImpl implements BookService {
 
-    private final ItemMapper itemMapper;
-    private final ServiceMapper serviceMapper;
+    private final BookingRepository bookingRepository;
+    private final ServiceRepository serviceRepository;
     private final UserInfoApi userInfoApi;
 
-    public BookServiceImpl(ItemMapper itemMapper, ServiceMapper serviceMapper, UserInfoApi userInfoApi) {
-        this.itemMapper = itemMapper;
-        this.serviceMapper = serviceMapper;
+    public BookServiceImpl(BookingRepository bookingRepository, ServiceRepository serviceRepository, UserInfoApi userInfoApi) {
+        this.bookingRepository = bookingRepository;
+        this.serviceRepository = serviceRepository;
         this.userInfoApi = userInfoApi;
     }
 
     @Override
     @Transactional
-    public User bookService(Long userId, List<Integer> serviceId) {
-        if (serviceId == null || serviceId.isEmpty()) {
-            throw new RuntimeException("服务ID列表不能为空");
+    public UserInfoDTO bookService(Long userId, List<Long> serviceIds) {
+        // 参数校验
+        if (serviceIds == null || serviceIds.isEmpty()) {
+            throw new BusinessException(BookErrorCode.SERVICE_ID_EMPTY);
         }
 
-        for (Integer sid : serviceId) {
-            ServicesDO services = serviceMapper.selectByPrimaryKey(Long.valueOf(sid));
-            if (services == null) {
-                throw new RuntimeException("服务ID " + sid + " 不存在");
-            }
-            if (services.getServiceState() != 1) {
-                throw new RuntimeException("服务ID " + sid + " 已被禁用");
+        // 校验每个服务的有效性
+        for (Long sid : serviceIds) {
+            com.laoliu.cas.appointment.domain.entity.Service service = serviceRepository.findById(sid)
+                    .orElseThrow(() -> new BusinessException(BookErrorCode.SERVICE_NOT_EXIST, sid));
+            if (!service.isAvailable()) {
+                throw new BusinessException(BookErrorCode.SERVICE_DISABLED, sid);
             }
         }
 
         try {
-            itemMapper.insertServices(userId, serviceId);
+            List<Integer> serviceIdInts = serviceIds.stream()
+                    .map(Long::intValue)
+                    .collect(Collectors.toList());
+            bookingRepository.insertServices(userId, serviceIdInts);
             return userInfoApi.getUserById(userId);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("预约失败: " + e.getCause(), e);
+            log.error("预约失败: userId={}, serviceIds={}", userId, serviceIds, e);
+            throw new BusinessException(BookErrorCode.BOOK_FAILED);
         }
     }
 
     @Override
-    public List<Map<String, Object>> getAllBookings(Long userId) {
-        return itemMapper.getServiceStatusByUserId(userId).stream()
-                .map(status -> {
-                    Map<String, Object> map = new java.util.HashMap<>();
-                    map.put("orderId", status.getOrderId());
-                    map.put("userId", status.getUserId());
-                    map.put("serviceName", status.getServiceName());
-                    map.put("status", status.getManageStatus());
-                    map.put("createTime", status.getCreateTime());
-                    map.put("reason", status.getStatusDescription());
-                    return map;
-                })
-                .collect(java.util.stream.Collectors.toList());
+    public List<BookingDTO> getAllBookings(Long userId) {
+        List<ServiceStatusResponse> statusList = bookingRepository.getServiceStatusByUserId(userId);
+        return statusList.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 将 ServiceStatusResponse 转换为 BookingDTO
+     */
+    private BookingDTO convertToDTO(ServiceStatusResponse status) {
+        BookingDTO dto = new BookingDTO();
+        dto.setOrderId(status.getOrderId());
+        dto.setUserId(status.getUserId());
+        dto.setServiceName(status.getServiceName());
+        dto.setStatus(status.getManageStatus());
+        dto.setCreateTime(status.getCreateTime());
+        dto.setReason(status.getStatusDescription());
+        dto.setStatusDescription(getStatusDescription(status.getManageStatus()));
+        return dto;
+    }
+
+    /**
+     * 获取状态描述
+     */
+    private String getStatusDescription(Integer status) {
+        if (status == null) {
+            return "未知状态";
+        }
+        return switch (status) {
+            case 0 -> "待审核";
+            case 1 -> "通过";
+            case 2 -> "拒绝";
+            case 3 -> "取消";
+            default -> "未知状态";
+        };
     }
 
     @Override
@@ -76,6 +111,6 @@ public class BookServiceImpl extends ServiceImpl<ServiceMapper, ServicesDO> impl
         if (bookingIds == null || bookingIds.isEmpty()) {
             return false;
         }
-        return itemMapper.setBookingStatusByParts(userId, bookingIds) > 0;
+        return bookingRepository.cancelBookings(userId, bookingIds) > 0;
     }
 }

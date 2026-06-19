@@ -40,7 +40,7 @@ public class QRCodeServiceImpl implements QRCodeService {
             return ossService.uploadFile(multipartFile);
         } catch (Exception e) {
             log.error("生成二维码失败", e);
-            throw new RuntimeException("生成二维码失败：" + e.getMessage(), e);
+            throw new BusinessException(CommonErrorCode.QR_CODE_FAILED);
         }
     }
 

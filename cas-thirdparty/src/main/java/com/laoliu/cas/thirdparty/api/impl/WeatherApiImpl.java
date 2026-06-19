@@ -1,6 +1,7 @@
 package com.laoliu.cas.thirdparty.api.impl;
 
 import com.laoliu.cas.common.exception.BusinessException;
+import com.laoliu.cas.common.exception.code.CommonErrorCode;
 import com.laoliu.cas.thirdparty.api.WeatherApi;
 import com.laoliu.cas.thirdparty.interfaces.dto.response.WeatherResponse;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,7 @@ public class WeatherApiImpl implements WeatherApi {
             return response;
         } catch (Exception e) {
             log.error("获取天气信息失败", e);
-            throw new RuntimeException("获取天气信息失败：" + e.getMessage());
+            throw new BusinessException(CommonErrorCode.WEATHER_QUERY_FAILED);
         }
     }
 }

@@ -1,9 +1,8 @@
 package com.laoliu.cas.system.application.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.system.application.service.UserService;
-import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
+import com.laoliu.cas.system.domain.entity.User;
+import com.laoliu.cas.system.domain.repository.UserRepository;
 import com.laoliu.cas.system.interfaces.dto.response.UserInfoAndServicesViaMPRespVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,14 +12,16 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
 
     @Override
     public UserInfoAndServicesViaMPRespVO getUserInfoAndBookings(Long userId) {
-        User user = this.getById(userId);
+        User user = userRepository.findById(userId).orElse(null);
         UserInfoAndServicesViaMPRespVO respVO = new UserInfoAndServicesViaMPRespVO();
         respVO.setUser(user);
-        respVO.setBookings(this.getBaseMapper().getAllBookings(userId));
+        respVO.setBookings(userRepository.getAllBookings(userId));
         return respVO;
     }
 }

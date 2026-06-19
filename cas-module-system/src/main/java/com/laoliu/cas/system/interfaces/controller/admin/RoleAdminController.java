@@ -6,7 +6,7 @@ import com.laoliu.cas.common.enums.UserRoleEnum;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.system.application.service.RoleService;
 import com.laoliu.cas.system.domain.entity.User;
-import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
+import com.laoliu.cas.system.domain.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class RoleAdminController {
 
     private final RoleService roleService;
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
-    private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
     @Operation(summary = "获取用户角色", description = "获取当前登录用户的角色信息")
     @GetMapping
@@ -67,7 +67,7 @@ public class RoleAdminController {
                 return CommonResult.badRequest("角色不存在");
             }
 
-            User user = userMapper.selectByPrimaryKey(userId);
+            User user = userRepository.findById(userId).orElse(null);
             Map<String, Object> result = new HashMap<>();
             result.put("user", user);
             result.put("role", changeRole);

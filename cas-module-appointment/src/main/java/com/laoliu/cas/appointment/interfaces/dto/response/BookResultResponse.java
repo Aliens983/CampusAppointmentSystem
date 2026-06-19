@@ -2,10 +2,12 @@ package com.laoliu.cas.appointment.interfaces.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
 import java.util.List;
-import java.util.Map;
 
 /**
+ * 预约结果响应 DTO
+ *
  * @author forever-king
  */
 @Data
@@ -22,5 +24,5 @@ public class BookResultResponse {
     private String grade;
 
     @Schema(description = "用户预约的服务列表")
-    private List<Map<String, Object>> allBookedServices;
+    private List<BookingDTO> allBookedServices;
 }

@@ -1,14 +1,14 @@
 server:
-  port: 18080
+  port: ${SERVER_PORT:18080}
 
 spring:
   application:
     name: CampusAppointmentSystem
   mail:
-    host: smtp.163.com
-    port: 465
-    username: dmregy@163.com
-    password: VPbQ2X9N2gM6PANi
+    host: ${EMAIL_HOST:smtp.163.com}
+    port: ${EMAIL_PORT:465}
+    username: ${EMAIL_USERNAME:}
+    password: ${EMAIL_PASSWORD:}
     protocol: smtp
     properties:
       mail:
@@ -21,14 +21,14 @@ spring:
             enable: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/cas_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: root
-    password: Lcy10194815!
+    url: ${DB_URL:jdbc:mysql://localhost:3306/cas_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
   data:
     redis:
-      host: localhost
-      port: 6379
-      database: 0
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:0}
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
@@ -41,47 +41,47 @@ mybatis-plus:
       id-type: auto
 
 jwt:
-  secret: dXBzZWNyZXR0aGF0aXN2ZXJ5bG9uZ3RoYW5rYXNkZmdoamtscXh6Y3Zibm0xMjM0NTY3OA==
-  expiration: 86400000
+  secret: ${JWT_SECRET:}
+  expiration: ${JWT_EXPIRATION:86400000}
 
 file:
   upload:
-    dir: uploads
-    path: ./uploads/
-    prefix: /api/files/
-    url-prefix: /uploads
-    server-address: http://localhost:8080
+    dir: ${FILE_UPLOAD_DIR:uploads}
+    path: ${FILE_UPLOAD_PATH:./uploads/}
+    prefix: ${FILE_UPLOAD_PREFIX:/api/files/}
+    url-prefix: ${FILE_UPLOAD_URL_PREFIX:/uploads}
+    server-address: ${FILE_SERVER_ADDRESS:http://localhost:8080}
 
 email:
-  subject: 验证码
-  content: 您的验证码是：
+  subject: ${EMAIL_SUBJECT:验证码}
+  content: ${EMAIL_CONTENT:您的验证码是：}
   code:
-    expiration: 300
+    expiration: ${EMAIL_CODE_EXPIRATION:300}
   send:
     frequency:
-      limit: 60
+      limit: ${EMAIL_SEND_FREQUENCY_LIMIT:60}
 
 logging:
   level:
-    com.laoliu: debug
+    com.laoliu: ${LOG_LEVEL:debug}
 
 weather:
   api:
-    url: https://cn.apihz.cn/api/tianqi/tqyb.php
-    id: 10015369
-    key: 8ea9cd7dfd4a44bf805891621b69b027
+    url: ${WEATHER_API_URL:https://cn.apihz.cn/api/tianqi/tqyb.php}
+    id: ${WEATHER_API_ID:}
+    key: ${WEATHER_API_KEY:}
 
 aliyun:
   oss:
-    endpoint: https://oss-cn-hangzhou.aliyuncs.com
-    access-key-id: your-access-key-id
-    access-key-secret: your-access-key-secret
-    bucket-name: your-bucket-name
+    endpoint: ${ALIYUN_OSS_ENDPOINT:https://oss-cn-hangzhou.aliyuncs.com}
+    access-key-id: ${ALIYUN_ACCESS_KEY_ID:}
+    access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:}
+    bucket-name: ${ALIYUN_OSS_BUCKET_NAME:}
   sms:
-    sign-name: 校园预约系统
-  access-key-id: your-access-key-id
-  access-key-secret: your-access-key-secret
-  region-id: cn-hangzhou
+    sign-name: ${ALIYUN_SMS_SIGN_NAME:校园预约系统}
+  access-key-id: ${ALIYUN_ACCESS_KEY_ID:}
+  access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:}
+  region-id: ${ALIYUN_REGION_ID:cn-hangzhou}
 
 management:
   endpoints:

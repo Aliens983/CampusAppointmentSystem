@@ -1,5 +1,7 @@
 package com.laoliu.cas.infra.application.service.impl;
 
+import com.laoliu.cas.common.exception.BusinessException;
+import com.laoliu.cas.common.exception.code.CommonErrorCode;
 import com.laoliu.cas.infra.application.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +29,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public String uploadFile(MultipartFile multipartFile) {
         if (multipartFile == null || multipartFile.isEmpty()) {
-            throw new IllegalArgumentException("文件不能为空");
+            throw new BusinessException(CommonErrorCode.FILE_EMPTY);
         }
 
         String originalFilename = multipartFile.getOriginalFilename();
@@ -49,14 +51,14 @@ public class FileServiceImpl implements FileService {
             return urlPrefix + "/" + newFileName;
         } catch (IOException e) {
             log.error("文件上传失败", e);
-            throw new RuntimeException("文件上传失败: " + e.getMessage());
+            throw new BusinessException(CommonErrorCode.FILE_UPLOAD_FAILED);
         }
     }
 
     @Override
     public String uploadFile(File file) {
         if (file == null || !file.exists()) {
-            throw new IllegalArgumentException("文件不存在");
+            throw new BusinessException(CommonErrorCode.FILE_EMPTY);
         }
 
         String originalFilename = file.getName();
@@ -78,7 +80,7 @@ public class FileServiceImpl implements FileService {
             return urlPrefix + "/" + newFileName;
         } catch (IOException e) {
             log.error("文件上传失败", e);
-            throw new RuntimeException("文件上传失败: " + e.getMessage());
+            throw new BusinessException(CommonErrorCode.FILE_UPLOAD_FAILED);
         }
     }
 }

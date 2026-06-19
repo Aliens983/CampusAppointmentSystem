@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laoliu.cas.thirdparty.application.service.CallModelService;
 import com.laoliu.cas.thirdparty.domain.entity.AiChatHistory;
+import com.laoliu.cas.thirdparty.domain.repository.AiChatHistoryRepository;
 import com.laoliu.cas.thirdparty.infrastructure.config.QwenConfig;
-import com.laoliu.cas.thirdparty.infrastructure.persistence.mapper.AiChatHistoryMapper;
 import com.laoliu.cas.thirdparty.interfaces.dto.request.ChatReqVO;
 import com.laoliu.cas.thirdparty.interfaces.dto.response.ChatRespVO;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +27,11 @@ public class CallModelServiceImpl implements CallModelService {
 
     private final QwenConfig qwenConfig;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final AiChatHistoryMapper aiChatHistoryMapper;
+    private final AiChatHistoryRepository aiChatHistoryRepository;
 
-    public CallModelServiceImpl(QwenConfig qwenConfig, AiChatHistoryMapper aiChatHistoryMapper) {
+    public CallModelServiceImpl(QwenConfig qwenConfig, AiChatHistoryRepository aiChatHistoryRepository) {
         this.qwenConfig = qwenConfig;
-        this.aiChatHistoryMapper = aiChatHistoryMapper;
+        this.aiChatHistoryRepository = aiChatHistoryRepository;
     }
 
     @Override
@@ -91,7 +91,7 @@ public class CallModelServiceImpl implements CallModelService {
                         null, userId, model, request.getMessage(), content, responseTimeMs,
                         LocalDateTime.now(), LocalDateTime.now()
                 );
-                aiChatHistoryMapper.insert(chatHistory);
+                aiChatHistoryRepository.save(chatHistory);
 
                 return new ChatRespVO(content, request.getModel(), responseTimeMs);
             } else {

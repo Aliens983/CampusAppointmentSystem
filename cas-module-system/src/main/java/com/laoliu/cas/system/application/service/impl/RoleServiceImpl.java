@@ -1,7 +1,7 @@
 package com.laoliu.cas.system.application.service.impl;
 
 import com.laoliu.cas.system.application.service.RoleService;
-import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
+import com.laoliu.cas.system.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,17 +12,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
-    private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
     @Override
     public String changeRoleById(Long userId) {
-        String role = userMapper.getRoleByUserId(userId);
+        String role = userRepository.getRoleByUserId(userId);
         if (role != null) {
             if ("1".equals(role)) {
-                userMapper.updateRoleToCommonUser(userId);
+                userRepository.updateRoleToCommonUser(userId);
                 return "普通用户";
             } else if ("0".equals(role)) {
-                userMapper.updateRoleToAdmin(userId);
+                userRepository.updateRoleToAdmin(userId);
                 return "管理员用户";
             }
         }
@@ -31,7 +31,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public String getRoleByUserId(Long userId) {
-        String role = userMapper.getRoleByUserId(userId);
+        String role = userRepository.getRoleByUserId(userId);
         if (role != null) {
             if ("1".equals(role)) {
                 return "管理员";

@@ -3,6 +3,8 @@ package com.laoliu.cas.thirdparty.application.service.impl;
 import com.aliyun.dysmsapi20170525.Client;
 import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
+import com.laoliu.cas.common.exception.BusinessException;
+import com.laoliu.cas.common.exception.code.CommonErrorCode;
 import com.laoliu.cas.thirdparty.application.service.SmsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +37,7 @@ public class SmsServiceImpl implements SmsService {
             log.info("SMS sent successfully: {}", response.getBody());
         } catch (Exception e) {
             log.error("SMS send error: {}", e.getMessage());
-            throw new RuntimeException("短信发送失败: " + e.getMessage());
+            throw new BusinessException(CommonErrorCode.SMS_SEND_FAILED);
         }
     }
 }

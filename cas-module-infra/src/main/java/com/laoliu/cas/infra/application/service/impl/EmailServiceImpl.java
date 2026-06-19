@@ -1,5 +1,7 @@
 package com.laoliu.cas.infra.application.service.impl;
 
+import com.laoliu.cas.common.exception.BusinessException;
+import com.laoliu.cas.common.exception.code.CommonErrorCode;
 import com.laoliu.cas.infra.application.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +36,7 @@ public class EmailServiceImpl implements EmailService {
             log.info("邮件发送成功，发件人：{}，收件人：{}，主题：{}，内容：{}", fromEmail, to, subject, content);
         } catch (Exception e) {
             log.error("邮件发送失败，收件人：{}，主题：{}，错误信息：{}", to, subject, e.getMessage(), e);
-            throw new RuntimeException("邮件发送失败：" + e.getMessage(), e);
+            throw new BusinessException(CommonErrorCode.EMAIL_SEND_FAILED);
         }
     }
 }

@@ -1,0 +1,56 @@
+package com.laoliu.cas.appointment.infrastructure.persistence.repository;
+
+import com.laoliu.cas.appointment.domain.repository.BookingRepository;
+import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ItemMapper;
+import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * 预约仓储实现
+ *
+ * @author forever-king
+ */
+@Repository
+@RequiredArgsConstructor
+public class BookingRepositoryImpl implements BookingRepository {
+
+    private final ItemMapper itemMapper;
+
+    @Override
+    public void insertServices(Long userId, List<Integer> serviceIds) {
+        itemMapper.insertServices(userId, serviceIds);
+    }
+
+    @Override
+    public int cancelBookings(Long userId, List<Long> bookingIds) {
+        return itemMapper.setBookingStatusByParts(userId, bookingIds);
+    }
+
+    @Override
+    public List<ServiceStatusResponse> getServiceStatus() {
+        return itemMapper.getServiceStatus();
+    }
+
+    @Override
+    public List<ServiceStatusResponse> getServiceStatusByUserId(Long userId) {
+        return itemMapper.getServiceStatusByUserId(userId);
+    }
+
+    @Override
+    public ServiceStatusResponse getServiceStatusByOrderId(Long orderId) {
+        return itemMapper.getServiceStatusByOrderId(orderId);
+    }
+
+    @Override
+    public boolean auditService(Long orderId, Integer status, String reason) {
+        return itemMapper.auditService(orderId, status, reason) > 0;
+    }
+
+    @Override
+    public String getUserEmailByOrderId(Long orderId) {
+        return itemMapper.getUserEmailByOrderId(orderId);
+    }
+}

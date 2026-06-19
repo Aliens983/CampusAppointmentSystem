@@ -1,7 +1,7 @@
 package com.laoliu.cas.appointment.interfaces.controller.app;
 
 import com.laoliu.cas.appointment.application.service.ServiceService;
-import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
+import com.laoliu.cas.appointment.domain.entity.Service;
 import com.laoliu.cas.common.result.CommonResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,9 +27,9 @@ public class ServiceAppController {
 
     @Operation(summary = "用户端：获取可预约服务", description = "用户端查询所有启用状态的服务")
     @GetMapping
-    public CommonResult<List<ServicesDO>> getEnabledServices() {
-        List<ServicesDO> services = serviceService.getAllServices().stream()
-                .filter(s -> s.getServiceState() == 1)
+    public CommonResult<List<Service>> getEnabledServices() {
+        List<Service> services = serviceService.getAllServices().stream()
+                .filter(Service::isAvailable)
                 .toList();
         return CommonResult.success(services);
     }

@@ -8,7 +8,7 @@ import com.laoliu.cas.common.util.PasswordUtils;
 import com.laoliu.cas.redis.util.RedisUtil;
 import com.laoliu.cas.common.security.JWTUtils;
 import com.laoliu.cas.system.application.service.vo.UserRegisterVO;
-import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
+import com.laoliu.cas.system.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserMapper userMapper;
+    private final UserRepository userRepository;
     private final JWTUtils jwtUtils;
     private final PasswordUtils passwordUtils;
     private final RedisUtil redisUtil;
@@ -29,12 +29,12 @@ public class AuthService {
             throw new BusinessException(LoginErrorCode.EMAIL_OR_PASSWORD_EMPTY);
         }
 
-        String encodePassword = userMapper.getEncodePasswordByEmail(email);
+        String encodePassword = userRepository.getEncodePasswordByEmail(email);
         if (encodePassword == null) {
             throw new BusinessException(LoginErrorCode.USER_NOT_EXIST);
         }
         if (passwordUtils.matches(password, encodePassword)) {
-            Long userId = userMapper.getUserIdByEmail(email);
+            Long userId = userRepository.getUserIdByEmail(email);
             return jwtUtils.generateToken(userId);
         }
         throw new BusinessException(LoginErrorCode.PASSWORD_ERROR);
@@ -59,13 +59,13 @@ public class AuthService {
             throw new BusinessException(LoginErrorCode.VERIFICATION_CODE_ERROR);
         }
 
-        Long userId = userMapper.getUserIdByEmail(email);
+        Long userId = userRepository.getUserIdByEmail(email);
         if (userId == null) {
             throw new BusinessException(LoginErrorCode.USER_NOT_EXIST_BY_EMAIL);
         }
 
         String encodedPassword = passwordUtils.encode(password);
-        userMapper.updatePasswordByEmail(email, encodedPassword);
+        userRepository.updatePasswordByEmail(email, encodedPassword);
         redisUtil.removeVerificationCode(email);
 
         return jwtUtils.generateToken(userId);
@@ -79,7 +79,7 @@ public class AuthService {
             throw new BusinessException(UserErrorCode.EMAIL_OR_CODE_EMPTY);
         }
 
-        Long ifUserId = userMapper.getUserIdByEmail(email);
+        Long ifUserId = userRepository.getUserIdByEmail(email);
         if (ifUserId != null) {
             throw new BusinessException(UserErrorCode.USER_ALREADY_EXISTS);
         }
@@ -106,7 +106,7 @@ public class AuthService {
         user.setEmail(email);
         user.setPassword(encodedPassword);
 
-        userMapper.insert(user);
-        return user.getId();
+        User savedUser = userRepository.save(user);
+        return savedUser.getId();
     }
 }
