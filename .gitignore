@@ -42,7 +42,7 @@ upload
 
 /uploads
 
-/docs
+# /docs 已移除，文档需要被跟踪
 
 /AGENTS.md
 
