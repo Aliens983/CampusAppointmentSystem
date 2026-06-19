@@ -45,3 +45,5 @@ upload
 /docs
 
 /AGENTS.md
+
+.env

@@ -69,7 +69,11 @@ public class FileServiceImpl implements FileService {
     }
 
     private String getSubDirectoryByExtension(String originalFilename) {
-        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+        int dotIndex = originalFilename.lastIndexOf(".");
+        if (dotIndex == -1) {
+            return "files";
+        }
+        String extension = originalFilename.substring(dotIndex).toLowerCase();
 
         for (String imgExt : IMAGE_EXTENSIONS) {
             if (extension.equals(imgExt)) {
