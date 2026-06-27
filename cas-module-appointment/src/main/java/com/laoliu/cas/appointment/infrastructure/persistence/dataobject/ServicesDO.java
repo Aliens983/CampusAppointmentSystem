@@ -3,7 +3,10 @@ package com.laoliu.cas.appointment.infrastructure.persistence.dataobject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 服务数据对象 - 用于 MyBatis-Plus ORM
@@ -11,38 +14,36 @@ import lombok.Data;
  * @author forever-king
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @TableName("services")
 public class ServicesDO {
 
     @TableId(type = IdType.AUTO)
     private Long serviceId;
 
+    /** 服务名称 */
     private String serviceName;
 
+    /** 服务描述 */
     private String serviceDescribe;
 
+    /** 服务状态（0-禁用，1-启用） */
     private Integer serviceState;
 
-    /**
-     * 转换为领域实体
-     */
     public com.laoliu.cas.appointment.domain.entity.Service toEntity() {
-        return new com.laoliu.cas.appointment.domain.entity.Service(
-                serviceId, serviceName, serviceDescribe, serviceState);
+        return com.laoliu.cas.appointment.domain.entity.Service.builder()
+                .serviceId(serviceId).serviceName(serviceName)
+                .serviceDescribe(serviceDescribe).serviceState(serviceState)
+                .build();
     }
 
-    /**
-     * 从领域实体创建
-     */
     public static ServicesDO fromEntity(com.laoliu.cas.appointment.domain.entity.Service entity) {
-        if (entity == null) {
-            return null;
-        }
-        ServicesDO dataObject = new ServicesDO();
-        dataObject.setServiceId(entity.getServiceId());
-        dataObject.setServiceName(entity.getServiceName());
-        dataObject.setServiceDescribe(entity.getServiceDescribe());
-        dataObject.setServiceState(entity.getServiceState());
-        return dataObject;
+        if (entity == null) return null;
+        return ServicesDO.builder()
+                .serviceId(entity.getServiceId()).serviceName(entity.getServiceName())
+                .serviceDescribe(entity.getServiceDescribe()).serviceState(entity.getServiceState())
+                .build();
     }
 }

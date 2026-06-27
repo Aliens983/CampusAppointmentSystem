@@ -95,14 +95,13 @@ public class UserController {
                 return CommonResult.badRequest("该邮箱已被注册");
             }
 
-            User user = new User();
-            user.setName(request.getName());
-            user.setEmail(request.getEmail());
-            user.setPassword(PasswordUtils.encode(request.getPassword()));
-            user.setGrade(request.getGrade());
-            user.setSex(request.getSex());
-            user.setAge(request.getAge());
-            user.setRole(request.getRole() != null ? request.getRole() : 0);
+            User user = User.builder()
+                    .name(request.getName()).email(request.getEmail())
+                    .password(PasswordUtils.encode(request.getPassword()))
+                    .grade(request.getGrade()).sex(request.getSex())
+                    .age(request.getAge())
+                    .role(request.getRole() != null ? request.getRole() : 0)
+                    .build();
 
             userRepository.save(user);
 

@@ -87,10 +87,13 @@ public class CallModelServiceImpl implements CallModelService {
                 int responseTimeMs = (int) (endTime - startTime);
                 String model = request.getModel();
 
-                AiChatHistory chatHistory = new AiChatHistory(
-                        null, userId, model, request.getMessage(), content, responseTimeMs,
-                        LocalDateTime.now(), LocalDateTime.now()
-                );
+                AiChatHistory chatHistory = AiChatHistory.builder()
+                        .userId(userId).model(model)
+                        .userMessage(request.getMessage()).aiResponse(content)
+                        .responseTimeMs(responseTimeMs)
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build();
                 aiChatHistoryRepository.save(chatHistory);
 
                 return new ChatRespVO(content, request.getModel(), responseTimeMs);

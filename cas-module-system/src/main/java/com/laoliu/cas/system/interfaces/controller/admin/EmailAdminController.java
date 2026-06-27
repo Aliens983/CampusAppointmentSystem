@@ -52,6 +52,6 @@ public class EmailAdminController {
         String content = "您的验证码是：" + code + "，5 分钟内有效，请勿泄露给他人。";
         emailService.sendEmail(email, subject, content);
 
-        return CommonResult.success(new EmailResponse("邮件发送成功"));
+        return CommonResult.success(EmailResponse.builder().message("邮件发送成功").build());
     }
 }

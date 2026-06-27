@@ -2,13 +2,19 @@ package com.laoliu.cas.system.interfaces.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 /**
  * @author forever-king
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Schema(description = "用户信息响应")
 public class UserResponse implements Serializable {
 

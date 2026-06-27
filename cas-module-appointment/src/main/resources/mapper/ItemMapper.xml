@@ -107,5 +107,11 @@
         </if>
         WHERE order_id = #{orderId}
     </update>
+    <update id="setBookingStatus">
+        UPDATE item
+        SET manage_status = 3
+        WHERE user_id = #{userId}
+        AND order_id = #{bookingId}
+    </update>
 
 </mapper>

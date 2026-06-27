@@ -26,10 +26,11 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public boolean addService(ServiceAddRequest request) {
-        Service service = new Service();
-        service.setServiceName(request.getServiceName());
-        service.setServiceDescribe(request.getServiceDescribe());
-        service.setServiceState(request.getServiceState());
+        Service service = Service.builder()
+                .serviceName(request.getServiceName())
+                .serviceDescribe(request.getServiceDescribe())
+                .serviceState(request.getServiceState())
+                .build();
         serviceRepository.save(service);
         return true;
     }

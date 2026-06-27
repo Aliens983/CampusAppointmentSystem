@@ -1,5 +1,8 @@
 package com.laoliu.cas.appointment.domain.entity;
 
+import lombok.*;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -9,24 +12,21 @@ import java.util.Objects;
  *
  * @author forever-king
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode()
+@ToString
+@Builder
 public class Service implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private Long serviceId;
     private String serviceName;
     private String serviceDescribe;
     private Integer serviceState;
-
-    public Service() {
-    }
-
-    public Service(Long serviceId, String serviceName, String serviceDescribe, Integer serviceState) {
-        this.serviceId = serviceId;
-        this.serviceName = serviceName;
-        this.serviceDescribe = serviceDescribe;
-        this.serviceState = serviceState;
-    }
 
     /**
      * 领域行为：检查服务是否可用
@@ -47,49 +47,5 @@ public class Service implements Serializable {
      */
     public void enable() {
         this.serviceState = 1;
-    }
-
-    // Getter 和 Setter
-
-    public Long getServiceId() {
-        return serviceId;
-    }
-
-    public void setServiceId(Long serviceId) {
-        this.serviceId = serviceId;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public String getServiceDescribe() {
-        return serviceDescribe;
-    }
-
-    public void setServiceDescribe(String serviceDescribe) {
-        this.serviceDescribe = serviceDescribe;
-    }
-
-    public Integer getServiceState() {
-        return serviceState;
-    }
-
-    public void setServiceState(Integer serviceState) {
-        this.serviceState = serviceState;
-    }
-
-    @Override
-    public String toString() {
-        return "Service{" +
-                "serviceId=" + serviceId +
-                ", serviceName='" + serviceName + '\'' +
-                ", serviceDescribe='" + serviceDescribe + '\'' +
-                ", serviceState=" + serviceState +
-                '}';
     }
 }

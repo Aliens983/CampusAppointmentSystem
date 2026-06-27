@@ -97,14 +97,12 @@ public class AuthService {
         String password = request.getPassword();
         String encodedPassword = passwordUtils.encode(password);
 
-        User user = new User();
-        user.setName(request.getName());
-        user.setGrade(request.getGrade());
-        user.setSex(request.getSex());
-        user.setAge(request.getAge());
-        user.setRole(request.getRole());
-        user.setEmail(email);
-        user.setPassword(encodedPassword);
+        User user = User.builder()
+                .name(request.getName()).grade(request.getGrade())
+                .sex(request.getSex()).age(request.getAge())
+                .role(request.getRole()).email(email)
+                .password(encodedPassword)
+                .build();
 
         User savedUser = userRepository.save(user);
         return savedUser.getId();

@@ -37,11 +37,11 @@ public class BookAppController {
         Long userId = getUserIdViaTokenApi.getUserId();
         UserInfoDTO userInfo = bookService.bookService(userId, serviceIds);
 
-        BookResultResponse response = new BookResultResponse();
-        response.setUsername(userInfo.getName());
-        response.setEmail(userInfo.getEmail());
-        response.setGrade(userInfo.getGrade());
-        response.setAllBookedServices(bookService.getAllBookings(userId));
+        BookResultResponse response = BookResultResponse.builder()
+                .username(userInfo.getName()).email(userInfo.getEmail())
+                .grade(userInfo.getGrade())
+                .allBookedServices(bookService.getAllBookings(userId))
+                .build();
         return CommonResult.success("预约成功", response);
     }
 

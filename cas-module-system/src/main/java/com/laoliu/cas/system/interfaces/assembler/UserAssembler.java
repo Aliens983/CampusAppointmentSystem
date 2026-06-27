@@ -17,15 +17,12 @@ public class UserAssembler {
         if (user == null) {
             return null;
         }
-        UserResponse response = new UserResponse();
-        response.setId(user.getId());
-        response.setName(user.getName());
-        response.setGrade(user.getGrade());
-        response.setSex(user.getSex());
-        response.setAge(user.getAge());
-        response.setEmail(user.getEmail());
-        response.setRole(user.getRole());
-        return response;
+        return UserResponse.builder()
+                .id(user.getId()).name(user.getName())
+                .grade(user.getGrade()).sex(user.getSex())
+                .age(user.getAge()).email(user.getEmail())
+                .role(user.getRole())
+                .build();
     }
 
     public List<UserResponse> convertToUserResponseList(List<User> users) {

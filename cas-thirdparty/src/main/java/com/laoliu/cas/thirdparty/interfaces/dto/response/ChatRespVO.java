@@ -2,6 +2,7 @@ package com.laoliu.cas.thirdparty.interfaces.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,8 +11,9 @@ import lombok.NoArgsConstructor;
  */
 @Schema(description = "聊天响应")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ChatRespVO {
 
     @Schema(description = "大模型返回的响应内容")
