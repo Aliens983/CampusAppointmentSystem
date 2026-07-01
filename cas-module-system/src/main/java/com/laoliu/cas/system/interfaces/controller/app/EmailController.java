@@ -1,4 +1,4 @@
-package com.laoliu.cas.system.interfaces.controller.admin;
+package com.laoliu.cas.system.interfaces.controller.app;
 
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.system.application.service.EmailVerificationService;
@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 管理员端邮件发送接口。
+ * 邮件发送接口（扁平路径，供前端直接调用）。
  *
  * @author forever-king
  */
-@Tag(name = "邮件发送（管理）")
+@Tag(name = "邮件发送（用户）")
 @RestController
-@RequestMapping("/admin/email")
+@RequestMapping("/email")
 @RequiredArgsConstructor
-public class EmailAdminController {
+public class EmailController {
 
     private final EmailVerificationService emailVerificationService;
 

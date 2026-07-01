@@ -51,7 +51,7 @@ public class AuthService {
             throw new BusinessException(LoginErrorCode.PASSWORD_EMPTY);
         }
 
-        String storedCode = redisUtil.getVerificationCode(email);
+        String storedCode = redisUtil.getVerificationCode("verification_code:" + email);
         if (storedCode == null) {
             throw new BusinessException(LoginErrorCode.VERIFICATION_CODE_EXPIRED);
         }
@@ -66,7 +66,7 @@ public class AuthService {
 
         String encodedPassword = passwordUtils.encode(password);
         userRepository.updatePasswordByEmail(email, encodedPassword);
-        redisUtil.removeVerificationCode(email);
+        redisUtil.removeVerificationCode("verification_code:" + email);
 
         return jwtUtils.generateToken(userId);
     }
@@ -84,7 +84,7 @@ public class AuthService {
             throw new BusinessException(UserErrorCode.USER_ALREADY_EXISTS);
         }
 
-        String storedCode = redisUtil.getVerificationCode(email);
+        String storedCode = redisUtil.getVerificationCode("verification_code:" + email);
         if (storedCode == null) {
             throw new BusinessException(UserErrorCode.VERIFICATION_CODE_EXPIRED);
         }

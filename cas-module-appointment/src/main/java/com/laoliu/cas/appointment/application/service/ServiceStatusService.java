@@ -13,6 +13,8 @@ public interface ServiceStatusService {
 
     List<ServiceStatusResponse> getServiceStatusByUserId(Long userId);
 
+    List<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId);
+
     boolean auditService(Long orderId, Integer status, String reason);
 
     ServiceStatusResponse getServiceStatusByOrderId(Long orderId);

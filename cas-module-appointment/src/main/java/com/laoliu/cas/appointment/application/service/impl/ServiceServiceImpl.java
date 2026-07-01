@@ -25,6 +25,13 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
+    public List<Service> getAvailableServices() {
+        return serviceRepository.findAll().stream()
+                .filter(Service::isAvailable)
+                .toList();
+    }
+
+    @Override
     public boolean addService(ServiceAddRequest request) {
         Service service = Service.builder()
                 .serviceName(request.getServiceName())

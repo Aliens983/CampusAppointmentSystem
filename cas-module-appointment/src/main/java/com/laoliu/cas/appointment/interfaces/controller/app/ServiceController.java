@@ -13,19 +13,19 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 用户端服务查询接口。
+ * 服务查询接口（扁平路径，供前端直接调用）。
  *
  * @author forever-king
  */
 @Tag(name = "服务查询（用户）")
 @RestController
-@RequestMapping("/app/service")
+@RequestMapping("/service")
 @RequiredArgsConstructor
-public class ServiceAppController {
+public class ServiceController {
 
     private final ServiceService serviceService;
 
-    @Operation(summary = "用户端：获取可预约服务", description = "用户端查询所有启用状态的服务")
+    @Operation(summary = "获取可预约服务列表", description = "查询所有启用状态的服务")
     @GetMapping
     public CommonResult<List<Service>> getEnabledServices() {
         return CommonResult.success(serviceService.getAvailableServices());

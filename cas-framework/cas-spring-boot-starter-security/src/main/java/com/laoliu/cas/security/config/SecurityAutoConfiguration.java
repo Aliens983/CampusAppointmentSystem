@@ -43,6 +43,10 @@ public class SecurityAutoConfiguration {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/public/**",
+                                "/login",
+                                "/graphic/get",
+                                "/register/verify-code",
+                                "/email",
                                 "/error",
                                 "/doc.html",
                                 "/swagger-ui.html",

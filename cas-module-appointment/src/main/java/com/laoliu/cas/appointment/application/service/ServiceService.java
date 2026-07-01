@@ -14,6 +14,8 @@ public interface ServiceService {
 
     List<Service> getAllServices();
 
+    List<Service> getAvailableServices();
+
     boolean addService(ServiceAddRequest request);
 
     List<Service> selectUserServices(Long userId);

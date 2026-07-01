@@ -16,20 +16,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 用户端服务状态查询接口。
+ * 服务状态查询接口（扁平路径，供前端直接调用）。
  *
  * @author forever-king
  */
 @Tag(name = "服务状态（用户）")
 @RestController
-@RequestMapping("/app/service-status")
+@RequestMapping("/service-status")
 @RequiredArgsConstructor
-public class ServiceStatusAppController {
+public class ServiceStatusController {
 
     private final ServiceStatusService serviceStatusService;
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
 
-    @Operation(summary = "获取用户自己的服务状态")
+    @Operation(summary = "获取当前用户的服务预约状态", description = "获取当前登录用户的所有预约记录")
     @GetMapping("/user")
     public CommonResult<Map<String, Object>> getServiceStatusByUser() {
         try {

@@ -43,7 +43,7 @@ public class UserController {
 
     @Operation(summary = "获取当前用户信息", description = "获取当前登录用户的基本信息，包含用户名、邮箱、角色等")
     @GetMapping
-    @RequireRole(UserRoleEnum.USER)
+    @RequireRole({UserRoleEnum.USER, UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
     public CommonResult<UserResponse> getUserByParseToken() {
         try {
             Long userId = getUserIdViaTokenApi.getUserId();
@@ -113,7 +113,7 @@ public class UserController {
 
     @GetMapping("/get_all_bookings")
     @Operation(summary = "用户查看自己预约的所有服务")
-    @RequireRole(UserRoleEnum.USER)
+    @RequireRole({UserRoleEnum.USER, UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
     public CommonResult<UserInfoAndServicesViaMPRespVO> getAllBookings() {
         Long userId = getUserIdViaTokenApi.getUserId();
         return CommonResult.success(userService.getUserInfoAndBookings(userId));
