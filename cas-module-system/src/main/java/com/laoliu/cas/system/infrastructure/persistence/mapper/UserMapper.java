@@ -28,6 +28,12 @@ public interface UserMapper extends BaseMapper<UserDO> {
     @Update("UPDATE user SET password = #{password} WHERE email = #{email}")
     void updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
 
+    @Select("SELECT password FROM user WHERE id = #{id}")
+    String getEncodePasswordById(@Param("id") Long id);
+
+    @Update("UPDATE user SET password = #{password} WHERE id = #{id}")
+    void updatePasswordById(@Param("id") Long id, @Param("password") String password);
+
     @Select("SELECT role FROM user WHERE id = #{userId}")
     String getRoleByUserId(@Param("userId") Long userId);
 

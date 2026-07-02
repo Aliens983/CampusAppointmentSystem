@@ -106,6 +106,7 @@
             , reason = #{reason}
         </if>
         WHERE order_id = #{orderId}
+        AND manage_status = 0
     </update>
     <update id="setBookingStatus">
         UPDATE item

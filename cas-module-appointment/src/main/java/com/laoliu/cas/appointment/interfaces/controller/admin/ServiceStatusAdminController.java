@@ -3,6 +3,10 @@ package com.laoliu.cas.appointment.interfaces.controller.admin;
 import com.laoliu.cas.appointment.application.service.ServiceStatusService;
 import com.laoliu.cas.appointment.interfaces.dto.request.AuditRequest;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
+import com.laoliu.cas.common.annotation.RequireRole;
+import com.laoliu.cas.common.enums.ManageStatus;
+import com.laoliu.cas.common.enums.UserRoleEnum;
+import com.laoliu.cas.common.exception.code.ServiceStatusErrorCode;
 import com.laoliu.cas.common.result.CommonResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,85 +33,46 @@ public class ServiceStatusAdminController {
     @Operation(summary = "获取所有服务状态（管理员专用）", description = "管理员查看所有用户的服务预约状态列表，包含待审核、通过、拒绝、取消等状态")
     @GetMapping
     public CommonResult<Map<String, Object>> getServiceStatus() {
-        try {
-            List<ServiceStatusResponse> serviceStatusList = serviceStatusService.getServiceStatus();
-            serviceStatusList.forEach(this::setStatusDescription);
-            Map<String, Object> result = new HashMap<>();
-            result.put("serviceStatusList", serviceStatusList);
-            result.put("total", serviceStatusList.size());
-            return CommonResult.success(result);
-        } catch (Exception e) {
-            return CommonResult.internalServerError("获取服务状态失败: " + e.getMessage());
-        }
+        List<ServiceStatusResponse> serviceStatusList = serviceStatusService.getServiceStatus();
+        serviceStatusList.forEach(this::setStatusDescription);
+        Map<String, Object> result = new HashMap<>();
+        result.put("serviceStatusList", serviceStatusList);
+        result.put("total", serviceStatusList.size());
+        return CommonResult.success(result);
     }
 
-    @Operation(summary = "审核通过服务预约", description = "管理员审核通过用户的服务预约申请，状态码为1")
+    @Operation(summary = "审核通过服务预约", description = "管理员审核通过用户的服务预约申请，审核通过后发送邮件通知申请人")
     @PostMapping("/audit/pass")
+    @RequireRole({UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
     public CommonResult<Void> auditPass(@RequestBody AuditRequest auditRequest) {
-        try {
-            if (auditRequest.getStatus() == null || auditRequest.getStatus() != 1) {
-                return CommonResult.badRequest("审核状态无效");
-            }
-
-            ServiceStatusResponse serviceInfo = serviceStatusService.getServiceStatusByOrderId(auditRequest.getOrderId());
-            if (serviceInfo == null) {
-                return CommonResult.badRequest("服务预约不存在");
-            }
-
-            boolean success = serviceStatusService.auditService(auditRequest.getOrderId(), 1, null);
-            if (success) {
-                String emailContent = "您好！您的预约已通过。\n预约服务：" + serviceInfo.getServiceName()
-                        + "\n服务描述：" + serviceInfo.getServiceDescribe()
-                        + (auditRequest.getReason() == null ? "" : "\n备注：" + auditRequest.getReason());
-                serviceStatusService.sendAuditEmail(auditRequest.getOrderId(), "预约审核通过通知", emailContent);
-                return CommonResult.success("审核通过成功", null);
-            } else {
-                return CommonResult.badRequest("审核失败");
-            }
-        } catch (Exception e) {
-            return CommonResult.internalServerError("审核失败: " + e.getMessage());
+        if (auditRequest.getStatus() == null || auditRequest.getStatus() != ManageStatus.APPROVED.getCode()) {
+            return CommonResult.error(ServiceStatusErrorCode.INVALID_AUDIT_STATUS);
         }
+        serviceStatusService.auditPass(auditRequest.getOrderId(), auditRequest.getReason());
+        return CommonResult.success("审核通过成功", null);
     }
 
-    @Operation(summary = "审核不通过服务预约", description = "管理员审核拒绝用户的服务预约申请，状态码为2，需要填写拒绝原因")
+    @Operation(summary = "审核不通过服务预约", description = "管理员审核拒绝用户的服务预约申请，需要填写拒绝原因，审核驳回后发送邮件通知申请人")
     @PostMapping("/audit/reject")
+    @RequireRole({UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
     public CommonResult<Void> auditReject(@RequestBody AuditRequest auditRequest) {
-        try {
-            if (auditRequest.getStatus() == null || auditRequest.getStatus() != 2) {
-                return CommonResult.badRequest("审核状态无效");
-            }
-
-            if (auditRequest.getReason() == null || auditRequest.getReason().trim().isEmpty()) {
-                return CommonResult.badRequest("审核原因不能为空");
-            }
-
-            ServiceStatusResponse serviceInfo = serviceStatusService.getServiceStatusByOrderId(auditRequest.getOrderId());
-            if (serviceInfo == null) {
-                return CommonResult.badRequest("服务预约不存在");
-            }
-
-            boolean success = serviceStatusService.auditService(auditRequest.getOrderId(), 2, auditRequest.getReason());
-            if (success) {
-                String emailContent = "您好！您的预约未通过。\n预约服务：" + serviceInfo.getServiceName()
-                        + "\n服务描述：" + serviceInfo.getServiceDescribe()
-                        + "\n拒绝原因：" + auditRequest.getReason();
-                serviceStatusService.sendAuditEmail(auditRequest.getOrderId(), "预约审核未通过通知", emailContent);
-                return CommonResult.success("审核不通过成功", null);
-            } else {
-                return CommonResult.badRequest("审核失败");
-            }
-        } catch (Exception e) {
-            return CommonResult.internalServerError("审核失败: " + e.getMessage());
+        if (auditRequest.getStatus() == null || auditRequest.getStatus() != ManageStatus.REJECTED.getCode()) {
+            return CommonResult.error(ServiceStatusErrorCode.INVALID_AUDIT_STATUS);
         }
+        if (auditRequest.getReason() == null || auditRequest.getReason().trim().isEmpty()) {
+            return CommonResult.error(ServiceStatusErrorCode.AUDIT_REASON_REQUIRED);
+        }
+        serviceStatusService.auditReject(auditRequest.getOrderId(), auditRequest.getReason());
+        return CommonResult.success("审核驳回成功", null);
     }
 
     private void setStatusDescription(ServiceStatusResponse response) {
         if (response.getManageStatus() != null) {
             switch (response.getManageStatus()) {
-                case 0 -> response.setStatusDescription("待审核");
-                case 1 -> response.setStatusDescription("通过");
-                case 2 -> response.setStatusDescription("拒绝");
-                case 3 -> response.setStatusDescription("取消");
+                case 0 -> response.setStatusDescription(ManageStatus.SUBMIT.getMessage());
+                case 1 -> response.setStatusDescription(ManageStatus.APPROVED.getMessage());
+                case 2 -> response.setStatusDescription(ManageStatus.REJECTED.getMessage());
+                case 3 -> response.setStatusDescription(ManageStatus.CANCELLED.getMessage());
                 default -> response.setStatusDescription("未知状态");
             }
         }

@@ -22,7 +22,11 @@ public interface UserRepository {
 
     void updatePasswordByEmail(String email, String encodedPassword);
 
+    void updatePasswordById(Long userId, String encodedPassword);
+
     String getEncodePasswordByEmail(String email);
+
+    String getEncodePasswordById(Long userId);
 
     String getRoleByUserId(Long userId);
 

@@ -26,4 +26,9 @@ public interface BookService {
      * 取消预约
      */
     boolean cancelBookings(Long userId, List<Long> bookingIds);
+
+    /**
+     * 获取单个预约详情
+     */
+    BookingDTO getBookingById(Long orderId);
 }

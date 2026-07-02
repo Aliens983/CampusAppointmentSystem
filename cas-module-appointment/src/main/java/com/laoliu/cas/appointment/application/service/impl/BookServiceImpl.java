@@ -113,4 +113,13 @@ public class BookServiceImpl implements BookService {
         }
         return bookingRepository.cancelBookings(userId, bookingIds) > 0;
     }
+
+    @Override
+    public BookingDTO getBookingById(Long orderId) {
+        ServiceStatusResponse status = bookingRepository.getServiceStatusByOrderId(orderId);
+        if (status == null) {
+            return null;
+        }
+        return convertToDTO(status);
+    }
 }

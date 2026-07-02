@@ -3,6 +3,9 @@ package com.laoliu.cas.appointment.application.service.impl;
 import com.laoliu.cas.appointment.application.service.ServiceStatusService;
 import com.laoliu.cas.appointment.domain.repository.BookingRepository;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
+import com.laoliu.cas.common.enums.ManageStatus;
+import com.laoliu.cas.common.exception.BusinessException;
+import com.laoliu.cas.common.exception.code.ServiceStatusErrorCode;
 import com.laoliu.cas.infra.application.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -54,13 +57,53 @@ public class ServiceStatusServiceImpl implements ServiceStatusService {
         }
     }
 
+    @Override
+    public void auditPass(Long orderId, String reason) {
+        ServiceStatusResponse serviceInfo = getServiceStatusByOrderId(orderId);
+        if (serviceInfo == null) {
+            throw new BusinessException(ServiceStatusErrorCode.STATUS_NOT_FOUND);
+        }
+
+        boolean success = bookingRepository.auditService(orderId, ManageStatus.APPROVED.getCode(), reason);
+        if (!success) {
+            throw new BusinessException(ServiceStatusErrorCode.AUDIT_FAILED);
+        }
+
+        String emailContent = "您好！您的预约已通过。\n预约服务：" + serviceInfo.getServiceName()
+                + "\n服务描述：" + serviceInfo.getServiceDescribe()
+                + (reason == null || reason.trim().isEmpty() ? "" : "\n备注：" + reason);
+        sendAuditEmail(orderId, "预约审核通过通知", emailContent);
+    }
+
+    @Override
+    public void auditReject(Long orderId, String reason) {
+        if (reason == null || reason.trim().isEmpty()) {
+            throw new BusinessException(ServiceStatusErrorCode.AUDIT_REASON_REQUIRED);
+        }
+
+        ServiceStatusResponse serviceInfo = getServiceStatusByOrderId(orderId);
+        if (serviceInfo == null) {
+            throw new BusinessException(ServiceStatusErrorCode.STATUS_NOT_FOUND);
+        }
+
+        boolean success = bookingRepository.auditService(orderId, ManageStatus.REJECTED.getCode(), reason);
+        if (!success) {
+            throw new BusinessException(ServiceStatusErrorCode.AUDIT_FAILED);
+        }
+
+        String emailContent = "您好！您的预约未通过。\n预约服务：" + serviceInfo.getServiceName()
+                + "\n服务描述：" + serviceInfo.getServiceDescribe()
+                + "\n拒绝原因：" + reason;
+        sendAuditEmail(orderId, "预约审核未通过通知", emailContent);
+    }
+
     private void setStatusDescription(ServiceStatusResponse response) {
         if (response.getManageStatus() != null) {
             switch (response.getManageStatus()) {
-                case 0 -> response.setStatusDescription("待审核");
-                case 1 -> response.setStatusDescription("通过");
-                case 2 -> response.setStatusDescription("拒绝");
-                case 3 -> response.setStatusDescription("取消");
+                case 0 -> response.setStatusDescription(ManageStatus.SUBMIT.getMessage());
+                case 1 -> response.setStatusDescription(ManageStatus.APPROVED.getMessage());
+                case 2 -> response.setStatusDescription(ManageStatus.REJECTED.getMessage());
+                case 3 -> response.setStatusDescription(ManageStatus.CANCELLED.getMessage());
                 default -> response.setStatusDescription("未知状态");
             }
         }

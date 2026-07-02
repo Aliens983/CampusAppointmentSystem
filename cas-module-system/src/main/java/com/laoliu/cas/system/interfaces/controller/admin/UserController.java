@@ -10,6 +10,7 @@ import com.laoliu.cas.system.application.service.UserService;
 import com.laoliu.cas.system.domain.repository.UserRepository;
 import com.laoliu.cas.system.interfaces.assembler.UserAssembler;
 import com.laoliu.cas.system.interfaces.dto.request.AdminCreateUserRequest;
+import com.laoliu.cas.system.interfaces.dto.request.ChangePasswordRequest;
 import com.laoliu.cas.system.interfaces.dto.response.UserInfoAndServicesViaMPRespVO;
 import com.laoliu.cas.system.interfaces.dto.response.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -109,6 +111,34 @@ public class UserController {
         } catch (Exception e) {
             return CommonResult.internalServerError("创建用户失败：" + e.getMessage());
         }
+    }
+
+    @Operation(summary = "修改密码", description = "当前登录用户修改自己的密码，需要提供旧密码和新密码")
+    @PutMapping("/password")
+    @RequireRole({UserRoleEnum.USER, UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
+    public CommonResult<Void> changePassword(@RequestBody ChangePasswordRequest request) {
+        if (request.getOldPassword() == null || request.getOldPassword().isEmpty()) {
+            return CommonResult.badRequest("旧密码不能为空");
+        }
+        if (request.getNewPassword() == null || request.getNewPassword().isEmpty()) {
+            return CommonResult.badRequest("新密码不能为空");
+        }
+
+        Long userId = getUserIdViaTokenApi.getUserId();
+        if (userId == null) {
+            return CommonResult.unauthorized("用户未登录或登录已过期");
+        }
+
+        String storedPassword = userRepository.getEncodePasswordById(userId);
+        if (storedPassword == null) {
+            return CommonResult.notFound("用户不存在");
+        }
+        if (!PasswordUtils.matches(request.getOldPassword(), storedPassword)) {
+            return CommonResult.badRequest("旧密码不正确");
+        }
+
+        userRepository.updatePasswordById(userId, PasswordUtils.encode(request.getNewPassword()));
+        return CommonResult.success("修改密码成功", null);
     }
 
     @GetMapping("/get_all_bookings")

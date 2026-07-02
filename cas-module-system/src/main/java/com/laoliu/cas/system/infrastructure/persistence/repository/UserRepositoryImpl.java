@@ -63,8 +63,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public void updatePasswordById(Long userId, String encodedPassword) {
+        userMapper.updatePasswordById(userId, encodedPassword);
+    }
+
+    @Override
     public String getEncodePasswordByEmail(String email) {
         return userMapper.getEncodePasswordByEmail(email);
+    }
+
+    @Override
+    public String getEncodePasswordById(Long userId) {
+        return userMapper.getEncodePasswordById(userId);
     }
 
     @Override
