@@ -3,6 +3,7 @@ package com.laoliu.cas.web.config;
 import com.laoliu.cas.common.exception.BusinessException;
 import com.laoliu.cas.common.result.CommonResult;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,6 +12,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
@@ -20,6 +23,24 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @RestControllerAdvice
 @AutoConfiguration
 public class WebAutoConfiguration {
+
+    @Value("${file.upload.path:./uploads/}")
+    private String uploadPath;
+
+    @Bean
+    public WebMvcConfigurer resourceConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                String path = uploadPath;
+                if (!path.endsWith("/")) {
+                    path += "/";
+                }
+                registry.addResourceHandler("/api/files/**", "/uploads/**")
+                        .addResourceLocations("file:" + path);
+            }
+        };
+    }
 
     @Bean
     public RestTemplate restTemplate() {
@@ -61,6 +82,6 @@ public class WebAutoConfiguration {
     @ExceptionHandler(Exception.class)
     public CommonResult<?> handleException(Exception e) {
         log.error("System exception: ", e);
-        return CommonResult.internalServerError("系统内部错误: " + e.getMessage());
+        return CommonResult.internalServerError("系统内部错误");
     }
 }

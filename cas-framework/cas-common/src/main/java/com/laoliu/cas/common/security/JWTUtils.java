@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import javax.crypto.SecretKey;
 
@@ -31,24 +33,18 @@ public class JWTUtils {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
 
-        byte[] keyBytes = Base64.getDecoder().decode(secret);
-        SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
-
         return Jwts.builder()
                 .subject(String.valueOf(userId))
                 .claim("userId", userId)
                 .issuedAt(now)
                 .expiration(expiryDate)
-                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
     public String generateToken(LoginUser loginUser) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
-
-        byte[] keyBytes = Base64.getDecoder().decode(secret);
-        SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
 
         return Jwts.builder()
                 .subject(String.valueOf(loginUser.getId()))
@@ -58,17 +54,14 @@ public class JWTUtils {
                 .claim("email", loginUser.getEmail())
                 .issuedAt(now)
                 .expiration(expiryDate)
-                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
     public Claims parseToken(String token) {
         try {
-            byte[] keyBytes = Base64.getDecoder().decode(secret);
-            SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
-
             Jws<Claims> claimsJws = Jwts.parser()
-                    .setSigningKey(secretKey)
+                    .setSigningKey(getSigningKey())
                     .build().parseSignedClaims(token);
 
             return claimsJws.getPayload();
@@ -125,6 +118,17 @@ public class JWTUtils {
         } catch (Exception e) {
             log.error("Error extracting user from token: {}", e.getMessage());
             return null;
+        }
+    }
+
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            byte[] digest = md.digest(keyBytes);
+            return Keys.hmacShaKeyFor(digest);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-512 algorithm not available", e);
         }
     }
 }

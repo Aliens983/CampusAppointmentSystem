@@ -2,6 +2,7 @@ package com.laoliu.cas.system.interfaces.controller.app;
 
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.system.application.service.AuthService;
+import com.laoliu.cas.system.interfaces.dto.request.ResetPasswordRequest;
 import com.laoliu.cas.system.interfaces.dto.request.UserLoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,6 +29,13 @@ public class LoginController {
     @PostMapping
     public CommonResult<String> login(@RequestBody UserLoginRequest userLoginRequest) {
         String token = authService.login(userLoginRequest.getEmail(), userLoginRequest.getPassword());
+        return CommonResult.success(token);
+    }
+
+    @Operation(summary = "重置密码", description = "通过邮箱验证码重置密码，验证成功后返回新的JWT令牌")
+    @PostMapping("/reset")
+    public CommonResult<String> resetPassword(@RequestBody ResetPasswordRequest request) {
+        String token = authService.resetPassword(request.getEmail(), request.getCode(), request.getPassword());
         return CommonResult.success(token);
     }
 }

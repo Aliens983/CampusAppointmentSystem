@@ -38,18 +38,16 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CommonResult<?> handleException(Exception e, HttpServletRequest request) {
         log.error("全局异常处理: ", e);
-        String requestUri = request.getRequestURI();
-        log.error("请求URL: {}", requestUri);
-        return CommonResult.internalServerError("服务器内部错误: " + e.getMessage());
+        log.error("请求URL: {}", request.getRequestURI());
+        return CommonResult.internalServerError("服务器内部错误");
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CommonResult<?> handleRuntimeException(RuntimeException e, HttpServletRequest request) {
         log.error("运行时异常: ", e);
-        String requestUri = request.getRequestURI();
-        log.error("请求URL: {}", requestUri);
-        return CommonResult.internalServerError("服务器内部错误: " + e.getMessage());
+        log.error("请求URL: {}", request.getRequestURI());
+        return CommonResult.internalServerError("服务器内部错误");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
