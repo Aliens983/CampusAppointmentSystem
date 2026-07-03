@@ -2,14 +2,23 @@ package com.laoliu.cas.appointment.application.service;
 
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+
 import java.util.List;
 
 /**
+ * 服务预约状态应用服务接口
+ *
  * @author forever-king
  */
 public interface ServiceStatusService {
 
     List<ServiceStatusResponse> getServiceStatus();
+
+    /**
+     * 分页查询所有服务预约状态。
+     */
+    IPage<ServiceStatusResponse> getServiceStatus(int page, int pageSize);
 
     List<ServiceStatusResponse> getServiceStatusByUserId(Long userId);
 

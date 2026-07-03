@@ -1,6 +1,8 @@
 package com.laoliu.cas.system.infrastructure.persistence.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laoliu.cas.system.infrastructure.persistence.dataobject.UserDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -45,6 +47,12 @@ public interface UserMapper extends BaseMapper<UserDO> {
 
     @Select("SELECT * FROM user")
     List<UserDO> getAllUsers();
+
+    /**
+     * 分页查询所有用户。MyBatis-Plus 自动拦截 Page 参数添加 LIMIT/OFFSET。
+     */
+    @Select("SELECT * FROM user ORDER BY id DESC")
+    IPage<UserDO> getAllUsersWithPage(Page<UserDO> page);
 
     int insert(UserDO userDO);
 

@@ -3,6 +3,7 @@ package com.laoliu.cas.appointment.infrastructure.persistence.dataobject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.laoliu.cas.appointment.domain.entity.Service;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,14 +33,14 @@ public class ServicesDO {
     /** 服务状态（0-禁用，1-启用） */
     private Integer serviceState;
 
-    public com.laoliu.cas.appointment.domain.entity.Service toEntity() {
-        return com.laoliu.cas.appointment.domain.entity.Service.builder()
+    public Service toEntity() {
+        return Service.builder()
                 .serviceId(serviceId).serviceName(serviceName)
                 .serviceDescribe(serviceDescribe).serviceState(serviceState)
                 .build();
     }
 
-    public static ServicesDO fromEntity(com.laoliu.cas.appointment.domain.entity.Service entity) {
+    public static ServicesDO fromEntity(Service entity) {
         if (entity == null) return null;
         return ServicesDO.builder()
                 .serviceId(entity.getServiceId()).serviceName(entity.getServiceName())

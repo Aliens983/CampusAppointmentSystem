@@ -1,5 +1,6 @@
 package com.laoliu.cas.appointment.application.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.laoliu.cas.appointment.application.service.ServiceStatusService;
 import com.laoliu.cas.appointment.domain.repository.BookingRepository;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
@@ -25,6 +26,13 @@ public class ServiceStatusServiceImpl implements ServiceStatusService {
     @Override
     public List<ServiceStatusResponse> getServiceStatus() {
         return bookingRepository.getServiceStatus();
+    }
+
+    @Override
+    public IPage<ServiceStatusResponse> getServiceStatus(int page, int pageSize) {
+        IPage<ServiceStatusResponse> result = bookingRepository.getServiceStatus(page, pageSize);
+        result.getRecords().forEach(this::setStatusDescription);
+        return result;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.laoliu.cas.appointment.infrastructure.persistence.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ItemDO;
 import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
@@ -23,7 +25,17 @@ public interface ItemMapper extends BaseMapper<ItemDO> {
 
     List<ServiceStatusResponse> getServiceStatus();
 
+    /**
+     * 分页查询所有服务预约状态。
+     */
+    IPage<ServiceStatusResponse> getServiceStatusWithPage(Page<?> page);
+
     List<ServiceStatusResponse> getServiceStatusByUserId(@Param("userId") Long userId);
+
+    /**
+     * 分页查询用户的预约状态。
+     */
+    IPage<ServiceStatusResponse> getServiceStatusByUserIdWithPage(@Param("userId") Long userId, Page<?> page);
 
     int auditService(@Param("orderId") Long orderId, @Param("status") Integer status, @Param("reason") String reason);
 

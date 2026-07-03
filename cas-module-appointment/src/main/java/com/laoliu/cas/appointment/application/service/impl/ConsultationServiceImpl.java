@@ -1,8 +1,10 @@
 package com.laoliu.cas.appointment.application.service.impl;
 
 import com.laoliu.cas.appointment.application.service.ConsultationService;
+import com.laoliu.cas.appointment.domain.entity.Consultant;
 import com.laoliu.cas.appointment.domain.entity.Service;
 import com.laoliu.cas.appointment.domain.repository.ServiceRepository;
+import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ConsultantMapper;
 import com.laoliu.cas.appointment.interfaces.dto.response.ConsultantResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -10,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * 咨询查询应用服务实现
+ * 咨询查询应用服务实现 — 从数据库读取真实咨询师数据。
  *
  * @author forever-king
  */
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class ConsultationServiceImpl implements ConsultationService {
 
     private final ServiceRepository serviceRepository;
+    private final ConsultantMapper consultantMapper;
 
     private static final List<String> CONSULTATION_KEYWORDS = Arrays.asList(
             "咨询", "辅导", "指导", "心理"
@@ -34,19 +37,18 @@ public class ConsultationServiceImpl implements ConsultationService {
         return serviceRepository.findAll().stream()
                 .filter(Service::isAvailable)
                 .filter(this::isConsultation)
-                .map(this::toConsultantResponse)
+                .flatMap(service -> consultantMapper.findByServiceId(service.getServiceId()).stream())
+                .map(doObj -> toConsultantResponse(doObj.toEntity()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public ConsultantResponse getConsultantById(Long id) {
-        Service service = serviceRepository.findById(id)
-                .filter(Service::isAvailable)
-                .orElse(null);
-        if (service == null) {
+        var consultantDO = consultantMapper.selectById(id);
+        if (consultantDO == null) {
             return null;
         }
-        return toConsultantResponse(service);
+        return toConsultantResponse(consultantDO.toEntity());
     }
 
     @Override
@@ -70,18 +72,17 @@ public class ConsultationServiceImpl implements ConsultationService {
                 .anyMatch(keyword -> service.getServiceName().contains(keyword));
     }
 
-    private ConsultantResponse toConsultantResponse(Service service) {
+    private ConsultantResponse toConsultantResponse(Consultant consultant) {
         return ConsultantResponse.builder()
-                .id(service.getServiceId())
-                .name(service.getServiceName() + "老师")
-                .title("资深顾问")
-                .department("学生咨询中心")
-                .expertise(Arrays.asList("学业指导", "心理咨询"))
-                .rating(4.8)
-                .reviews(128)
-                .available(service.isAvailable())
-                .nextSlot("今日 14:30")
-                .avatar("")
+                .id(consultant.getId())
+                .name(consultant.getName())
+                .title(consultant.getTitle())
+                .department(consultant.getDepartment())
+                .expertise(Collections.singletonList(consultant.getDescription()))
+                .rating(consultant.getRating() != null ? consultant.getRating().doubleValue() : 5.0)
+                .reviews(consultant.getReviewCount() != null ? consultant.getReviewCount() : 0)
+                .available(true)
+                .avatar(consultant.getAvatarUrl() != null ? consultant.getAvatarUrl() : "")
                 .build();
     }
 }

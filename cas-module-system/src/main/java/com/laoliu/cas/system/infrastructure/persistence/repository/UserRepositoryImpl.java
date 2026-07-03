@@ -1,5 +1,7 @@
 package com.laoliu.cas.system.infrastructure.persistence.repository;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.system.domain.repository.UserRepository;
 import com.laoliu.cas.system.infrastructure.persistence.dataobject.UserDO;
@@ -102,6 +104,13 @@ public class UserRepositoryImpl implements UserRepository {
         return userMapper.getAllUsers().stream()
                 .map(UserDO::toEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public IPage<User> getAllUsers(int page, int pageSize) {
+        Page<UserDO> pageParam = new Page<>(page, pageSize);
+        IPage<UserDO> doPage = userMapper.getAllUsersWithPage(pageParam);
+        return doPage.convert(UserDO::toEntity);
     }
 
     @Override

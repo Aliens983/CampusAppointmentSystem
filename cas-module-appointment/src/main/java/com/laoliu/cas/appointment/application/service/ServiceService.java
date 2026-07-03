@@ -4,6 +4,7 @@ import com.laoliu.cas.appointment.domain.entity.Service;
 import com.laoliu.cas.appointment.interfaces.dto.request.ServiceAddRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 服务管理应用服务接口
@@ -15,6 +16,8 @@ public interface ServiceService {
     List<Service> getAllServices();
 
     List<Service> getAvailableServices();
+
+    Optional<Service> getServiceById(Long id);
 
     boolean addService(ServiceAddRequest request);
 

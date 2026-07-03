@@ -115,4 +115,27 @@
         AND order_id = #{bookingId}
     </update>
 
+    <!-- 分页查询所有服务预约状态（MyBatis-Plus 自动拦截 Page 参数添加 LIMIT） -->
+    <select id="getServiceStatusWithPage" resultMap="ServiceStatusResultMap">
+        SELECT i.order_id, i.user_id, u.name AS username,
+               s.service_name, s.service_describe, i.reason,
+               i.create_time, i.update_time, i.manage_status
+        FROM item i
+        JOIN user u ON i.user_id = u.id
+        JOIN services s ON i.service_id = s.service_id
+        ORDER BY i.create_time DESC
+    </select>
+
+    <!-- 分页查询用户的预约状态（MyBatis-Plus 自动拦截 Page 参数添加 LIMIT） -->
+    <select id="getServiceStatusByUserIdWithPage" resultMap="ServiceStatusResultMap">
+        SELECT i.order_id, i.user_id, u.name AS username,
+               s.service_name, s.service_describe, i.reason,
+               i.create_time, i.update_time, i.manage_status
+        FROM item i
+        JOIN user u ON i.user_id = u.id
+        JOIN services s ON i.service_id = s.service_id
+        WHERE i.user_id = #{userId}
+        ORDER BY i.create_time DESC
+    </select>
+
 </mapper>

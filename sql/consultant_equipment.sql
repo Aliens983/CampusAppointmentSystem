@@ -1,0 +1,46 @@
+-- 咨询师表
+CREATE TABLE IF NOT EXISTS consultant (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '咨询师ID',
+    name VARCHAR(50) NOT NULL COMMENT '咨询师姓名',
+    department VARCHAR(100) NOT NULL COMMENT '所属部门',
+    title VARCHAR(50) NOT NULL COMMENT '职称',
+    description VARCHAR(500) DEFAULT '' COMMENT '咨询师简介',
+    rating DECIMAL(2,1) DEFAULT 5.0 COMMENT '评分',
+    review_count INT DEFAULT 0 COMMENT '评价数量',
+    avatar_url VARCHAR(255) DEFAULT '' COMMENT '头像URL',
+    service_id BIGINT NOT NULL COMMENT '关联服务ID',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    INDEX idx_service_id (service_id),
+    CONSTRAINT fk_consultant_service FOREIGN KEY (service_id) REFERENCES services(service_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='咨询师信息表';
+
+-- 设备表
+CREATE TABLE IF NOT EXISTS equipment (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '设备ID',
+    name VARCHAR(100) NOT NULL COMMENT '设备名称',
+    description VARCHAR(500) DEFAULT '' COMMENT '设备描述',
+    total_stock INT NOT NULL DEFAULT 0 COMMENT '总库存',
+    available_stock INT NOT NULL DEFAULT 0 COMMENT '可用库存',
+    unit VARCHAR(20) NOT NULL DEFAULT '台' COMMENT '单位',
+    location VARCHAR(200) NOT NULL DEFAULT '' COMMENT '存放位置',
+    service_id BIGINT NOT NULL COMMENT '关联服务ID',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    INDEX idx_service_id (service_id),
+    CONSTRAINT fk_equipment_service FOREIGN KEY (service_id) REFERENCES services(service_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='设备信息表';
+
+-- 咨询师示例数据
+INSERT INTO consultant (name, department, title, description, rating, review_count, service_id) VALUES
+('张老师', '学生咨询中心', '资深心理咨询师', '从事学生心理咨询工作10年，擅长学业压力、人际关系、情绪管理等领域', 4.8, 128, 2),
+('李老师', '学生咨询中心', '高级职业规划师', '专注于大学生职业规划与就业指导，帮助学生明确职业方向', 4.9, 95, 2),
+('王老师', '学生咨询中心', '心理咨询师', '擅长青少年心理辅导、学业规划、时间管理', 4.7, 86, 2),
+('赵老师', '学业辅导中心', '高级学业导师', '擅长高等数学、线性代数等理工科课程的辅导', 4.6, 72, 3);
+
+-- 设备示例数据
+INSERT INTO equipment (name, description, total_stock, available_stock, unit, location, service_id) VALUES
+('投影仪', '高清投影仪，支持HDMI/VGA接口，适用于教学和会议', 10, 5, '台', '校园设备管理中心A区', 1),
+('笔记本电脑', 'ThinkPad T14，i7处理器，16GB内存，适合办公和编程', 20, 12, '台', '校园设备管理中心B区', 1),
+('录音笔', '专业录音笔，支持远距离录音，适合课堂记录', 30, 22, '支', '校园设备管理中心C区', 1),
+('摄像机', 'SONY 4K摄像机，适用于活动拍摄和课程录制', 8, 3, '台', '校园设备管理中心A区', 1);

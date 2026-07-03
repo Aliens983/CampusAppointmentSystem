@@ -1,5 +1,7 @@
 package com.laoliu.cas.appointment.infrastructure.persistence.repository;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laoliu.cas.appointment.domain.repository.BookingRepository;
 import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ItemMapper;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
@@ -35,8 +37,18 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
+    public IPage<ServiceStatusResponse> getServiceStatus(int page, int pageSize) {
+        return itemMapper.getServiceStatusWithPage(new Page<>(page, pageSize));
+    }
+
+    @Override
     public List<ServiceStatusResponse> getServiceStatusByUserId(Long userId) {
         return itemMapper.getServiceStatusByUserId(userId);
+    }
+
+    @Override
+    public IPage<ServiceStatusResponse> getServiceStatusByUserId(Long userId, int page, int pageSize) {
+        return itemMapper.getServiceStatusByUserIdWithPage(userId, new Page<>(page, pageSize));
     }
 
     @Override

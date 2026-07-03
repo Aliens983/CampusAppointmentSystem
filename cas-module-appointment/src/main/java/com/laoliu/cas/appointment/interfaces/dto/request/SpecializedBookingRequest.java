@@ -1,6 +1,7 @@
 package com.laoliu.cas.appointment.interfaces.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -21,15 +22,19 @@ public class SpecializedBookingRequest {
     @Schema(description = "咨询师ID")
     private String consultantId;
 
+    @NotBlank(message = "预约日期不能为空")
     @Schema(description = "预约日期")
     private String date;
 
+    @NotBlank(message = "开始时间不能为空")
     @Schema(description = "开始时间")
     private String startTime;
 
+    @NotBlank(message = "结束时间不能为空")
     @Schema(description = "结束时间")
     private String endTime;
 
+    @NotBlank(message = "用途不能为空")
     @Schema(description = "用途/主题")
     private String purpose;
 

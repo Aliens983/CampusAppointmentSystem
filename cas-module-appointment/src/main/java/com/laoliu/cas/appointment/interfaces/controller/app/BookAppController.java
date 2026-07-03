@@ -6,10 +6,12 @@ import com.laoliu.cas.appointment.interfaces.dto.response.BookingDTO;
 import com.laoliu.cas.appointment.interfaces.dto.response.BookResultResponse;
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.common.result.CommonResult;
+import com.laoliu.cas.common.result.PageResult;
 import com.laoliu.cas.system.api.dto.UserInfoDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,15 +41,29 @@ public class BookAppController {
         return CommonResult.success("预约成功", buildBookResult(userInfo, userId));
     }
 
-    @Operation(summary = "查看所有预约", description = "获取当前用户的所有预约记录")
+    @Operation(summary = "查看所有预约（分页）", description = "分页获取当前用户的所有预约记录")
     @GetMapping("/allService")
-    public CommonResult<List<BookingDTO>> getBook() {
+    public CommonResult<PageResult<BookingDTO>> getBook(
+            @Parameter(description = "页码，从1开始") @RequestParam(defaultValue = "1") int page,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") int pageSize) {
         Long userId = getUserIdViaTokenApi.getUserId();
-        List<BookingDTO> bookings = bookService.getAllBookings(userId);
-        if (bookings == null || bookings.isEmpty()) {
-            return CommonResult.notFound("暂无预约记录");
+        List<BookingDTO> allBookings = bookService.getAllBookings(userId);
+        if (allBookings == null || allBookings.isEmpty()) {
+            return CommonResult.success(PageResult.empty(pageSize, page));
         }
-        return CommonResult.success(bookings);
+        // 手动分页（已查询全量数据）
+        int total = allBookings.size();
+        int fromIndex = (int) Math.min((page - 1) * pageSize, total);
+        int toIndex = (int) Math.min(fromIndex + pageSize, total);
+        int pages = (int) Math.ceil((double) total / pageSize);
+        PageResult<BookingDTO> pageResult = PageResult.<BookingDTO>builder()
+                .records(allBookings.subList(fromIndex, toIndex))
+                .total(total)
+                .pageSize(pageSize)
+                .current(page)
+                .pages(pages)
+                .build();
+        return CommonResult.success(pageResult);
     }
 
     @Operation(summary = "取消预约", description = "取消用户已预约的服务，传入预约ID列表")
@@ -74,7 +90,7 @@ public class BookAppController {
 
     @Operation(summary = "预约会议室", description = "预约会议室服务")
     @PostMapping("/room")
-    public CommonResult<BookResultResponse> bookRoom(@RequestBody SpecializedBookingRequest request) {
+    public CommonResult<BookResultResponse> bookRoom(@Valid @RequestBody SpecializedBookingRequest request) {
         Long serviceId = request.extractServiceId();
         if (serviceId == null) {
             return CommonResult.badRequest("会议室ID不能为空");
@@ -84,7 +100,7 @@ public class BookAppController {
 
     @Operation(summary = "预约设备", description = "预约设备借用服务")
     @PostMapping("/equipment")
-    public CommonResult<BookResultResponse> bookEquipment(@RequestBody SpecializedBookingRequest request) {
+    public CommonResult<BookResultResponse> bookEquipment(@Valid @RequestBody SpecializedBookingRequest request) {
         Long serviceId = request.extractServiceId();
         if (serviceId == null) {
             return CommonResult.badRequest("设备ID不能为空");
@@ -94,7 +110,7 @@ public class BookAppController {
 
     @Operation(summary = "预约咨询", description = "预约咨询服务")
     @PostMapping("/consultation")
-    public CommonResult<BookResultResponse> bookConsultation(@RequestBody SpecializedBookingRequest request) {
+    public CommonResult<BookResultResponse> bookConsultation(@Valid @RequestBody SpecializedBookingRequest request) {
         Long serviceId = request.extractServiceId();
         if (serviceId == null) {
             return CommonResult.badRequest("咨询师ID不能为空");

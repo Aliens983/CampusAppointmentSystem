@@ -11,6 +11,7 @@ import com.laoliu.cas.common.exception.code.ServiceErrorCode;
 import com.laoliu.cas.common.result.CommonResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +45,7 @@ public class ServiceAdminController {
     @Operation(summary = "添加服务", description = "管理员添加新的服务项目，包含服务名称、描述和状态")
     @PostMapping
     @RequireRole(UserRoleEnum.ADMIN)
-    public CommonResult<Void> addService(@RequestBody ServiceAddRequest serviceAddRequest) {
+    public CommonResult<Void> addService(@Valid @RequestBody ServiceAddRequest serviceAddRequest) {
         boolean success = serviceService.addService(serviceAddRequest);
         if (success) {
             return CommonResult.success("添加服务成功", null);

@@ -1,8 +1,10 @@
 package com.laoliu.cas.appointment.application.service.impl;
 
 import com.laoliu.cas.appointment.application.service.EquipmentService;
+import com.laoliu.cas.appointment.domain.entity.Equipment;
 import com.laoliu.cas.appointment.domain.entity.Service;
 import com.laoliu.cas.appointment.domain.repository.ServiceRepository;
+import com.laoliu.cas.appointment.infrastructure.persistence.mapper.EquipmentMapper;
 import com.laoliu.cas.appointment.interfaces.dto.response.EquipmentResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 设备查询应用服务实现
+ * 设备查询应用服务实现 — 从数据库读取真实设备数据。
  *
  * @author forever-king
  */
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class EquipmentServiceImpl implements EquipmentService {
 
     private final ServiceRepository serviceRepository;
+    private final EquipmentMapper equipmentMapper;
 
     private static final List<String> EQUIPMENT_KEYWORDS = Arrays.asList(
             "设备", "投影", "相机", "仪器", "电脑", "笔记本", "打印机", "扫描仪"
@@ -34,7 +37,8 @@ public class EquipmentServiceImpl implements EquipmentService {
         return serviceRepository.findAll().stream()
                 .filter(Service::isAvailable)
                 .filter(this::isEquipment)
-                .map(this::toEquipmentResponse)
+                .flatMap(service -> equipmentMapper.findByServiceId(service.getServiceId()).stream())
+                .map(doObj -> toEquipmentResponse(doObj.toEntity()))
                 .collect(Collectors.toList());
     }
 
@@ -45,13 +49,11 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public EquipmentResponse getEquipmentById(Long id) {
-        Service service = serviceRepository.findById(id)
-                .filter(Service::isAvailable)
-                .orElse(null);
-        if (service == null) {
+        var equipmentDO = equipmentMapper.selectById(id);
+        if (equipmentDO == null) {
             return null;
         }
-        return toEquipmentResponse(service);
+        return toEquipmentResponse(equipmentDO.toEntity());
     }
 
     private boolean isEquipment(Service service) {
@@ -62,17 +64,17 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .anyMatch(keyword -> service.getServiceName().contains(keyword));
     }
 
-    private EquipmentResponse toEquipmentResponse(Service service) {
+    private EquipmentResponse toEquipmentResponse(Equipment equipment) {
         return EquipmentResponse.builder()
-                .id(service.getServiceId())
-                .name(service.getServiceName())
+                .id(equipment.getId())
+                .name(equipment.getName())
                 .category("设备资源")
-                .description(service.getServiceDescribe())
-                .stock(10)
-                .availableStock(service.isAvailable() ? 5 : 0)
-                .unit("台")
-                .priceLabel(service.isAvailable() ? "可借用" : "暂不可借")
-                .location("校园设备管理中心")
+                .description(equipment.getDescription())
+                .stock(equipment.getTotalStock())
+                .availableStock(equipment.getAvailableStock())
+                .unit(equipment.getUnit())
+                .priceLabel(equipment.isAvailable() ? "可借用" : "暂不可借")
+                .location(equipment.getLocation())
                 .image("gradient-teal")
                 .build();
     }

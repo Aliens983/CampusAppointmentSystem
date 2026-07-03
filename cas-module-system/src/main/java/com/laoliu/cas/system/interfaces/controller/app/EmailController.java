@@ -6,6 +6,7 @@ import com.laoliu.cas.system.interfaces.dto.request.EmailRequest;
 import com.laoliu.cas.system.interfaces.dto.response.EmailResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +28,7 @@ public class EmailController {
 
     @Operation(summary = "发送验证码邮件", description = "向指定邮箱发送验证码，60 秒内只能发送一次，Redis 缓存 5 分钟")
     @PostMapping
-    public CommonResult<EmailResponse> sendEmail(@RequestBody EmailRequest request) {
+    public CommonResult<EmailResponse> sendEmail(@Valid @RequestBody EmailRequest request) {
         emailVerificationService.sendVerificationCode(request.getTo());
         return CommonResult.success(EmailResponse.builder().message("邮件发送成功").build());
     }

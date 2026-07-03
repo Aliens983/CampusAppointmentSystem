@@ -6,6 +6,7 @@ import com.laoliu.cas.system.application.service.vo.UserRegisterVO;
 import com.laoliu.cas.system.interfaces.dto.request.UserRegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +28,7 @@ public class RegisterController {
 
     @Operation(summary = "验证邮箱验证码并注册", description = "用户通过邮箱验证码完成注册流程，验证成功后自动创建用户并返回用户ID")
     @PostMapping("/verify-code")
-    public CommonResult<Long> verifyEmailCode(@RequestBody UserRegisterRequest request) {
+    public CommonResult<Long> verifyEmailCode(@Valid @RequestBody UserRegisterRequest request) {
         UserRegisterVO vo = new UserRegisterVO();
         vo.setName(request.getName());
         vo.setGrade(request.getGrade());

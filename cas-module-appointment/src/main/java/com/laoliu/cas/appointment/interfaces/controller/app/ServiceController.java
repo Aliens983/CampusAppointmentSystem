@@ -2,7 +2,6 @@ package com.laoliu.cas.appointment.interfaces.controller.app;
 
 import com.laoliu.cas.appointment.application.service.ServiceService;
 import com.laoliu.cas.appointment.domain.entity.Service;
-import com.laoliu.cas.appointment.domain.repository.ServiceRepository;
 import com.laoliu.cas.common.result.CommonResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +26,6 @@ import java.util.List;
 public class ServiceController {
 
     private final ServiceService serviceService;
-    private final ServiceRepository serviceRepository;
 
     @Operation(summary = "获取可预约服务列表", description = "查询所有启用状态的服务")
     @GetMapping
@@ -38,7 +36,7 @@ public class ServiceController {
     @Operation(summary = "根据ID获取服务详情", description = "获取单个服务的详细信息")
     @GetMapping("/{id}")
     public CommonResult<Service> getServiceById(@PathVariable Long id) {
-        return serviceRepository.findById(id)
+        return serviceService.getServiceById(id)
                 .map(CommonResult::success)
                 .orElse(CommonResult.notFound("服务不存在"));
     }

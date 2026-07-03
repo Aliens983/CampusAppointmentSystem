@@ -1,55 +1,60 @@
-# AGENTS.md - cas-module-infra
+# AGENTS.md — cas-module-infra
 
-## OVERVIEW
+Infrastructure module: file upload (local), QR code generation, email sending. Serves as the technical foundation for business modules.
 
-cas-module-infra 是基础设施模块，采用 DDD 四层架构，为业务模块提供通用基础设施服务，包括文件服务、代码生成等。
-
-## STRUCTURE
+## Complete File List
 
 ```
-cas-module-infra/
-├── src/main/java/com/laoliu/cas/infra/
-│   ├── interfaces/              # 接口层
-│   │   ├── controller/         # REST控制器
-│   │   └── dto/                # 数据传输对象
-│   │
-│   ├── application/            # 应用层
-│   │   └── service/            # 应用服务
-│   │
-│   ├── domain/                 # 领域层
-│   │   ├── entity/             # 实体
-│   │   └── repository/         # 仓储接口
-│   │
-│   ├── infrastructure/         # 基础设施层
-│   │   ├── persistence/        # 持久化
-│   │   └── external/           # 外部服务
-│   │
-│   └── api/                    # 跨模块API
-│
-└── src/main/resources/
+com.laoliu.cas.infra
+├── interfaces/
+│   ├── controller/admin/
+│   │   ├── FileAdminController.java   ← POST /admin/file/upload
+│   │   └── OSSAdminController.java    ← POST /admin/oss/upload
+│   └── dto/
+│       └── FileUploadReqVO.java       ← ONLY DTO with @NotNull Bean Validation
+├── application/service/
+│   ├── EmailService.java              ← sendEmail(to, subject, content) — @Async
+│   ├── FileService.java               ← uploadFile(MultipartFile) / uploadFile(File)
+│   ├── QRCodeService.java             ← generateQRCode(text) → OSS URL
+│   └── impl/
+│       ├── EmailServiceImpl.java      ← JavaMailSender, reads from spring.mail.username
+│       ├── FileServiceImpl.java       ← saves to ./uploads/, UUID rename, returns URL
+│       └── QRCodeServiceImpl.java     ← Hutool QrCodeUtil → BufferedImage → byte[] → OSS
 ```
 
-## KEY COMPONENTS
+## Service Details
 
-| 类名 | 层级 | 职责 |
-|------|------|------|
-| FileController | interfaces | 文件上传REST接口 |
-| FileService | application | 文件服务接口 |
-| FileServiceImpl | application | 文件服务实现 |
+### EmailService
+- Interface: `sendEmail(String to, String subject, String content)`
+- Implementation: `@Async`, `SimpleMailMessage`, reads sender from `spring.mail.username` property
+- Error handling: catches exception → logs → throws `BusinessException(CommonErrorCode.EMAIL_SEND_FAILED)`
+- SMTP: 163.com, SSL port 465
 
-## DEPENDENCIES
+### FileService
+- Local filesystem storage at `file.upload.dir` (default `./uploads/`)
+- UUID-based renaming: `UUID.randomUUID().toString() + extension`
+- Returns URL: `file.upload.url-prefix` + filename
+- Two overloads: one takes `MultipartFile`, one takes `File` (used by CaptchaService)
+- Handles extension extraction from original filename
 
-- 依赖: cas-framework (技术底座)
-- 不依赖: cas-module-system, cas-module-appointment (业务模块)
+### QRCodeService
+- Generates QR code image via Hutool `QrCodeUtil.generate()`
+- Converts `BufferedImage` → PNG `byte[]`
+- Wraps in custom `ByteArrayMultipartFile` (inline class implementing `MultipartFile`)
+- Uploads to OSS via `OSSService.uploadFile()` from cas-thirdparty
+- **Dependency concern**: QR generation will fail if OSS is not configured
 
-## CONVENTIONS
+## Known Issues
+1. **No file type/size validation** — any file type accepted
+2. **No download endpoint** — only upload, no streaming/download
+3. **QR code depends on OSS** — tightly coupled to Aliyun OSS
+4. **No infra-level domain entities or repositories** — simpler than business modules
 
-1. 基础设施模块不依赖任何业务模块
-2. 采用依赖倒置：领域层定义仓储接口，基础设施层实现
-3. 应用层编排领域对象，不包含业务规则
+## Dependencies
+- Depends: `cas-framework`, `cas-thirdparty` (for OSS in QRCodeService)
+- Does NOT depend: `cas-module-system`, `cas-module-appointment`
 
-## ANTI-PATTERNS
-
-- 禁止在 infra 模块中引入业务相关的类
-- 禁止在基础设施层直接调用业务模块的接口
-- 禁止在领域层依赖 Spring 框架注解
+## Cross-Module APIs Provided
+- `EmailService` → used by system (AuthService, EmailVerificationService) and appointment (ServiceStatusService)
+- `FileService` → used by system (CaptchaService)
+- `QRCodeService` → not currently consumed by other modules

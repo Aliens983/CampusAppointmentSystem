@@ -2,7 +2,10 @@ package com.laoliu.cas.system.domain.repository;
 
 import com.laoliu.cas.system.domain.entity.User;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,5 +41,14 @@ public interface UserRepository {
 
     List<User> getAllUsers();
 
-    List<java.util.Map<String, Object>> getAllBookings(Long userId);
+    /**
+     * 分页查询所有用户。
+     *
+     * @param page     页码，从 1 开始
+     * @param pageSize 每页大小
+     * @return MyBatis-Plus IPage 分页对象
+     */
+    IPage<User> getAllUsers(int page, int pageSize);
+
+    List<Map<String, Object>> getAllBookings(Long userId);
 }

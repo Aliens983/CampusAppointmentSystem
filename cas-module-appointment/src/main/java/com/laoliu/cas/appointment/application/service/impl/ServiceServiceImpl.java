@@ -7,6 +7,7 @@ import com.laoliu.cas.appointment.interfaces.dto.request.ServiceAddRequest;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 服务管理应用服务实现
@@ -29,6 +30,11 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceRepository.findAll().stream()
                 .filter(Service::isAvailable)
                 .toList();
+    }
+
+    @Override
+    public Optional<Service> getServiceById(Long id) {
+        return serviceRepository.findById(id);
     }
 
     @Override

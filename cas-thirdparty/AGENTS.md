@@ -1,32 +1,87 @@
-# AGENTS.md - cas-thirdparty-aliyun
+# AGENTS.md — cas-thirdparty
 
-## OVERVIEW
+Third-party integration module: AI chat (Qwen/DeepSeek), weather API, Aliyun OSS, Aliyun SMS. Isolates external service calls from business logic.
 
-cas-thirdparty-aliyun 是第三方集成模块，隔离阿里云等第三方系统接口调用。
-
-## STRUCTURE
+## Complete File List
 
 ```
-cas-thirdparty-aliyun/
-├── src/main/java/com/laoliu/cas/thirdparty/aliyun/
-│   ├── service/      # 服务接口和实现
-│   └── config/       # 配置类
+com.laoliu.cas.thirdparty
+├── config/
+│   ├── AliyunConfig.java              ← SMS Client bean (Dysmsapi)
+│   ├── DeepSeekConfig.java            ← DEAD CODE — never used
+│   └── QwenConfig.java                ← WebClient bean for DashScope API
+├── controller/
+│   ├── CallTheModelController.java     ← POST /callTheLargeModel (public, no auth)
+│   └── WeatherController.java          ← GET /weather
+├── dto/
+│   ├── ChatReqVO.java                  ← model, message fields
+│   ├── ChatRespVO.java                 ← aiResponse, responseTimeMs fields
+│   └── WeatherResponse.java            ← city, temp, weather, wind etc.
+├── service/
+│   ├── CallModelService.java / impl/CallModelServiceImpl.java
+│   │   → WebClient → Qwen DashScope API → parse JSON → persist AiChatHistory
+│   ├── OSSService.java / impl/OSSServiceImpl.java
+│   │   → Aliyun OSS SDK → upload MultipartFile → return URL
+│   ├── SmsService.java / impl/SmsServiceImpl.java
+│   │   → Aliyun Dysmsapi Client → sendSms(templateCode, phone, params)
+│   └── WeatherApi.java / impl/WeatherApiImpl.java
+│       → RestTemplate → cn.apihz.cn API → return WeatherResponse
+├── domain/
+│   ├── entity/AiChatHistory.java       ← ANEMIC entity
+│   └── repository/AiChatHistoryRepository.java
+└── infrastructure/persistence/
+    ├── dataobject/AiChatHistoryDO.java
+    ├── mapper/AiChatHistoryMapper.java
+    └── repository/AiChatHistoryRepositoryImpl.java
 ```
 
-## KEY COMPONENTS
+## Service Details
 
-| 类名 | 职责 |
-|------|------|
-| SmsService | 短信服务接口 |
-| SmsServiceImpl | 短信服务实现（阿里云SMS） |
+### CallModelService (AI Chat)
+- Calls Qwen DashScope API via `WebClient` (blocking mode: `.block()`)
+- Constructs messages array: system prompt + user message
+- Response parsing: `ObjectMapper` → extract `output.text`
+- Persists chat history to `ai_chat_history` table (userId, model, userMessage, aiResponse, responseTimeMs)
+- **Note**: Chat history is persisted but never exposed via any query API
+- **DeepSeekConfig** exists but no service implementation uses it — dead code
 
-## DEPENDENCIES
+### WeatherApi
+- Calls `cn.apihz.cn` weather API via `RestTemplate.getForObject()`
+- API key/ID configured in `application.yml`
+- Builds query string manually, validates response code=200
+- Returns `WeatherResponse` DTO
 
-- 依赖: cas-common (保持轻量)
-- 不依赖: 任何业务模块
+### OSSService
+- Uploads files to Aliyun OSS
+- Config: `aliyun.oss.*` properties (endpoint, accessKeyId, accessKeySecret, bucketName)
+- **Credentials are placeholder values** (`your-access-key-id`) — not actually usable
+- Returns `https://{bucket}.{endpoint}/{filename}`
+- Proper `finally` block to shutdown `OSSClient`
+- **Note**: `OSSConfig.java` is a `@ConfigurationProperties` class but never injected — `OSSServiceImpl` reads `@Value` directly
 
-## CONVENTIONS
+### SmsService
+- Wraps Aliyun Dysmsapi `sendSms()`
+- Uses auto-configured `Client` bean from `AliyunConfig`
+- Very thin wrapper — single API call
 
-1. 第三方模块保持轻量，只依赖 common
-2. 通过接口暴露服务，便于后续替换实现
-3. 配置通过 @Value 注解读取
+## Known Issues
+1. **DeepSeekConfig is dead code** — never injected or called
+2. **OSS credentials are placeholders** — `your-access-key-id` values
+3. **OSSConfig not used** — `@ConfigurationProperties` class exists but `@Value` used instead
+4. **AiChatHistory no read API** — data persisted but no endpoint to query history
+5. **WebClient blocking** — `CallModelServiceImpl` uses `.block()` instead of reactive
+6. **SMS never called** — no business flow triggers SMS sending
+
+## Dependencies
+- Depends: `cas-common` only (plus SDK jars: aliyun-oss, aliyun-dysmsapi)
+- Does NOT depend: any business module or infra module
+- **Note**: Actually depends on `cas-spring-boot-starter-mybatis` at runtime for AiChatHistory persistence — this is a dependency direction concern
+
+## Mapper XML
+- `AiChatHistoryMapper.xml` — INSERT chat history
+
+## Cross-Module APIs Provided
+- `OSSService` → used by infra (QRCodeServiceImpl, OSSAdminController)
+- `SmsService` → not currently consumed
+- `WeatherApi` → consumed by WeatherController
+- `CallModelService` → consumed by CallTheModelController

@@ -1,10 +1,12 @@
 package com.laoliu.cas.system.interfaces.controller.admin;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.laoliu.cas.common.annotation.RequireRole;
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.common.enums.UserRoleEnum;
 import com.laoliu.cas.common.result.CommonResult;
+import com.laoliu.cas.common.result.PageResult;
 import com.laoliu.cas.common.util.PasswordUtils;
 import com.laoliu.cas.system.application.service.UserService;
 import com.laoliu.cas.system.domain.repository.UserRepository;
@@ -14,8 +16,11 @@ import com.laoliu.cas.system.interfaces.dto.request.ChangePasswordRequest;
 import com.laoliu.cas.system.interfaces.dto.response.UserInfoAndServicesViaMPRespVO;
 import com.laoliu.cas.system.interfaces.dto.response.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -63,35 +69,38 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "获取所有用户列表", description = "管理员获取系统中所有用户的信息列表")
+    @Operation(summary = "获取所有用户列表（分页）", description = "管理员分页获取系统中所有用户的信息列表")
     @GetMapping("/all_users")
     @RequireRole(UserRoleEnum.ADMIN)
-    public CommonResult<List<UserResponse>> getAllUsers() {
+    public CommonResult<PageResult<UserResponse>> getAllUsers(
+            @Parameter(description = "页码，从1开始", example = "1")
+            @RequestParam(defaultValue = "1") int page,
+            @Parameter(description = "每页大小", example = "10")
+            @RequestParam(defaultValue = "10") int pageSize) {
         try {
-            List<User> allUsers = userRepository.getAllUsers();
-            List<UserResponse> responses = userAssembler.convertToUserResponseList(allUsers);
-            return CommonResult.success(responses);
+            IPage<User> userPage = userRepository.getAllUsers(page, pageSize);
+            List<UserResponse> responses = userPage.getRecords().stream()
+                    .map(userAssembler::convertToUserResponse)
+                    .collect(Collectors.toList());
+            PageResult<UserResponse> pageResult = PageResult.<UserResponse>builder()
+                    .records(responses)
+                    .total(userPage.getTotal())
+                    .pageSize(userPage.getSize())
+                    .current(userPage.getCurrent())
+                    .pages(userPage.getPages())
+                    .build();
+            return CommonResult.success(pageResult);
         } catch (Exception e) {
             log.error("获取所有用户失败", e);
             return CommonResult.internalServerError("获取所有用户失败：" + e.getMessage());
         }
     }
 
-    @Operation(summary = "创建新用户", description = "超级管理员创建新用户，需要提供用户名、邮箱、密码等基本信息")
+    @Operation(summary = "创建新用户", description = "超级管理员创建新用户，需要提供用户名、邮箱、密码等基本信息，参数校验由 Bean Validation 自动完成")
     @PostMapping("/create")
     @RequireRole(UserRoleEnum.SUPER_ADMIN)
-    public CommonResult<String> createUser(@RequestBody AdminCreateUserRequest request) {
+    public CommonResult<String> createUser(@Valid @RequestBody AdminCreateUserRequest request) {
         try {
-            if (request.getName() == null || request.getName().isEmpty()) {
-                return CommonResult.badRequest("用户名不能为空");
-            }
-            if (request.getEmail() == null || request.getEmail().isEmpty()) {
-                return CommonResult.badRequest("邮箱不能为空");
-            }
-            if (request.getPassword() == null || request.getPassword().isEmpty()) {
-                return CommonResult.badRequest("密码不能为空");
-            }
-
             Long existUserId = userRepository.getUserIdByEmail(request.getEmail());
             if (existUserId != null) {
                 return CommonResult.badRequest("该邮箱已被注册");
@@ -113,17 +122,10 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "修改密码", description = "当前登录用户修改自己的密码，需要提供旧密码和新密码")
+    @Operation(summary = "修改密码", description = "当前登录用户修改自己的密码，需要提供旧密码和新密码，参数校验由 Bean Validation 自动完成")
     @PutMapping("/password")
     @RequireRole({UserRoleEnum.USER, UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
-    public CommonResult<Void> changePassword(@RequestBody ChangePasswordRequest request) {
-        if (request.getOldPassword() == null || request.getOldPassword().isEmpty()) {
-            return CommonResult.badRequest("旧密码不能为空");
-        }
-        if (request.getNewPassword() == null || request.getNewPassword().isEmpty()) {
-            return CommonResult.badRequest("新密码不能为空");
-        }
-
+    public CommonResult<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         Long userId = getUserIdViaTokenApi.getUserId();
         if (userId == null) {
             return CommonResult.unauthorized("用户未登录或登录已过期");

@@ -1,39 +1,100 @@
-# AGENTS.md - cas-server
+# AGENTS.md — cas-server
 
-## OVERVIEW
+Application entry point. Aggregates all module dependencies, holds `application.yml`, and configures component scanning. Contains **ZERO business code**.
 
-cas-server 是应用启动入口模块，聚合所有业务模块的依赖，配置应用启动参数。
-
-## STRUCTURE
+## File List
 
 ```
 cas-server/
-├── src/main/java/com/laoliu/cas/server/
-│   └── CampusAppointmentApplication.java  # 启动类
-├── src/main/resources/
-│   └── application.yml                   # 配置文件
-└── pom.xml                              # 聚合依赖
+├── pom.xml                                          ← depends on ALL modules
+└── src/main/
+    ├── java/com/laoliu/cas/server/
+    │   └── CampusAppointmentApplication.java         ← @SpringBootApplication
+    └── resources/
+        ├── application.yml                           ← REAL CREDENTIALS — treat as secrets
+        └── application.yml.example                   ← template without real values
 ```
 
-## KEY COMPONENTS
+## CampusAppointmentApplication.java
 
-| 类名 | 职责 |
-|------|------|
-| CampusAppointmentApplication | Spring Boot启动类 |
+```java
+@SpringBootApplication
+@MapperScan("com.laoliu.cas.**.mapper")      // scans all modules' mappers
+@ComponentScan("com.laoliu.cas")              // scans all modules' components
+public class CampusAppointmentApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(CampusAppointmentApplication.class, args);
+    }
+}
+```
 
-## DEPENDENCIES
+**Key points:**
+- `@MapperScan` with wildcard `com.laoliu.cas.**.mapper` → picks up all MyBatis mappers from all modules automatically
+- `@ComponentScan("com.laoliu.cas")` → picks up all `@Service`/`@Component`/`@Repository`/`@Controller` from all modules
+- New packages under `com.laoliu.cas` are picked up WITHOUT any config change
 
-- 依赖: 所有业务模块（system, infra, appointment, thirdparty-aliyun）
-- 依赖: 所有框架模块（framework starters）
+## application.yml Configuration
 
-## CONVENTIONS
+### Server
+- Port: **18080** (not 8080)
 
-1. 使用 @MapperScan 扫描所有 Mapper 接口
-2. 配置文件统一管理在 resources 目录
-3. 不编写业务代码，只做依赖聚合和配置
+### Database
+- MySQL: `jdbc:mysql://localhost:3306/cas_db`
+- User: `root`
+- MyBatis-Plus: `map-underscore-to-camel-case: true`, SQL stdout logging (StdOutImpl)
+
+### Redis
+- Host: `localhost:6379`, database 0
+
+### Mail (163.com SMTP)
+- Host: `smtp.163.com`, port 465, SSL
+- Username: `dmregy@163.com` (real credential)
+
+### JWT
+- Base64-encoded secret
+- Expiration: 86400000 ms (24 hours)
+
+### File Upload
+- Directory: `./uploads/`
+- URL prefix: `/api/files/`
+- Server address: `http://localhost:18080`
+
+### Email Verification
+- Code expiration: 300 seconds (5 min)
+- Send frequency limit: 60 seconds
+
+### External APIs
+- Weather: cn.apihz.cn (real API key/ID in config)
+- Aliyun OSS: placeholder credentials (`your-access-key-id`)
+- Aliyun SMS: real credentials in config
+- AI (Qwen): DashScope API
+
+### Actuator
+- Exposed: `health`, `info` only
+- Show details: `when_authorized`
+
+### Knife4j / Swagger
+- Access: `http://localhost:18080/doc.html`
+- Permit-all paths for swagger resources
+
+### Logging
+- `com.laoliu: debug`
+- MyBatis SQL logging via `StdOutImpl` (should be dev-profile only)
+
+## Dependency Aggregation
+
+cas-server's pom.xml depends on:
+- `cas-module-system`
+- `cas-module-appointment`
+- `cas-module-infra`
+- `cas-thirdparty`
+- All `cas-spring-boot-starter-*` modules
+- `spring-boot-starter-actuator`
+- `knife4j-openapi3-jakarta-spring-boot-starter`
+- `mysql-connector-j` (runtime)
 
 ## ANTI-PATTERNS
 
-- 禁止在 server 模块编写业务逻辑
-- 禁止在 server 模块创建新的 domain entity
-- 所有配置必须在 application.yml 中声明
+- ❌ **NO business code** — no services, no entities, no controllers in this module
+- ❌ **NO domain entities** — entities belong in their business modules
+- ❌ **NO new credentials in application.yml** — use env vars, add to `.example` instead

@@ -3,6 +3,7 @@ package com.laoliu.cas.thirdparty.infrastructure.persistence.dataobject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.laoliu.cas.thirdparty.domain.entity.AiChatHistory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,15 +47,15 @@ public class AiChatHistoryDO {
     /** 更新时间 */
     private LocalDateTime updatedAt;
 
-    public com.laoliu.cas.thirdparty.domain.entity.AiChatHistory toEntity() {
-        return com.laoliu.cas.thirdparty.domain.entity.AiChatHistory.builder()
+    public AiChatHistory toEntity() {
+        return AiChatHistory.builder()
                 .id(id).userId(userId).model(model).userMessage(userMessage)
                 .aiResponse(aiResponse).responseTimeMs(responseTimeMs)
                 .createdAt(createdAt).updatedAt(updatedAt)
                 .build();
     }
 
-    public static AiChatHistoryDO fromEntity(com.laoliu.cas.thirdparty.domain.entity.AiChatHistory entity) {
+    public static AiChatHistoryDO fromEntity(AiChatHistory entity) {
         if (entity == null) return null;
         return AiChatHistoryDO.builder()
                 .id(entity.getId()).userId(entity.getUserId()).model(entity.getModel())
