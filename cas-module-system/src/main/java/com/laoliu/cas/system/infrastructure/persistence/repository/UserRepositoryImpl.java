@@ -117,4 +117,10 @@ public class UserRepositoryImpl implements UserRepository {
     public List<Map<String, Object>> getAllBookings(Long userId) {
         return userMapper.getAllBookings(userId);
     }
+
+    @Override
+    public IPage<Map<String, Object>> getAllBookings(Long userId, int page, int pageSize) {
+        Page<Map<String, Object>> pageParam = new Page<>(page, pageSize);
+        return userMapper.getAllBookingsWithPage(userId, pageParam);
+    }
 }

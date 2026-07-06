@@ -1,5 +1,6 @@
 package com.laoliu.cas.appointment.domain.repository;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.laoliu.cas.appointment.domain.entity.Service;
 import java.util.List;
 import java.util.Optional;
@@ -23,9 +24,19 @@ public interface ServiceRepository {
     List<Service> findAll();
 
     /**
+     * 分页查找所有服务。
+     */
+    IPage<Service> findAll(int page, int pageSize);
+
+    /**
      * 根据创建者 ID 查找服务
      */
     List<Service> findByUserId(Long userId);
+
+    /**
+     * 分页查找用户的服务。
+     */
+    IPage<Service> findByUserId(Long userId, int page, int pageSize);
 
     /**
      * 保存服务（新增或更新）

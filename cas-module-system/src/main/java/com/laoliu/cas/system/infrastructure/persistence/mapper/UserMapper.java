@@ -39,10 +39,10 @@ public interface UserMapper extends BaseMapper<UserDO> {
     @Select("SELECT role FROM user WHERE id = #{userId}")
     String getRoleByUserId(@Param("userId") Long userId);
 
-    @Update("UPDATE user SET role = 1 WHERE id = #{userId}")
+    @Update("UPDATE user SET role = 0 WHERE id = #{userId}")
     void updateRoleToCommonUser(@Param("userId") Long userId);
 
-    @Update("UPDATE user SET role = 0 WHERE id = #{userId}")
+    @Update("UPDATE user SET role = 1 WHERE id = #{userId}")
     void updateRoleToAdmin(@Param("userId") Long userId);
 
     @Select("SELECT * FROM user")
@@ -62,4 +62,15 @@ public interface UserMapper extends BaseMapper<UserDO> {
             "JOIN services s ON i.service_id = s.service_id " +
             "WHERE i.user_id = #{userId}")
     List<Map<String, Object>> getAllBookings(@Param("userId") Long userId);
+
+    /**
+     * 分页查询用户的预约记录。
+     */
+    @Select("SELECT s.service_name AS serviceName, s.service_describe AS serviceDescribe, " +
+            "i.create_time AS createTime, i.manage_status AS manageStatus " +
+            "FROM item i " +
+            "JOIN services s ON i.service_id = s.service_id " +
+            "WHERE i.user_id = #{userId} " +
+            "ORDER BY i.create_time DESC")
+    IPage<Map<String, Object>> getAllBookingsWithPage(@Param("userId") Long userId, Page<?> page);
 }

@@ -5,7 +5,7 @@ import com.laoliu.cas.appointment.domain.repository.BookingRepository;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 import com.laoliu.cas.common.enums.ManageStatus;
 import com.laoliu.cas.common.exception.BusinessException;
-import com.laoliu.cas.common.exception.code.ServiceStatusErrorCode;
+import com.laoliu.cas.common.exception.code.BookErrorCode;
 import com.laoliu.cas.infra.application.service.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -98,7 +98,7 @@ class ServiceStatusServiceImplTest {
             // When & Then
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> serviceStatusService.auditPass(INVALID_ORDER_ID, null));
-            assertEquals(ServiceStatusErrorCode.STATUS_NOT_FOUND.getCode(), exception.getCode());
+            assertEquals(BookErrorCode.STATUS_NOT_FOUND.getCode(), exception.getCode());
             verify(bookingRepository, never()).auditService(anyLong(), anyInt(), any());
         }
 
@@ -113,7 +113,7 @@ class ServiceStatusServiceImplTest {
             // When & Then
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> serviceStatusService.auditPass(VALID_ORDER_ID, null));
-            assertEquals(ServiceStatusErrorCode.AUDIT_FAILED.getCode(), exception.getCode());
+            assertEquals(BookErrorCode.AUDIT_FAILED.getCode(), exception.getCode());
             verify(emailService, never()).sendEmail(anyString(), anyString(), anyString());
         }
     }
@@ -149,7 +149,7 @@ class ServiceStatusServiceImplTest {
             // When & Then
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> serviceStatusService.auditReject(VALID_ORDER_ID, null));
-            assertEquals(ServiceStatusErrorCode.AUDIT_REASON_REQUIRED.getCode(), exception.getCode());
+            assertEquals(BookErrorCode.AUDIT_REASON_REQUIRED.getCode(), exception.getCode());
             verify(bookingRepository, never()).auditService(anyLong(), anyInt(), any());
         }
 
@@ -159,7 +159,7 @@ class ServiceStatusServiceImplTest {
             // When & Then
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> serviceStatusService.auditReject(VALID_ORDER_ID, ""));
-            assertEquals(ServiceStatusErrorCode.AUDIT_REASON_REQUIRED.getCode(), exception.getCode());
+            assertEquals(BookErrorCode.AUDIT_REASON_REQUIRED.getCode(), exception.getCode());
         }
 
         @Test
@@ -168,7 +168,7 @@ class ServiceStatusServiceImplTest {
             // When & Then
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> serviceStatusService.auditReject(VALID_ORDER_ID, "   "));
-            assertEquals(ServiceStatusErrorCode.AUDIT_REASON_REQUIRED.getCode(), exception.getCode());
+            assertEquals(BookErrorCode.AUDIT_REASON_REQUIRED.getCode(), exception.getCode());
         }
 
         @Test
@@ -180,7 +180,7 @@ class ServiceStatusServiceImplTest {
             // When & Then
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> serviceStatusService.auditReject(INVALID_ORDER_ID, "有原因但订单不存在"));
-            assertEquals(ServiceStatusErrorCode.STATUS_NOT_FOUND.getCode(), exception.getCode());
+            assertEquals(BookErrorCode.STATUS_NOT_FOUND.getCode(), exception.getCode());
             verify(bookingRepository, never()).auditService(anyLong(), anyInt(), any());
         }
     }

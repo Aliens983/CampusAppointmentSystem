@@ -7,6 +7,7 @@ import com.laoliu.cas.thirdparty.interfaces.dto.response.WeatherResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -33,6 +34,7 @@ public class WeatherApiImpl implements WeatherApi {
     private String apiKey;
 
     @Override
+    @Cacheable(value = "weather", key = "#sheng + ':' + #place")
     public WeatherResponse getWeather(String sheng, String place) {
         try {
             log.info("调用天气API - 省份: {}, 城市: {}", sheng, place);

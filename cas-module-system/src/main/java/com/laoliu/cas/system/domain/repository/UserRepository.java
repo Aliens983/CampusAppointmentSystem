@@ -51,4 +51,9 @@ public interface UserRepository {
     IPage<User> getAllUsers(int page, int pageSize);
 
     List<Map<String, Object>> getAllBookings(Long userId);
+
+    /**
+     * 分页查询用户的预约记录。
+     */
+    IPage<Map<String, Object>> getAllBookings(Long userId, int page, int pageSize);
 }

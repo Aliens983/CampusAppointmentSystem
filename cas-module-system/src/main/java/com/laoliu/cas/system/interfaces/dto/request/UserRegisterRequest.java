@@ -2,6 +2,7 @@ package com.laoliu.cas.system.interfaces.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +33,9 @@ public class UserRegisterRequest {
     @Min(value = 1, message = "年龄必须大于0")
     private Integer age;
 
-    @Schema(description = "角色", example = "1")
+    @Min(value = 0, message = "角色值必须为0/1/2")
+    @Max(value = 2, message = "角色值必须为0/1/2")
+    @Schema(description = "角色（0=普通用户, 1=管理员, 2=超级管理员）", example = "1")
     private Integer role;
 
     @NotBlank(message = "邮箱不能为空")

@@ -144,10 +144,15 @@ public class UserController {
     }
 
     @GetMapping("/get_all_bookings")
-    @Operation(summary = "用户查看自己预约的所有服务")
+    @Operation(summary = "用户查看自己预约的所有服务（分页）")
     @RequireRole({UserRoleEnum.USER, UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
-    public CommonResult<UserInfoAndServicesViaMPRespVO> getAllBookings() {
+    public CommonResult<UserInfoAndServicesViaMPRespVO> getAllBookings(
+            @Parameter(description = "页码，从1开始") @RequestParam(defaultValue = "1") int page,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") int pageSize) {
         Long userId = getUserIdViaTokenApi.getUserId();
-        return CommonResult.success(userService.getUserInfoAndBookings(userId));
+        UserInfoAndServicesViaMPRespVO respVO = new UserInfoAndServicesViaMPRespVO();
+        respVO.setUser(userRepository.findById(userId).orElse(null));
+        respVO.setBookings(userService.getUserBookings(userId, page, pageSize).getRecords());
+        return CommonResult.success(respVO);
     }
 }

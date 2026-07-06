@@ -1,5 +1,7 @@
 package com.laoliu.cas.appointment.infrastructure.persistence.repository;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laoliu.cas.appointment.domain.entity.Service;
 import com.laoliu.cas.appointment.domain.repository.ServiceRepository;
 import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
@@ -36,10 +38,24 @@ public class ServiceRepositoryImpl implements ServiceRepository {
     }
 
     @Override
+    public IPage<Service> findAll(int page, int pageSize) {
+        Page<ServicesDO> pageParam = new Page<>(page, pageSize);
+        IPage<ServicesDO> doPage = serviceMapper.selectAllWithPage(pageParam);
+        return doPage.convert(ServicesDO::toEntity);
+    }
+
+    @Override
     public List<Service> findByUserId(Long userId) {
         return serviceMapper.selectUserServices(userId).stream()
                 .map(ServicesDO::toEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public IPage<Service> findByUserId(Long userId, int page, int pageSize) {
+        Page<ServicesDO> pageParam = new Page<>(page, pageSize);
+        IPage<ServicesDO> doPage = serviceMapper.selectUserServicesWithPage(userId, pageParam);
+        return doPage.convert(ServicesDO::toEntity);
     }
 
     @Override

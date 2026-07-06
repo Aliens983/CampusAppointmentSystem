@@ -7,6 +7,7 @@ import com.laoliu.cas.appointment.domain.repository.ServiceRepository;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 import com.laoliu.cas.common.exception.BusinessException;
 import com.laoliu.cas.common.exception.code.BookErrorCode;
+import com.laoliu.cas.common.exception.code.ServiceErrorCode;
 import com.laoliu.cas.system.api.UserInfoApi;
 import com.laoliu.cas.system.api.dto.UserInfoDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,7 +89,7 @@ class BookServiceImplTest {
             // When & Then
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> bookService.bookService(USER_ID, Collections.emptyList()));
-            assertEquals(BookErrorCode.SERVICE_ID_EMPTY.getCode(), exception.getCode());
+            assertEquals(ServiceErrorCode.SERVICE_ID_EMPTY.getCode(), exception.getCode());
             verify(bookingRepository, never()).insertServices(anyLong(), anyList());
         }
 
@@ -98,7 +99,7 @@ class BookServiceImplTest {
             // When & Then
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> bookService.bookService(USER_ID, null));
-            assertEquals(BookErrorCode.SERVICE_ID_EMPTY.getCode(), exception.getCode());
+            assertEquals(ServiceErrorCode.SERVICE_ID_EMPTY.getCode(), exception.getCode());
         }
 
         @Test
@@ -110,7 +111,7 @@ class BookServiceImplTest {
             // When & Then
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> bookService.bookService(USER_ID, List.of(SERVICE_ID)));
-            assertEquals(BookErrorCode.SERVICE_NOT_EXIST.getCode(), exception.getCode());
+            assertEquals(ServiceErrorCode.SERVICE_NOT_EXIST.getCode(), exception.getCode());
         }
 
         @Test
@@ -123,7 +124,7 @@ class BookServiceImplTest {
             // When & Then
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> bookService.bookService(USER_ID, List.of(SERVICE_ID)));
-            assertEquals(BookErrorCode.SERVICE_DISABLED.getCode(), exception.getCode());
+            assertEquals(ServiceErrorCode.SERVICE_DISABLED.getCode(), exception.getCode());
         }
     }
 

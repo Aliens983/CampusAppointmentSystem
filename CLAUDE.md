@@ -526,10 +526,39 @@ When module A needs data from module B:
 
 ---
 
+## Testing
+
+### Current State
+
+The project has **20 unit tests** in the `cas-module-appointment` module, using **JUnit 5 + Mockito**. There are no integration tests yet.
+
+| Test Class | Location | Tests | What It Covers |
+|------------|----------|-------|----------------|
+| `BookServiceImplTest` | `cas-module-appointment/src/test/.../impl/` | 11 | Booking creation, validation (empty/null IDs, service not found, disabled), cancellation, query by user/order ID |
+| `ServiceStatusServiceImplTest` | `cas-module-appointment/src/test/.../impl/` | 9 | Audit approval (with/without reason), audit rejection (reason validation: null/empty/blank), order not found, update failure |
+
+### Testing Infrastructure
+
+- **Test framework**: JUnit 5 (Jupiter) + Mockito (`@ExtendWith(MockitoExtension.class)`)
+- **Test base class**: `BaseApplicationTest` in `cas-spring-boot-starter-test` (abstract, `@SpringBootTest`)
+- **Dependency**: `spring-boot-starter-test` (pulled in by `cas-module-appointment/pom.xml`, scope `test`)
+- **Pattern**: Given-When-Then with `@Nested` inner classes for grouping
+
+### What's Missing
+
+| Gap | Priority |
+|-----|----------|
+| `cas-module-system` tests | High — AuthService, UserService, CaptchaService |
+| `cas-module-infra` tests | Medium — EmailService, FileService |
+| Controller integration tests | Medium — `@WebMvcTest` or `@SpringBootTest` + MockMvc |
+| Repository integration tests | Low — `@MybatisPlusTest` against real DB |
+
+---
+
 ## Known Issues & TODOs
 
 ### Critical
-1. **Zero tests** — No `src/test` directories exist anywhere. Build always uses `-DskipTests`.
+1. **Partial test coverage** — `cas-module-appointment` has 20 unit tests (BookServiceImplTest + ServiceStatusServiceImplTest) using JUnit 5 + Mockito. `cas-module-system` and `cas-module-infra` still have zero tests. No integration tests exist.
 2. **No pagination** — All list endpoints return full datasets.
 3. **Minimal Bean Validation** — Only `FileUploadReqVO` uses `@NotNull`. All other DTOs have no validation annotations.
 4. **Fake/stub data** — `ConsultationServiceImpl` and `EquipmentServiceImpl` return hardcoded data with fake ratings, stock numbers, and consultant names.
@@ -594,8 +623,14 @@ mvn -pl cas-framework/cas-common -am clean compile
 # Build + run
 mvn clean package -DskipTests && java -jar cas-server/target/cas-server-1.0.0.jar
 
-# Run a single test (once tests exist)
-mvn -pl cas-module-appointment test -Dtest=ServiceStatusServiceImplTest#testAuditPass
+# Run tests for appointment module
+mvn -pl cas-module-appointment -am test
+
+# Run a single test class
+mvn -pl cas-module-appointment -am test -Dtest=BookServiceImplTest
+
+# Run a single test method
+mvn -pl cas-module-appointment -am test -Dtest=ServiceStatusServiceImplTest#shouldApproveAndSendEmailWithoutReason
 ```
 
 ### Dependency Versions (BOM managed in cas-dependencies)

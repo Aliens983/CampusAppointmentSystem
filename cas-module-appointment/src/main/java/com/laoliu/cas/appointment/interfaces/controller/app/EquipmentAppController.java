@@ -3,7 +3,9 @@ package com.laoliu.cas.appointment.interfaces.controller.app;
 import com.laoliu.cas.appointment.application.service.EquipmentService;
 import com.laoliu.cas.appointment.interfaces.dto.response.EquipmentResponse;
 import com.laoliu.cas.common.result.CommonResult;
+import com.laoliu.cas.common.result.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +25,13 @@ public class EquipmentAppController {
 
     private final EquipmentService equipmentService;
 
-    @Operation(summary = "获取设备列表", description = "获取所有设备类服务列表")
+    @Operation(summary = "获取设备列表（分页）", description = "分页获取所有设备类服务列表")
     @GetMapping
-    public CommonResult<List<EquipmentResponse>> getEquipment() {
-        return CommonResult.success(equipmentService.getAvailableEquipment());
+    public CommonResult<PageResult<EquipmentResponse>> getEquipment(
+            @Parameter(description = "页码，从1开始") @RequestParam(defaultValue = "1") int page,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") int pageSize) {
+        List<EquipmentResponse> allList = equipmentService.getAvailableEquipment();
+        return CommonResult.success(paginateInMemory(allList, page, pageSize));
     }
 
     @Operation(summary = "获取设备分类", description = "获取所有设备分类列表")
@@ -43,5 +48,24 @@ public class EquipmentAppController {
             return CommonResult.notFound("设备不存在");
         }
         return CommonResult.success(equipment);
+    }
+
+    /** 内存分页工具方法，用于 stub / 假数据场景。 */
+    private static <T> PageResult<T> paginateInMemory(List<T> allList, int page, int pageSize) {
+        int total = allList.size();
+        int fromIndex = (page - 1) * pageSize;
+        if (fromIndex >= total) {
+            return PageResult.empty(pageSize, page);
+        }
+        int toIndex = Math.min(fromIndex + pageSize, total);
+        List<T> pageRecords = allList.subList(fromIndex, toIndex);
+        long pages = (total + pageSize - 1) / pageSize;
+        return PageResult.<T>builder()
+                .records(pageRecords)
+                .total(total)
+                .pageSize(pageSize)
+                .current(page)
+                .pages(pages)
+                .build();
     }
 }

@@ -7,6 +7,7 @@ import com.laoliu.cas.appointment.interfaces.dto.response.BookingDTO;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 import com.laoliu.cas.common.exception.BusinessException;
 import com.laoliu.cas.common.exception.code.BookErrorCode;
+import com.laoliu.cas.common.exception.code.ServiceErrorCode;
 import com.laoliu.cas.system.api.UserInfoApi;
 import com.laoliu.cas.system.api.dto.UserInfoDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -40,15 +41,15 @@ public class BookServiceImpl implements BookService {
     public UserInfoDTO bookService(Long userId, List<Long> serviceIds) {
         // 参数校验
         if (serviceIds == null || serviceIds.isEmpty()) {
-            throw new BusinessException(BookErrorCode.SERVICE_ID_EMPTY);
+            throw new BusinessException(ServiceErrorCode.SERVICE_ID_EMPTY);
         }
 
         // 校验每个服务的有效性
         for (Long sid : serviceIds) {
             com.laoliu.cas.appointment.domain.entity.Service service = serviceRepository.findById(sid)
-                    .orElseThrow(() -> new BusinessException(BookErrorCode.SERVICE_NOT_EXIST, sid));
+                    .orElseThrow(() -> new BusinessException(ServiceErrorCode.SERVICE_NOT_EXIST, sid));
             if (!service.isAvailable()) {
-                throw new BusinessException(BookErrorCode.SERVICE_DISABLED, sid);
+                throw new BusinessException(ServiceErrorCode.SERVICE_DISABLED, sid);
             }
         }
 
@@ -62,7 +63,7 @@ public class BookServiceImpl implements BookService {
             throw e;
         } catch (Exception e) {
             log.error("预约失败: userId={}, serviceIds={}", userId, serviceIds, e);
-            throw new BusinessException(BookErrorCode.BOOK_FAILED);
+            throw new BusinessException(BookErrorCode.BOOKING_FAILED);
         }
     }
 

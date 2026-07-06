@@ -6,7 +6,7 @@ import com.laoliu.cas.appointment.domain.repository.BookingRepository;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 import com.laoliu.cas.common.enums.ManageStatus;
 import com.laoliu.cas.common.exception.BusinessException;
-import com.laoliu.cas.common.exception.code.ServiceStatusErrorCode;
+import com.laoliu.cas.common.exception.code.BookErrorCode;
 import com.laoliu.cas.infra.application.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,10 +41,22 @@ public class ServiceStatusServiceImpl implements ServiceStatusService {
     }
 
     @Override
+    public IPage<ServiceStatusResponse> getServiceStatusByUserId(Long userId, int page, int pageSize) {
+        return bookingRepository.getServiceStatusByUserId(userId, page, pageSize);
+    }
+
+    @Override
     public List<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId) {
         List<ServiceStatusResponse> statusList = bookingRepository.getServiceStatusByUserId(userId);
         statusList.forEach(this::setStatusDescription);
         return statusList;
+    }
+
+    @Override
+    public IPage<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId, int page, int pageSize) {
+        IPage<ServiceStatusResponse> statusPage = bookingRepository.getServiceStatusByUserId(userId, page, pageSize);
+        statusPage.getRecords().forEach(this::setStatusDescription);
+        return statusPage;
     }
 
     @Override
@@ -69,12 +81,12 @@ public class ServiceStatusServiceImpl implements ServiceStatusService {
     public void auditPass(Long orderId, String reason) {
         ServiceStatusResponse serviceInfo = getServiceStatusByOrderId(orderId);
         if (serviceInfo == null) {
-            throw new BusinessException(ServiceStatusErrorCode.STATUS_NOT_FOUND);
+            throw new BusinessException(BookErrorCode.STATUS_NOT_FOUND);
         }
 
         boolean success = bookingRepository.auditService(orderId, ManageStatus.APPROVED.getCode(), reason);
         if (!success) {
-            throw new BusinessException(ServiceStatusErrorCode.AUDIT_FAILED);
+            throw new BusinessException(BookErrorCode.AUDIT_FAILED);
         }
 
         String emailContent = "您好！您的预约已通过。\n预约服务：" + serviceInfo.getServiceName()
@@ -86,17 +98,17 @@ public class ServiceStatusServiceImpl implements ServiceStatusService {
     @Override
     public void auditReject(Long orderId, String reason) {
         if (reason == null || reason.trim().isEmpty()) {
-            throw new BusinessException(ServiceStatusErrorCode.AUDIT_REASON_REQUIRED);
+            throw new BusinessException(BookErrorCode.AUDIT_REASON_REQUIRED);
         }
 
         ServiceStatusResponse serviceInfo = getServiceStatusByOrderId(orderId);
         if (serviceInfo == null) {
-            throw new BusinessException(ServiceStatusErrorCode.STATUS_NOT_FOUND);
+            throw new BusinessException(BookErrorCode.STATUS_NOT_FOUND);
         }
 
         boolean success = bookingRepository.auditService(orderId, ManageStatus.REJECTED.getCode(), reason);
         if (!success) {
-            throw new BusinessException(ServiceStatusErrorCode.AUDIT_FAILED);
+            throw new BusinessException(BookErrorCode.AUDIT_FAILED);
         }
 
         String emailContent = "您好！您的预约未通过。\n预约服务：" + serviceInfo.getServiceName()

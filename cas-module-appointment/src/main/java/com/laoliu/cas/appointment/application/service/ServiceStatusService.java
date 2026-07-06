@@ -22,7 +22,17 @@ public interface ServiceStatusService {
 
     List<ServiceStatusResponse> getServiceStatusByUserId(Long userId);
 
+    /**
+     * 分页查询用户的预约状态。
+     */
+    IPage<ServiceStatusResponse> getServiceStatusByUserId(Long userId, int page, int pageSize);
+
     List<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId);
+
+    /**
+     * 分页查询用户的预约状态（含状态描述）。
+     */
+    IPage<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId, int page, int pageSize);
 
     boolean auditService(Long orderId, Integer status, String reason);
 

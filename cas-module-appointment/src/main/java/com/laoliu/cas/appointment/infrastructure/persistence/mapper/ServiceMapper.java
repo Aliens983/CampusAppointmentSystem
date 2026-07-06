@@ -1,6 +1,8 @@
 package com.laoliu.cas.appointment.infrastructure.persistence.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.ServicesDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,6 +22,11 @@ public interface ServiceMapper extends BaseMapper<ServicesDO> {
 
     List<ServicesDO> selectAll();
 
+    /**
+     * 分页查询所有服务。
+     */
+    IPage<ServicesDO> selectAllWithPage(Page<ServicesDO> page);
+
     int insertSelective(ServicesDO record);
 
     int updateByPrimaryKeySelective(ServicesDO record);
@@ -27,6 +34,11 @@ public interface ServiceMapper extends BaseMapper<ServicesDO> {
     int updateByPrimaryKey(ServicesDO record);
 
     List<ServicesDO> selectUserServices(@Param("userId") Long userId);
+
+    /**
+     * 分页查询用户预约的服务。
+     */
+    IPage<ServicesDO> selectUserServicesWithPage(@Param("userId") Long userId, Page<ServicesDO> page);
 
     @Select("SELECT * FROM services WHERE service_state = 1")
     List<ServicesDO> selectEnabledServices();

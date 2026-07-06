@@ -44,6 +44,9 @@ upload
 
 /interact
 
+# 项目文档/计划（本地笔记，不提交）
+/docs/
+
 # ========== 配置文件 ==========
 # 敏感配置，不提交到 Git
 application.yml

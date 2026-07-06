@@ -582,13 +582,50 @@ CampusAppointmentSystem/
 
 ---
 
+## 🧪 单元测试
+
+项目已为预约核心模块编写了单元测试，使用 **JUnit 5 + Mockito** 框架，遵循 Given-When-Then 模式。
+
+### 测试概况
+
+| 测试类 | 模块 | 测试数 | 覆盖内容 |
+|--------|------|--------|----------|
+| `BookServiceImplTest` | cas-module-appointment | 11 | 创建预约、空ID校验、服务不存在、服务已禁用、取消预约、查询预约 |
+| `ServiceStatusServiceImplTest` | cas-module-appointment | 9 | 审核通过（有/无备注）、审核驳回（含原因校验）、订单不存在、更新失败 |
+| **合计** | | **20** | 覆盖预约核心业务 & 审核流程的所有正常/异常分支 |
+
+### 测试基础设施
+
+- `cas-spring-boot-starter-test` — 提供 `BaseApplicationTest` 抽象基类（`@SpringBootTest`）
+- `cas-module-appointment/pom.xml` — 引入 `spring-boot-starter-test`（含 JUnit 5 + Mockito）
+
+### 运行测试
+
+```bash
+# 运行所有测试
+mvn test
+
+# 只运行 appointment 模块的测试
+mvn -pl cas-module-appointment -am test
+
+# 运行单个测试类
+mvn -pl cas-module-appointment -am test -Dtest=BookServiceImplTest
+
+# 运行单个测试方法
+mvn -pl cas-module-appointment -am test -Dtest=ServiceStatusServiceImplTest#testAuditPass
+```
+
+<br />
+
+---
+
 ## 🧪 开发计划
 
 > ⚠️ 当前项目为功能可用的 **WIP（Work In Progress）** 状态，以下是待完善的方向：
 
 | 优先级 | 计划 | 说明 |
 |--------|------|------|
-| 🔴 高 | 单元测试 & 集成测试 | 当前零测试，需补全 Service 层 + Controller 层测试 |
+| 🟡 中 | 补充测试覆盖 | system 模块、infra 模块、Controller 层及集成测试待补全 |
 | 🔴 高 | 分页查询 | 所有列表接口目前返回全量数据 |
 | 🔴 高 | Bean Validation | DTO 批量添加校验注解 |
 | 🟡 中 | Docker Compose 部署 | 一键启动 MySQL + Redis + 应用 |

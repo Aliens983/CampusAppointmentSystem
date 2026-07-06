@@ -62,4 +62,18 @@
         WHERE i.user_id = #{userId}
     </select>
 
+    <select id="selectAllWithPage" resultMap="BaseResultMap">
+        SELECT service_id, service_name, service_describe, service_state
+        FROM services
+        ORDER BY service_id DESC
+    </select>
+
+    <select id="selectUserServicesWithPage" resultMap="BaseResultMap">
+        SELECT s.service_id, s.service_name, s.service_describe, s.service_state
+        FROM item i
+        JOIN services s ON i.service_id = s.service_id
+        WHERE i.user_id = #{userId}
+        ORDER BY s.service_id DESC
+    </select>
+
 </mapper>

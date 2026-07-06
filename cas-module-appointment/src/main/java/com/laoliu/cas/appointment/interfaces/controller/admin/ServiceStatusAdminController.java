@@ -7,7 +7,7 @@ import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 import com.laoliu.cas.common.annotation.RequireRole;
 import com.laoliu.cas.common.enums.ManageStatus;
 import com.laoliu.cas.common.enums.UserRoleEnum;
-import com.laoliu.cas.common.exception.code.ServiceStatusErrorCode;
+import com.laoliu.cas.common.exception.code.BookErrorCode;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.result.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,7 +47,7 @@ public class ServiceStatusAdminController {
     @RequireRole({UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
     public CommonResult<Void> auditPass(@Valid @RequestBody AuditRequest auditRequest) {
         if (auditRequest.getStatus() == null || auditRequest.getStatus() != ManageStatus.APPROVED.getCode()) {
-            return CommonResult.error(ServiceStatusErrorCode.INVALID_AUDIT_STATUS);
+            return CommonResult.error(BookErrorCode.INVALID_AUDIT_STATUS);
         }
         serviceStatusService.auditPass(auditRequest.getOrderId(), auditRequest.getReason());
         return CommonResult.success("审核通过成功", null);
@@ -58,10 +58,10 @@ public class ServiceStatusAdminController {
     @RequireRole({UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
     public CommonResult<Void> auditReject(@Valid @RequestBody AuditRequest auditRequest) {
         if (auditRequest.getStatus() == null || auditRequest.getStatus() != ManageStatus.REJECTED.getCode()) {
-            return CommonResult.error(ServiceStatusErrorCode.INVALID_AUDIT_STATUS);
+            return CommonResult.error(BookErrorCode.INVALID_AUDIT_STATUS);
         }
         if (auditRequest.getReason() == null || auditRequest.getReason().trim().isEmpty()) {
-            return CommonResult.error(ServiceStatusErrorCode.AUDIT_REASON_REQUIRED);
+            return CommonResult.error(BookErrorCode.AUDIT_REASON_REQUIRED);
         }
         serviceStatusService.auditReject(auditRequest.getOrderId(), auditRequest.getReason());
         return CommonResult.success("审核驳回成功", null);

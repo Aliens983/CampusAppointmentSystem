@@ -1,7 +1,7 @@
 package com.laoliu.cas.system.application.service.impl;
 
 import com.laoliu.cas.common.exception.BusinessException;
-import com.laoliu.cas.common.exception.code.EmailErrorCode;
+import com.laoliu.cas.common.exception.code.UserErrorCode;
 import com.laoliu.cas.common.util.CodeGenerator;
 import com.laoliu.cas.infra.application.service.EmailService;
 import com.laoliu.cas.redis.util.RedisUtil;
@@ -22,13 +22,13 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     @Override
     public void sendVerificationCode(String email) {
         if (email == null || email.isEmpty()) {
-            throw new BusinessException(EmailErrorCode.EMAIL_NOT_PROVIDED);
+            throw new BusinessException(UserErrorCode.EMAIL_NOT_PROVIDED);
         }
 
         String rateLimitKey = "rate_limit:email:" + email;
         String lastSendTime = redisUtil.getVerificationCode(rateLimitKey);
         if (lastSendTime != null) {
-            throw new BusinessException(EmailErrorCode.EMAIL_SEND_TOO_FREQUENTLY);
+            throw new BusinessException(UserErrorCode.EMAIL_SEND_TOO_FREQUENTLY);
         }
 
         String code = CodeGenerator.generateCode();
