@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
- * 预约记录查询结果 DO — 对应 item JOIN services 的查询结果。
+ * 预约记录查询结果 DO — 对应 item JOIN services JOIN user 的查询结果。
  *
  * @author forever-king
  */
@@ -18,9 +18,13 @@ import java.util.Date;
 @Builder
 public class BookingRecordDO {
 
+    private Long orderId;
     private String serviceName;
     private String serviceDescribe;
+    private String username;
     private Date createTime;
+    private Date updateTime;
     private Integer manageStatus;
+    private String statusDescription;
 
 }

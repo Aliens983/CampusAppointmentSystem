@@ -57,20 +57,26 @@ public interface UserMapper extends BaseMapper<UserDO> {
     @Override
     int insert(UserDO userDO);
 
-    @Select("SELECT s.service_name AS serviceName, s.service_describe AS serviceDescribe, " +
-            "i.create_time AS createTime, i.manage_status AS manageStatus " +
+    @Select("SELECT i.order_id AS orderId, s.service_name AS serviceName, s.service_describe AS serviceDescribe, " +
+            "u.name AS username, i.create_time AS createTime, i.update_time AS updateTime, " +
+            "i.manage_status AS manageStatus, " +
+            "CASE i.manage_status WHEN 0 THEN '待审核' WHEN 1 THEN '已通过' WHEN 2 THEN '已拒绝' WHEN 3 THEN '已取消' ELSE '未知' END AS statusDescription " +
             "FROM item i " +
             "JOIN services s ON i.service_id = s.service_id " +
+            "JOIN user u ON i.user_id = u.id " +
             "WHERE i.user_id = #{userId}")
     List<BookingRecordDO> getAllBookings(@Param("userId") Long userId);
 
     /**
      * 分页查询用户的预约记录。
      */
-    @Select("SELECT s.service_name AS serviceName, s.service_describe AS serviceDescribe, " +
-            "i.create_time AS createTime, i.manage_status AS manageStatus " +
+    @Select("SELECT i.order_id AS orderId, s.service_name AS serviceName, s.service_describe AS serviceDescribe, " +
+            "u.name AS username, i.create_time AS createTime, i.update_time AS updateTime, " +
+            "i.manage_status AS manageStatus, " +
+            "CASE i.manage_status WHEN 0 THEN '待审核' WHEN 1 THEN '已通过' WHEN 2 THEN '已拒绝' WHEN 3 THEN '已取消' ELSE '未知' END AS statusDescription " +
             "FROM item i " +
             "JOIN services s ON i.service_id = s.service_id " +
+            "JOIN user u ON i.user_id = u.id " +
             "WHERE i.user_id = #{userId} " +
             "ORDER BY i.create_time DESC")
     IPage<BookingRecordDO> getAllBookingsWithPage(@Param("userId") Long userId, Page<?> page);

@@ -20,6 +20,7 @@ public interface BookingRecordConvert {
     BookingRecordConvert INSTANCE = Mappers.getMapper(BookingRecordConvert.class);
 
     @Mapping(target = "createTime", source = "createTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(target = "updateTime", source = "updateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
     BookingRecordRespVO convert(BookingRecordDO bookingRecordDO);
 
     List<BookingRecordRespVO> convertList(List<BookingRecordDO> list);

@@ -1,6 +1,7 @@
 package com.laoliu.cas.appointment.interfaces.controller.app;
 
 import com.laoliu.cas.appointment.application.service.BookService;
+import com.laoliu.cas.appointment.interfaces.dto.request.BookServiceRequest;
 import com.laoliu.cas.appointment.interfaces.dto.request.SpecializedBookingRequest;
 import com.laoliu.cas.appointment.interfaces.dto.response.BookingDTO;
 import com.laoliu.cas.appointment.interfaces.dto.response.BookResultResponse;
@@ -36,9 +37,9 @@ public class BookAppController {
     @Operation(summary = "预定服务", description = "用户预约多个服务，传入服务ID列表")
     @PostMapping
     public CommonResult<BookResultResponse> bookService(
-            @Parameter(description = "服务ID列表", required = true) @RequestParam List<Long> serviceIds) {
+            @Valid @RequestBody BookServiceRequest request) {
         Long userId = getUserIdViaTokenApi.getUserId();
-        UserInfoDTO userInfo = bookService.bookService(userId, serviceIds);
+        UserInfoDTO userInfo = bookService.bookService(userId, request.getServiceIds());
         return CommonResult.success("预约成功", buildBookResult(userInfo, userId));
     }
 

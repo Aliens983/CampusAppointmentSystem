@@ -7,12 +7,14 @@ import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.system.application.service.RoleService;
 import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.system.domain.repository.UserRepository;
+import com.laoliu.cas.system.interfaces.dto.request.ChangeRoleRequest;
 import com.laoliu.cas.system.interfaces.dto.response.ChangeRoleRespVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,25 +50,39 @@ public class RoleAdminController {
         }
     }
 
-    @Operation(summary = "修改用户角色", description = "管理员修改用户角色，返回修改后的用户信息和新的角色（仅限修改非普通用户）")
+    @Operation(summary = "修改用户角色", description = "管理员修改指定用户的角色，需要提供用户ID和新角色值（0=普通用户, 1=管理员）")
     @PutMapping("/role")
-    @RequireRole(UserRoleEnum.ADMIN)
-    public CommonResult<ChangeRoleRespVO> changeRole() {
+    @RequireRole({UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
+    public CommonResult<String> changeRole(@RequestBody ChangeRoleRequest request) {
         try {
-            Long userId = getUserIdViaTokenApi.getUserId();
-            String role = roleService.getRoleByUserId(userId);
+            Long targetUserId = request.getUserId();
+            Integer newRole = request.getRole();
 
-            if ("普通用户".equals(role)) {
-                return CommonResult.forbidden("权限不足");
+            if (targetUserId == null) {
+                return CommonResult.badRequest("用户ID不能为空");
+            }
+            if (newRole == null || (newRole != 0 && newRole != 1)) {
+                return CommonResult.badRequest("角色值必须为0（普通用户）或1（管理员）");
             }
 
-            String changeRole = roleService.changeRoleById(userId);
-            if (changeRole == null) {
-                return CommonResult.badRequest("角色不存在");
+            User user = userRepository.findById(targetUserId).orElse(null);
+            if (user == null) {
+                return CommonResult.notFound("用户不存在");
             }
 
-            User user = userRepository.findById(userId).orElse(null);
-            return CommonResult.success(ChangeRoleRespVO.of(user, changeRole));
+            // 超级管理员不能被降级
+            if (user.getRole() != null && user.getRole() == 2) {
+                return CommonResult.forbidden("不能修改超级管理员的角色");
+            }
+
+            if (newRole == 1) {
+                userRepository.updateRoleToAdmin(targetUserId);
+            } else {
+                userRepository.updateRoleToCommonUser(targetUserId);
+            }
+
+            String roleName = newRole == 1 ? "管理员" : "普通用户";
+            return CommonResult.success("已将用户 " + user.getName() + " 的角色修改为 " + roleName, roleName);
         } catch (Exception e) {
             return CommonResult.internalServerError("修改用户角色失败：" + e.getMessage());
         }
