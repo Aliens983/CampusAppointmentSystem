@@ -7,5 +7,6 @@ import com.laoliu.cas.system.application.service.vo.CaptchaResult;
  */
 public interface CaptchaService {
 
+    /** 生成图形验证码 */
     CaptchaResult generateCaptcha();
 }

@@ -7,5 +7,6 @@ package com.laoliu.cas.infra.application.service;
  */
 public interface QRCodeService {
 
+    /** 生成二维码并上传 */
     String generateQrCode(String content);
 }

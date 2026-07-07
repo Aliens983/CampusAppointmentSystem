@@ -5,7 +5,6 @@ import com.laoliu.cas.appointment.application.service.ServiceStatusService;
 import com.laoliu.cas.appointment.interfaces.dto.request.ServiceStatusPageReqVO;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
-import com.laoliu.cas.common.pojo.PageParam;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.result.PageResult;
 import io.swagger.v3.oas.annotations.Operation;

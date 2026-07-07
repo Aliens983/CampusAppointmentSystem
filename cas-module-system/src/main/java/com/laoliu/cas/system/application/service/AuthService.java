@@ -23,6 +23,7 @@ public class AuthService {
     private final PasswordUtils passwordUtils;
     private final RedisUtil redisUtil;
 
+    /** 用户登录 */
     public String login(String email, String password) {
         if (email == null || password == null) {
             throw new BusinessException(UserErrorCode.EMAIL_OR_PASSWORD_EMPTY);
@@ -39,6 +40,7 @@ public class AuthService {
         throw new BusinessException(UserErrorCode.PASSWORD_ERROR);
     }
 
+    /** 重置密码 */
     public String resetPassword(String email, String code, String password) {
         if (email == null || email.isEmpty()) {
             throw new BusinessException(UserErrorCode.EMAIL_EMPTY);
@@ -70,6 +72,7 @@ public class AuthService {
         return jwtUtils.generateToken(userId);
     }
 
+    /** 用户注册 */
     public Long register(UserRegisterVO request) {
         String email = request.getEmail();
         String code = request.getCode();

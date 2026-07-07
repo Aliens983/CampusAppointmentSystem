@@ -23,9 +23,13 @@ public class Service implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /** 服务ID */
     private Long serviceId;
+    /** 服务名称 */
     private String serviceName;
+    /** 服务描述 */
     private String serviceDescribe;
+    /** 服务状态 */
     private Integer serviceState;
 
     /**

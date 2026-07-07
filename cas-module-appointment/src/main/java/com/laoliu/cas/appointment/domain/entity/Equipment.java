@@ -21,13 +21,21 @@ public class Equipment implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /** 设备ID */
     private Long id;
+    /** 设备名称 */
     private String name;
+    /** 设备描述 */
     private String description;
+    /** 总库存 */
     private Integer totalStock;
+    /** 可用库存 */
     private Integer availableStock;
+    /** 单位 */
     private String unit;
+    /** 存放位置 */
     private String location;
+    /** 关联服务ID */
     private Long serviceId;
 
     public boolean isAvailable() {

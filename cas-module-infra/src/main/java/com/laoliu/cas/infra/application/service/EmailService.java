@@ -6,5 +6,6 @@ package com.laoliu.cas.infra.application.service;
  * @author forever-king
  */
 public interface EmailService {
+    /** 发送邮件 */
     void sendEmail(String to, String subject, String content);
 }

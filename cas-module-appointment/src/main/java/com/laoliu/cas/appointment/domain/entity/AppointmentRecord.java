@@ -22,20 +22,28 @@ public class AppointmentRecord implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /** 记录ID */
     private Integer recordId;
 
+    /** 预约项ID */
     private Integer itemId;
 
+    /** 用户ID */
     private Long userId;
 
+    /** 预约时间 */
     private String appointmentTime;
 
+    /** 预约地点 */
     private String appointmentPlace;
 
+    /** 预约状态 */
     private Integer appointmentState;
 
+    /** 描述 */
     private String description;
 
+    /** 创建时间 */
     private String createTime;
 
 }

@@ -9,5 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface OSSService {
 
+    /** 上传文件到OSS */
     String uploadFile(MultipartFile file);
 }

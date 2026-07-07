@@ -9,5 +9,6 @@ import com.laoliu.cas.thirdparty.interfaces.dto.response.ChatRespVO;
  * @author forever-king
  */
 public interface CallModelService {
+    /** 调用Qwen大模型进行对话 */
     ChatRespVO callQwenModel(Long userId, ChatReqVO request);
 }

@@ -14,6 +14,7 @@ import java.util.List;
  */
 public interface ServiceStatusService {
 
+    /** 获取所有服务预约状态 */
     List<ServiceStatusResponse> getServiceStatus();
 
     /**
@@ -21,6 +22,7 @@ public interface ServiceStatusService {
      */
     IPage<ServiceStatusResponse> getServiceStatus(ServiceStatusPageReqVO reqVO);
 
+    /** 根据用户ID获取预约状态 */
     List<ServiceStatusResponse> getServiceStatusByUserId(Long userId);
 
     /**
@@ -28,6 +30,7 @@ public interface ServiceStatusService {
      */
     IPage<ServiceStatusResponse> getServiceStatusByUserId(Long userId, ServiceStatusPageReqVO reqVO);
 
+    /** 获取用户预约状态（含描述） */
     List<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId);
 
     /**
@@ -35,10 +38,13 @@ public interface ServiceStatusService {
      */
     IPage<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId, ServiceStatusPageReqVO reqVO);
 
+    /** 审核服务预约 */
     boolean auditService(Long orderId, Integer status, String reason);
 
+    /** 根据订单ID获取预约状态 */
     ServiceStatusResponse getServiceStatusByOrderId(Long orderId);
 
+    /** 发送审核邮件 */
     void sendAuditEmail(Long orderId, String title, String content);
 
     /**

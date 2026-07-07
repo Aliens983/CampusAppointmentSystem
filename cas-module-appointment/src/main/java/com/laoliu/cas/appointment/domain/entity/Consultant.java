@@ -22,14 +22,23 @@ public class Consultant implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /** 咨询师ID */
     private Long id;
+    /** 姓名 */
     private String name;
+    /** 所属部门 */
     private String department;
+    /** 职称 */
     private String title;
+    /** 简介 */
     private String description;
+    /** 评分 */
     private BigDecimal rating;
+    /** 评价数量 */
     private Integer reviewCount;
+    /** 头像地址 */
     private String avatarUrl;
+    /** 关联服务ID */
     private Long serviceId;
 
     public boolean hasRatings() {

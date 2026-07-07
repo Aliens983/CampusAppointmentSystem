@@ -15,6 +15,7 @@ import java.util.Optional;
  */
 public interface ServiceService {
 
+    /** 获取所有服务 */
     List<Service> getAllServices();
 
     /**
@@ -22,12 +23,16 @@ public interface ServiceService {
      */
     PageResult<Service> getAllServices(ServicePageReqVO reqVO);
 
+    /** 获取可用服务列表 */
     List<Service> getAvailableServices();
 
+    /** 根据ID获取服务 */
     Optional<Service> getServiceById(Long id);
 
+    /** 添加服务 */
     boolean addService(ServiceAddRequest request);
 
+    /** 获取用户已选服务 */
     List<Service> selectUserServices(Long userId);
 
     /**

@@ -8,6 +8,7 @@ import com.laoliu.cas.system.interfaces.dto.response.UserInfoAndServicesViaMPRes
  * @author forever-king
  */
 public interface UserService {
+    /** 获取用户信息和预约记录 */
     UserInfoAndServicesViaMPRespVO getUserInfoAndBookings(Long userId);
 
     /**

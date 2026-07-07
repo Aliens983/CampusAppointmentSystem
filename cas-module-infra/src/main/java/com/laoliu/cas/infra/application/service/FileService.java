@@ -11,7 +11,9 @@ import java.io.File;
  */
 public interface FileService {
 
+    /** 上传MultipartFile文件 */
     String uploadFile(MultipartFile file);
 
+    /** 上传File文件 */
     String uploadFile(File file);
 }

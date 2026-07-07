@@ -6,5 +6,6 @@ package com.laoliu.cas.thirdparty.application.service;
  * @author forever-king
  */
 public interface SmsService {
+    /** 发送短信 */
     void sendSms(String phoneNumber, String templateCode, String templateParam);
 }
