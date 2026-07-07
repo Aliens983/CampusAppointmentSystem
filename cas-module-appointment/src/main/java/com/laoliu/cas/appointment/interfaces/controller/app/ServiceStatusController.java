@@ -20,17 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author forever-king
  */
-@Tag(name = "服务状态（用户）")
+@Tag(name = "预约状态（用户）")
 @RestController
-@RequestMapping("/service-status")
+@RequestMapping("/app/bookings")
 @RequiredArgsConstructor
 public class ServiceStatusController {
 
     private final ServiceStatusService serviceStatusService;
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
 
-    @Operation(summary = "获取当前用户的服务预约状态（分页+筛选）", description = "分页获取当前登录用户的预约记录，支持按审核状态和服务名称筛选")
-    @GetMapping("/user")
+    @Operation(summary = "获取当前用户的预约状态（分页+筛选）", description = "分页获取当前登录用户的预约记录，支持按审核状态和服务名称筛选")
+    @GetMapping("/mine")
     public CommonResult<PageResult<ServiceStatusResponse>> getServiceStatusByUser(@Valid ServiceStatusPageReqVO reqVO) {
         try {
             Long userId = getUserIdViaTokenApi.getUserId();
@@ -45,10 +45,4 @@ public class ServiceStatusController {
         }
     }
 
-    @Operation(summary = "获取所有服务预约状态（分页+筛选）", description = "分页获取所有用户的预约状态列表，支持按审核状态和服务名称筛选")
-    @GetMapping
-    public CommonResult<PageResult<ServiceStatusResponse>> getAllServiceStatus(@Valid ServiceStatusPageReqVO reqVO) {
-        IPage<ServiceStatusResponse> statusPage = serviceStatusService.getServiceStatus(reqVO);
-        return CommonResult.success(PageResult.of(statusPage));
-    }
 }

@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "服务管理（管理）")
 @RestController
-@RequestMapping("/admin/service")
+@RequestMapping("/admin/services")
 @RequiredArgsConstructor
 public class ServiceAdminController {
 
@@ -55,7 +55,7 @@ public class ServiceAdminController {
     }
 
     @Operation(summary = "获取指定用户的所有已预约服务（分页）", description = "管理员根据用户ID分页查询该用户预约的所有服务详情")
-    @GetMapping("/id")
+    @GetMapping("/by-user")
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<UserServicesRespVO> getUserServices(
             @Parameter(description = "用户ID", required = true) @RequestParam Long userId,

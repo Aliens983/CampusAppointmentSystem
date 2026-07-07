@@ -43,13 +43,9 @@ public class SecurityAutoConfiguration {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/public/**",
-                                "/login",
-                                "/login/reset",
-                                "/graphic/get",
-                                "/register/verify-code",
-                                "/email",
+                                "/auth/**",
+                                "/captcha",
                                 "/error",
-                                "/api/files/**",
                                 "/uploads/**",
                                 "/doc.html",
                                 "/swagger-ui.html",
@@ -60,7 +56,8 @@ public class SecurityAutoConfiguration {
                                 "/webjars/**",
                                 "/favicon.ico",
                                 "/hello",
-                                "/callTheLargeModel/**"
+                                "/weather",
+                                "/ai/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

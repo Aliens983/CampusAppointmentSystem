@@ -26,7 +26,7 @@ import java.util.List;
  */
 @Tag(name = "预约服务（用户）")
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/app/bookings")
 @RequiredArgsConstructor
 public class BookAppController {
 
@@ -43,7 +43,7 @@ public class BookAppController {
     }
 
     @Operation(summary = "查看所有预约（分页）", description = "分页获取当前用户的所有预约记录")
-    @GetMapping("/allService")
+    @GetMapping
     public CommonResult<PageResult<BookingDTO>> getBook(@Valid PageParam pageParam) {
         Long userId = getUserIdViaTokenApi.getUserId();
         int page = pageParam.getPageNo();
@@ -67,12 +67,12 @@ public class BookAppController {
         return CommonResult.success(pageResult);
     }
 
-    @Operation(summary = "取消预约", description = "取消用户已预约的服务，传入预约ID列表")
-    @PostMapping("/cancel")
+    @Operation(summary = "取消预约", description = "取消用户已预约的服务，传入预约ID")
+    @PatchMapping("/{id}/cancel")
     public CommonResult<Void> cancelBooking(
-            @Parameter(description = "预约ID列表", required = true) @RequestParam List<Long> bookingIds) {
+            @Parameter(description = "预约ID", required = true) @PathVariable Long id) {
         Long userId = getUserIdViaTokenApi.getUserId();
-        boolean success = bookService.cancelBookings(userId, bookingIds);
+        boolean success = bookService.cancelBookings(userId, Collections.singletonList(id));
         if (!success) {
             return CommonResult.badRequest("取消预约失败");
         }
@@ -80,7 +80,7 @@ public class BookAppController {
     }
 
     @Operation(summary = "获取预约详情", description = "根据预约ID获取单条预约的详细信息")
-    @GetMapping("/allService/{id}")
+    @GetMapping("/{id}")
     public CommonResult<BookingDTO> getBookingDetail(@PathVariable Long id) {
         BookingDTO booking = bookService.getBookingById(id);
         if (booking == null) {

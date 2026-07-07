@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "用户角色管理（管理）")
 @RestController
-@RequestMapping("/admin/role")
+@RequestMapping("/admin/users")
 @RequiredArgsConstructor
 public class RoleAdminController {
 
@@ -32,7 +32,7 @@ public class RoleAdminController {
     private final UserRepository userRepository;
 
     @Operation(summary = "获取用户角色", description = "获取当前登录用户的角色信息")
-    @GetMapping
+    @GetMapping("/role")
     @RequireRole(UserRoleEnum.USER)
     public CommonResult<String> getRole() {
         try {
@@ -49,7 +49,7 @@ public class RoleAdminController {
     }
 
     @Operation(summary = "修改用户角色", description = "管理员修改用户角色，返回修改后的用户信息和新的角色（仅限修改非普通用户）")
-    @PutMapping
+    @PutMapping("/role")
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<ChangeRoleRespVO> changeRole() {
         try {

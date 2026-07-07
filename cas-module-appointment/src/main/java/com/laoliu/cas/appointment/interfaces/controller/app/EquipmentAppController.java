@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Tag(name = "设备查询")
 @RestController
-@RequestMapping("/equipment")
+@RequestMapping("/app/equipment")
 @RequiredArgsConstructor
 public class EquipmentAppController {
 

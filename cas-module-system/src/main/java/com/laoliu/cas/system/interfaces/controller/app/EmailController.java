@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "邮件发送（用户）")
 @RestController
-@RequestMapping("/email")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class EmailController {
 
     private final EmailVerificationService emailVerificationService;
 
     @Operation(summary = "发送验证码邮件", description = "向指定邮箱发送验证码，60 秒内只能发送一次，Redis 缓存 5 分钟")
-    @PostMapping
+    @PostMapping("/verification-code")
     public CommonResult<EmailResponse> sendEmail(@Valid @RequestBody EmailRequest request) {
         emailVerificationService.sendVerificationCode(request.getTo());
         return CommonResult.success(EmailResponse.builder().message("邮件发送成功").build());

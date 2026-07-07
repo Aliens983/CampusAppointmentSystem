@@ -19,14 +19,14 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Tag(name = "对象存储（管理）")
 @RestController
-@RequestMapping("/admin/oss")
+@RequestMapping("/admin/files")
 @RequiredArgsConstructor
 public class OSSAdminController {
 
     private final OSSService ossService;
 
     @Operation(summary = "上传文件到OSS", description = "上传文件到阿里云OSS对象存储，返回文件的访问URL地址")
-    @PostMapping("/upload")
+    @PostMapping("/oss")
     public CommonResult<String> upload(
             @Parameter(description = "待上传的文件", required = true) @RequestParam("file") MultipartFile file) {
         String url = ossService.uploadFile(file);

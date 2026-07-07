@@ -18,16 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author forever-king
  */
-@Tag(name = "登录接口（用户）")
+@Tag(name = "认证接口（用户）")
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class LoginController {
 
     private final AuthService authService;
 
     @Operation(summary = "用户登录", description = "用户通过邮箱和密码登录，返回JWT令牌")
-    @PostMapping
+    @PostMapping("/login")
     public CommonResult<String> login(@Valid @RequestBody UserLoginRequest userLoginRequest) {
         String token = authService.login(userLoginRequest.getEmail(), userLoginRequest.getPassword());
         return CommonResult.success(token);

@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "图形验证码（用户）")
 @RestController
-@RequestMapping("/graphic")
+@RequestMapping("/captcha")
 @RequiredArgsConstructor
 public class GraphicController {
 
     private final CaptchaService captchaService;
 
     @Operation(summary = "获取图形验证码", description = "返回uuid和验证码图片URL，验证码5分钟内有效")
-    @GetMapping("/get")
+    @GetMapping
     public CommonResult<CaptchaRespVO> getGraphicCaptcha() {
         CaptchaResult captchaResult = captchaService.generateCaptcha();
         CaptchaRespVO respVO = CaptchaRespVO.builder()

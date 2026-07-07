@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "服务查询（用户）")
 @RestController
-@RequestMapping("/service")
+@RequestMapping("/app/services")
 @RequiredArgsConstructor
 public class ServiceController {
 

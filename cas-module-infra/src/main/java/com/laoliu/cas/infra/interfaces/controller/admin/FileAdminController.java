@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "文件管理（管理）")
 @RestController
-@RequestMapping("/admin/file")
+@RequestMapping("/admin/files")
 @RequiredArgsConstructor
 public class FileAdminController {
 
     private final FileService fileService;
 
     @Operation(summary = "上传文件", description = "上传本地文件并获取文件的访问URL地址")
-    @PostMapping("/upload")
+    @PostMapping
     public CommonResult<String> uploadFile(@Validated FileUploadReqVO fileUploadReqVO) {
         String fileUrl = fileService.uploadFile(fileUploadReqVO.getFile());
         return CommonResult.success(fileUrl);

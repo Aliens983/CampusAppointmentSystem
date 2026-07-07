@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "用户注册（用户）")
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class RegisterController {
 
     private final AuthService authService;
 
     @Operation(summary = "验证邮箱验证码并注册", description = "用户通过邮箱验证码完成注册流程，验证成功后自动创建用户并返回用户ID")
-    @PostMapping("/verify-code")
+    @PostMapping("/register")
     public CommonResult<Long> verifyEmailCode(@Valid @RequestBody UserRegisterRequest request) {
         UserRegisterVO vo = new UserRegisterVO();
         vo.setName(request.getName());

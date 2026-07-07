@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Tag(name = "咨询查询")
 @RestController
-@RequestMapping("/consultation")
+@RequestMapping("/app/consultations")
 @RequiredArgsConstructor
 public class ConsultationAppController {
 
@@ -45,9 +45,9 @@ public class ConsultationAppController {
     }
 
     @Operation(summary = "获取可用时段", description = "获取指定咨询师的可用预约时段")
-    @GetMapping("/available")
+    @GetMapping("/{consultantId}/slots")
     public CommonResult<List<TimeSlotRespVO>> getAvailableTime(
-            @RequestParam Long consultantId,
+            @PathVariable Long consultantId,
             @RequestParam String date) {
         return CommonResult.success(consultationService.getAvailableTimeSlots(consultantId, date));
     }

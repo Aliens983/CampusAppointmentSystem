@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 @Tag(name = "用户接口")
 public class UserController {
@@ -47,7 +47,7 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "获取当前用户信息", description = "获取当前登录用户的基本信息，包含用户名、邮箱、角色等")
-    @GetMapping
+    @GetMapping({"/", "/me"})
     @RequireRole({UserRoleEnum.USER, UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
     public CommonResult<UserResponse> getUserByParseToken() {
         try {
@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @Operation(summary = "获取所有用户列表（分页+筛选）", description = "管理员分页获取用户列表，支持按姓名、邮箱模糊搜索和角色筛选")
-    @GetMapping("/all_users")
+    @GetMapping("/list")
     @RequireRole(UserRoleEnum.ADMIN)
     public CommonResult<PageResult<UserResponse>> getAllUsers(@Valid UserPageReqVO reqVO) {
         try {
@@ -82,7 +82,7 @@ public class UserController {
     }
 
     @Operation(summary = "创建新用户", description = "超级管理员创建新用户，需要提供用户名、邮箱、密码等基本信息，参数校验由 Bean Validation 自动完成")
-    @PostMapping("/create")
+    @PostMapping
     @RequireRole(UserRoleEnum.SUPER_ADMIN)
     public CommonResult<String> createUser(@Valid @RequestBody AdminCreateUserRequest request) {
         try {
@@ -128,7 +128,7 @@ public class UserController {
         return CommonResult.success("修改密码成功", null);
     }
 
-    @GetMapping("/get_all_bookings")
+    @GetMapping("/me/bookings")
     @Operation(summary = "用户查看自己预约的所有服务（分页）")
     @RequireRole({UserRoleEnum.USER, UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN})
     public CommonResult<UserInfoAndServicesViaMPRespVO> getAllBookings(@Valid PageParam pageParam) {
