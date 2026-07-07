@@ -3,6 +3,7 @@ package com.laoliu.cas.appointment.application.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.laoliu.cas.appointment.application.service.ServiceStatusService;
 import com.laoliu.cas.appointment.domain.repository.BookingRepository;
+import com.laoliu.cas.appointment.interfaces.dto.request.ServiceStatusPageReqVO;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 import com.laoliu.cas.common.enums.ManageStatus;
 import com.laoliu.cas.common.exception.BusinessException;
@@ -29,8 +30,10 @@ public class ServiceStatusServiceImpl implements ServiceStatusService {
     }
 
     @Override
-    public IPage<ServiceStatusResponse> getServiceStatus(int page, int pageSize) {
-        IPage<ServiceStatusResponse> result = bookingRepository.getServiceStatus(page, pageSize);
+    public IPage<ServiceStatusResponse> getServiceStatus(ServiceStatusPageReqVO reqVO) {
+        IPage<ServiceStatusResponse> result = bookingRepository.getServiceStatus(
+                reqVO.getPageNo(), reqVO.getPageSize(),
+                reqVO.getManageStatus(), reqVO.getServiceName());
         result.getRecords().forEach(this::setStatusDescription);
         return result;
     }
@@ -41,8 +44,9 @@ public class ServiceStatusServiceImpl implements ServiceStatusService {
     }
 
     @Override
-    public IPage<ServiceStatusResponse> getServiceStatusByUserId(Long userId, int page, int pageSize) {
-        return bookingRepository.getServiceStatusByUserId(userId, page, pageSize);
+    public IPage<ServiceStatusResponse> getServiceStatusByUserId(Long userId, ServiceStatusPageReqVO reqVO) {
+        return bookingRepository.getServiceStatusByUserId(userId, reqVO.getPageNo(), reqVO.getPageSize(),
+                reqVO.getManageStatus(), reqVO.getServiceName());
     }
 
     @Override
@@ -53,8 +57,10 @@ public class ServiceStatusServiceImpl implements ServiceStatusService {
     }
 
     @Override
-    public IPage<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId, int page, int pageSize) {
-        IPage<ServiceStatusResponse> statusPage = bookingRepository.getServiceStatusByUserId(userId, page, pageSize);
+    public IPage<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId, ServiceStatusPageReqVO reqVO) {
+        IPage<ServiceStatusResponse> statusPage = bookingRepository.getServiceStatusByUserId(
+                userId, reqVO.getPageNo(), reqVO.getPageSize(),
+                reqVO.getManageStatus(), reqVO.getServiceName());
         statusPage.getRecords().forEach(this::setStatusDescription);
         return statusPage;
     }

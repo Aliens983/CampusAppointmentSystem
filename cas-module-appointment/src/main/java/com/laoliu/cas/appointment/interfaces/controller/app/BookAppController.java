@@ -5,6 +5,7 @@ import com.laoliu.cas.appointment.interfaces.dto.request.SpecializedBookingReque
 import com.laoliu.cas.appointment.interfaces.dto.response.BookingDTO;
 import com.laoliu.cas.appointment.interfaces.dto.response.BookResultResponse;
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
+import com.laoliu.cas.common.pojo.PageParam;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.result.PageResult;
 import com.laoliu.cas.system.api.dto.UserInfoDTO;
@@ -43,18 +44,18 @@ public class BookAppController {
 
     @Operation(summary = "查看所有预约（分页）", description = "分页获取当前用户的所有预约记录")
     @GetMapping("/allService")
-    public CommonResult<PageResult<BookingDTO>> getBook(
-            @Parameter(description = "页码，从1开始") @RequestParam(defaultValue = "1") int page,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") int pageSize) {
+    public CommonResult<PageResult<BookingDTO>> getBook(@Valid PageParam pageParam) {
         Long userId = getUserIdViaTokenApi.getUserId();
+        int page = pageParam.getPageNo();
+        int pageSize = pageParam.getPageSize();
         List<BookingDTO> allBookings = bookService.getAllBookings(userId);
         if (allBookings == null || allBookings.isEmpty()) {
             return CommonResult.success(PageResult.empty(pageSize, page));
         }
         // 手动分页（已查询全量数据）
         int total = allBookings.size();
-        int fromIndex = (int) Math.min((page - 1) * pageSize, total);
-        int toIndex = (int) Math.min(fromIndex + pageSize, total);
+        int fromIndex = Math.min((page - 1) * pageSize, total);
+        int toIndex = Math.min(fromIndex + pageSize, total);
         int pages = (int) Math.ceil((double) total / pageSize);
         PageResult<BookingDTO> pageResult = PageResult.<BookingDTO>builder()
                 .records(allBookings.subList(fromIndex, toIndex))

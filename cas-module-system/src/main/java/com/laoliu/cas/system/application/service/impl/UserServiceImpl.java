@@ -5,11 +5,10 @@ import com.laoliu.cas.common.result.PageResult;
 import com.laoliu.cas.system.application.service.UserService;
 import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.system.domain.repository.UserRepository;
+import com.laoliu.cas.system.interfaces.dto.response.BookingRecordRespVO;
 import com.laoliu.cas.system.interfaces.dto.response.UserInfoAndServicesViaMPRespVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 /**
  * @author forever-king
@@ -30,8 +29,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageResult<Map<String, Object>> getUserBookings(Long userId, int page, int pageSize) {
-        IPage<Map<String, Object>> bookingsPage = userRepository.getAllBookings(userId, page, pageSize);
+    public PageResult<BookingRecordRespVO> getUserBookings(Long userId, int page, int pageSize) {
+        IPage<BookingRecordRespVO> bookingsPage = userRepository.getAllBookings(userId, page, pageSize);
         return PageResult.of(bookingsPage);
     }
 }

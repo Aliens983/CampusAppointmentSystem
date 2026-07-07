@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 预约仓储实现
+ * 预约仓储实现。
  *
  * @author forever-king
  */
@@ -37,8 +37,8 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public IPage<ServiceStatusResponse> getServiceStatus(int page, int pageSize) {
-        return itemMapper.getServiceStatusWithPage(new Page<>(page, pageSize));
+    public IPage<ServiceStatusResponse> getServiceStatus(int page, int pageSize, Integer manageStatus, String serviceName) {
+        return itemMapper.getServiceStatusWithPage(new Page<>(page, pageSize), manageStatus, serviceName);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public IPage<ServiceStatusResponse> getServiceStatusByUserId(Long userId, int page, int pageSize) {
-        return itemMapper.getServiceStatusByUserIdWithPage(userId, new Page<>(page, pageSize));
+    public IPage<ServiceStatusResponse> getServiceStatusByUserId(Long userId, int page, int pageSize, Integer manageStatus, String serviceName) {
+        return itemMapper.getServiceStatusByUserIdWithPage(userId, new Page<>(page, pageSize), manageStatus, serviceName);
     }
 
     @Override

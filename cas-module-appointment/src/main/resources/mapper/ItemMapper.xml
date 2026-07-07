@@ -115,7 +115,7 @@
         AND order_id = #{bookingId}
     </update>
 
-    <!-- 分页查询所有服务预约状态（MyBatis-Plus 自动拦截 Page 参数添加 LIMIT） -->
+    <!-- 分页查询所有服务预约状态（支持按审核状态、服务名称筛选） -->
     <select id="getServiceStatusWithPage" resultMap="ServiceStatusResultMap">
         SELECT i.order_id, i.user_id, u.name AS username,
                s.service_name, s.service_describe, i.reason,
@@ -123,10 +123,18 @@
         FROM item i
         JOIN user u ON i.user_id = u.id
         JOIN services s ON i.service_id = s.service_id
+        <where>
+            <if test="manageStatus != null">
+                AND i.manage_status = #{manageStatus}
+            </if>
+            <if test="serviceName != null and serviceName != ''">
+                AND s.service_name LIKE CONCAT('%', #{serviceName}, '%')
+            </if>
+        </where>
         ORDER BY i.create_time DESC
     </select>
 
-    <!-- 分页查询用户的预约状态（MyBatis-Plus 自动拦截 Page 参数添加 LIMIT） -->
+    <!-- 分页查询用户的预约状态（支持按审核状态、服务名称筛选） -->
     <select id="getServiceStatusByUserIdWithPage" resultMap="ServiceStatusResultMap">
         SELECT i.order_id, i.user_id, u.name AS username,
                s.service_name, s.service_describe, i.reason,
@@ -135,6 +143,12 @@
         JOIN user u ON i.user_id = u.id
         JOIN services s ON i.service_id = s.service_id
         WHERE i.user_id = #{userId}
+        <if test="manageStatus != null">
+            AND i.manage_status = #{manageStatus}
+        </if>
+        <if test="serviceName != null and serviceName != ''">
+            AND s.service_name LIKE CONCAT('%', #{serviceName}, '%')
+        </if>
         ORDER BY i.create_time DESC
     </select>
 

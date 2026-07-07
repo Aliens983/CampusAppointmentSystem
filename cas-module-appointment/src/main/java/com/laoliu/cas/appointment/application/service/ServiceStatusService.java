@@ -1,5 +1,6 @@
 package com.laoliu.cas.appointment.application.service;
 
+import com.laoliu.cas.appointment.interfaces.dto.request.ServiceStatusPageReqVO;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -16,23 +17,23 @@ public interface ServiceStatusService {
     List<ServiceStatusResponse> getServiceStatus();
 
     /**
-     * 分页查询所有服务预约状态。
+     * 分页查询所有服务预约状态（支持筛选）。
      */
-    IPage<ServiceStatusResponse> getServiceStatus(int page, int pageSize);
+    IPage<ServiceStatusResponse> getServiceStatus(ServiceStatusPageReqVO reqVO);
 
     List<ServiceStatusResponse> getServiceStatusByUserId(Long userId);
 
     /**
-     * 分页查询用户的预约状态。
+     * 分页查询用户的预约状态（支持筛选）。
      */
-    IPage<ServiceStatusResponse> getServiceStatusByUserId(Long userId, int page, int pageSize);
+    IPage<ServiceStatusResponse> getServiceStatusByUserId(Long userId, ServiceStatusPageReqVO reqVO);
 
     List<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId);
 
     /**
-     * 分页查询用户的预约状态（含状态描述）。
+     * 分页查询用户的预约状态（含状态描述，支持筛选）。
      */
-    IPage<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId, int page, int pageSize);
+    IPage<ServiceStatusResponse> getServiceStatusByUserIdWithDescription(Long userId, ServiceStatusPageReqVO reqVO);
 
     boolean auditService(Long orderId, Integer status, String reason);
 

@@ -24,9 +24,9 @@ public interface ServiceRepository {
     List<Service> findAll();
 
     /**
-     * 分页查找所有服务。
+     * 分页查找所有服务（支持按名称模糊搜索、按状态筛选）。
      */
-    IPage<Service> findAll(int page, int pageSize);
+    IPage<Service> findAll(int page, int pageSize, String serviceName, Integer serviceState);
 
     /**
      * 根据创建者 ID 查找服务

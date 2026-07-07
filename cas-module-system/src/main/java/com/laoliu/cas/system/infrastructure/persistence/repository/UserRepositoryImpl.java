@@ -1,16 +1,20 @@
 package com.laoliu.cas.system.infrastructure.persistence.repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.system.domain.repository.UserRepository;
+import com.laoliu.cas.system.infrastructure.persistence.dataobject.BookingRecordDO;
 import com.laoliu.cas.system.infrastructure.persistence.dataobject.UserDO;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
+import com.laoliu.cas.system.interfaces.convert.BookingRecordConvert;
+import com.laoliu.cas.system.interfaces.dto.response.BookingRecordRespVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -107,20 +111,33 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public IPage<User> getAllUsers(int page, int pageSize) {
+    public IPage<User> getAllUsers(int page, int pageSize, String name, String email, Integer role) {
+        LambdaQueryWrapper<UserDO> wrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.hasText(name)) {
+            wrapper.like(UserDO::getName, name);
+        }
+        if (StringUtils.hasText(email)) {
+            wrapper.like(UserDO::getEmail, email);
+        }
+        if (role != null) {
+            wrapper.eq(UserDO::getRole, role);
+        }
+        wrapper.orderByDesc(UserDO::getId);
+
         Page<UserDO> pageParam = new Page<>(page, pageSize);
-        IPage<UserDO> doPage = userMapper.getAllUsersWithPage(pageParam);
+        IPage<UserDO> doPage = userMapper.selectPage(pageParam, wrapper);
         return doPage.convert(UserDO::toEntity);
     }
 
     @Override
-    public List<Map<String, Object>> getAllBookings(Long userId) {
-        return userMapper.getAllBookings(userId);
+    public List<BookingRecordRespVO> getAllBookings(Long userId) {
+        return BookingRecordConvert.INSTANCE.convertList(userMapper.getAllBookings(userId));
     }
 
     @Override
-    public IPage<Map<String, Object>> getAllBookings(Long userId, int page, int pageSize) {
-        Page<Map<String, Object>> pageParam = new Page<>(page, pageSize);
-        return userMapper.getAllBookingsWithPage(userId, pageParam);
+    public IPage<BookingRecordRespVO> getAllBookings(Long userId, int page, int pageSize) {
+        Page<BookingRecordDO> pageParam = new Page<>(page, pageSize);
+        IPage<BookingRecordDO> doPage = userMapper.getAllBookingsWithPage(userId, pageParam);
+        return doPage.convert(BookingRecordConvert.INSTANCE::convert);
     }
 }

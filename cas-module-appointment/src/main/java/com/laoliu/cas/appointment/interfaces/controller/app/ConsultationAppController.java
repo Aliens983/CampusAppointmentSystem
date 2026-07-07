@@ -2,16 +2,18 @@ package com.laoliu.cas.appointment.interfaces.controller.app;
 
 import com.laoliu.cas.appointment.application.service.ConsultationService;
 import com.laoliu.cas.appointment.interfaces.dto.response.ConsultantResponse;
+import com.laoliu.cas.appointment.interfaces.dto.response.TimeSlotRespVO;
+import com.laoliu.cas.common.pojo.PageParam;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.result.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 咨询查询接口。
@@ -28,11 +30,9 @@ public class ConsultationAppController {
 
     @Operation(summary = "获取咨询师列表（分页）", description = "分页获取所有咨询类服务列表")
     @GetMapping
-    public CommonResult<PageResult<ConsultantResponse>> getConsultants(
-            @Parameter(description = "页码，从1开始") @RequestParam(defaultValue = "1") int page,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") int pageSize) {
+    public CommonResult<PageResult<ConsultantResponse>> getConsultants(@Valid PageParam pageParam) {
         List<ConsultantResponse> allList = consultationService.getAvailableConsultants();
-        return CommonResult.success(paginateInMemory(allList, page, pageSize));
+        return CommonResult.success(paginateInMemory(allList, pageParam.getPageNo(), pageParam.getPageSize()));
     }
 
     @Operation(summary = "获取咨询师详情", description = "根据ID获取单个咨询师详细信息")
@@ -47,7 +47,7 @@ public class ConsultationAppController {
 
     @Operation(summary = "获取可用时段", description = "获取指定咨询师的可用预约时段")
     @GetMapping("/available")
-    public CommonResult<List<Map<String, String>>> getAvailableTime(
+    public CommonResult<List<TimeSlotRespVO>> getAvailableTime(
             @RequestParam Long consultantId,
             @RequestParam String date) {
         return CommonResult.success(consultationService.getAvailableTimeSlots(consultantId, date));

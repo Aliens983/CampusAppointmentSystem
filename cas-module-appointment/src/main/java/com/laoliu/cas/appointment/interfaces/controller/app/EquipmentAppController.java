@@ -2,11 +2,12 @@ package com.laoliu.cas.appointment.interfaces.controller.app;
 
 import com.laoliu.cas.appointment.application.service.EquipmentService;
 import com.laoliu.cas.appointment.interfaces.dto.response.EquipmentResponse;
+import com.laoliu.cas.common.pojo.PageParam;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.result.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,11 +28,9 @@ public class EquipmentAppController {
 
     @Operation(summary = "获取设备列表（分页）", description = "分页获取所有设备类服务列表")
     @GetMapping
-    public CommonResult<PageResult<EquipmentResponse>> getEquipment(
-            @Parameter(description = "页码，从1开始") @RequestParam(defaultValue = "1") int page,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") int pageSize) {
+    public CommonResult<PageResult<EquipmentResponse>> getEquipment(@Valid PageParam pageParam) {
         List<EquipmentResponse> allList = equipmentService.getAvailableEquipment();
-        return CommonResult.success(paginateInMemory(allList, page, pageSize));
+        return CommonResult.success(paginateInMemory(allList, pageParam.getPageNo(), pageParam.getPageSize()));
     }
 
     @Operation(summary = "获取设备分类", description = "获取所有设备分类列表")

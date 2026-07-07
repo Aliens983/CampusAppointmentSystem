@@ -2,11 +2,10 @@ package com.laoliu.cas.system.interfaces.dto.response;
 
 import com.laoliu.cas.system.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 import lombok.Data;
 
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author forever-king
@@ -19,5 +18,5 @@ public class UserInfoAndServicesViaMPRespVO implements Serializable {
     private User user;
 
     @Schema(description = "用户预约的服务列表")
-    private List<Map<String, Object>> bookings;
+    private List<BookingRecordRespVO> bookings;
 }

@@ -26,16 +26,20 @@ public interface ItemMapper extends BaseMapper<ItemDO> {
     List<ServiceStatusResponse> getServiceStatus();
 
     /**
-     * 分页查询所有服务预约状态。
+     * 分页查询所有服务预约状态（支持筛选）。
      */
-    IPage<ServiceStatusResponse> getServiceStatusWithPage(Page<?> page);
+    IPage<ServiceStatusResponse> getServiceStatusWithPage(Page<?> page,
+            @Param("manageStatus") Integer manageStatus,
+            @Param("serviceName") String serviceName);
 
     List<ServiceStatusResponse> getServiceStatusByUserId(@Param("userId") Long userId);
 
     /**
-     * 分页查询用户的预约状态。
+     * 分页查询用户的预约状态（支持筛选）。
      */
-    IPage<ServiceStatusResponse> getServiceStatusByUserIdWithPage(@Param("userId") Long userId, Page<?> page);
+    IPage<ServiceStatusResponse> getServiceStatusByUserIdWithPage(@Param("userId") Long userId, Page<?> page,
+            @Param("manageStatus") Integer manageStatus,
+            @Param("serviceName") String serviceName);
 
     int auditService(@Param("orderId") Long orderId, @Param("status") Integer status, @Param("reason") String reason);
 

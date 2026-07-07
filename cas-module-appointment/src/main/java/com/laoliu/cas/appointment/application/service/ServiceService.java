@@ -2,6 +2,7 @@ package com.laoliu.cas.appointment.application.service;
 
 import com.laoliu.cas.appointment.domain.entity.Service;
 import com.laoliu.cas.appointment.interfaces.dto.request.ServiceAddRequest;
+import com.laoliu.cas.appointment.interfaces.dto.request.ServicePageReqVO;
 import com.laoliu.cas.common.result.PageResult;
 
 import java.util.List;
@@ -17,16 +18,11 @@ public interface ServiceService {
     List<Service> getAllServices();
 
     /**
-     * 分页获取所有服务。
+     * 分页获取所有服务（支持筛选）。
      */
-    PageResult<Service> getAllServices(int page, int pageSize);
+    PageResult<Service> getAllServices(ServicePageReqVO reqVO);
 
     List<Service> getAvailableServices();
-
-    /**
-     * 分页获取可预约服务。
-     */
-    PageResult<Service> getAvailableServices(int page, int pageSize);
 
     Optional<Service> getServiceById(Long id);
 

@@ -1,9 +1,13 @@
 package com.laoliu.cas.appointment.interfaces.controller.admin;
 
 import com.laoliu.cas.appointment.application.service.ServiceService;
-import com.laoliu.cas.appointment.domain.entity.Service;
+import com.laoliu.cas.appointment.interfaces.convert.ServiceConvert;
 import com.laoliu.cas.appointment.interfaces.dto.request.ServiceAddRequest;
+import com.laoliu.cas.appointment.interfaces.dto.request.ServicePageReqVO;
+import com.laoliu.cas.appointment.interfaces.dto.response.ServiceRespVO;
+import com.laoliu.cas.appointment.interfaces.dto.response.UserServicesRespVO;
 import com.laoliu.cas.common.annotation.RequireRole;
+import com.laoliu.cas.common.pojo.PageParam;
 import com.laoliu.cas.system.api.UserInfoApi;
 import com.laoliu.cas.system.api.dto.UserInfoDTO;
 import com.laoliu.cas.common.enums.UserRoleEnum;
@@ -16,8 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 
 /**
@@ -34,12 +36,10 @@ public class ServiceAdminController {
     private final ServiceService serviceService;
     private final UserInfoApi userInfoApi;
 
-    @Operation(summary = "获取所有服务（分页）", description = "分页获取所有可用的服务列表，仅返回状态为启用（serviceState=1）的服务")
+    @Operation(summary = "获取所有服务（分页+筛选）", description = "分页获取服务列表，支持按名称模糊搜索和状态筛选")
     @GetMapping
-    public CommonResult<PageResult<Service>> getService(
-            @Parameter(description = "页码，从1开始") @RequestParam(defaultValue = "1") int page,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") int pageSize) {
-        return CommonResult.success(serviceService.getAllServices(page, pageSize));
+    public CommonResult<PageResult<ServiceRespVO>> getService(@Valid ServicePageReqVO reqVO) {
+        return CommonResult.success(ServiceConvert.INSTANCE.convertPage(serviceService.getAllServices(reqVO)));
     }
 
     @Operation(summary = "添加服务", description = "管理员添加新的服务项目，包含服务名称、描述和状态")
@@ -57,21 +57,17 @@ public class ServiceAdminController {
     @Operation(summary = "获取指定用户的所有已预约服务（分页）", description = "管理员根据用户ID分页查询该用户预约的所有服务详情")
     @GetMapping("/id")
     @RequireRole(UserRoleEnum.ADMIN)
-    public CommonResult<Map<String, Object>> getUserServices(
+    public CommonResult<UserServicesRespVO> getUserServices(
             @Parameter(description = "用户ID", required = true) @RequestParam Long userId,
-            @Parameter(description = "页码，从1开始") @RequestParam(defaultValue = "1") int page,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") int pageSize) {
+            @Valid PageParam pageParam) {
         UserInfoDTO userInfo = userInfoApi.getUserById(userId);
         if (userInfo == null) {
             return CommonResult.error(ServiceErrorCode.SERVICE_NOT_FOUND);
         }
-        PageResult<Service> servicesPage = serviceService.selectUserServices(userId, page, pageSize);
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("user", userInfo.getName());
-        result.put("userId", userId);
-        result.put("userRole", userInfo.getRole());
-        result.put("userGrade", userInfo.getEmail());
-        result.put("services", servicesPage);
-        return CommonResult.success("获取用户服务成功", result);
+        PageResult<ServiceRespVO> servicesPage = ServiceConvert.INSTANCE.convertPage(
+                serviceService.selectUserServices(userId, pageParam.getPageNo(), pageParam.getPageSize()));
+        UserServicesRespVO respVO = UserServicesRespVO.of(
+                userInfo.getName(), userId, userInfo.getRole(), userInfo.getEmail(), servicesPage);
+        return CommonResult.success(respVO);
     }
 }

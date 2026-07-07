@@ -3,6 +3,7 @@ package com.laoliu.cas.system.application.service.impl;
 import com.laoliu.cas.system.application.service.UserService;
 import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.system.domain.repository.UserRepository;
+import com.laoliu.cas.system.interfaces.dto.response.BookingRecordRespVO;
 import com.laoliu.cas.system.interfaces.dto.response.UserInfoAndServicesViaMPRespVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,13 +50,11 @@ class UserServiceImplTest {
             User user = buildUser(USER_ID);
             when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
 
-            Map<String, Object> booking1 = new HashMap<>();
-            booking1.put("orderId", 100L);
-            booking1.put("serviceName", "自习室预约");
-            Map<String, Object> booking2 = new HashMap<>();
-            booking2.put("orderId", 101L);
-            booking2.put("serviceName", "心理咨询");
-            List<Map<String, Object>> bookings = List.of(booking1, booking2);
+            BookingRecordRespVO b1 = BookingRecordRespVO.builder()
+                    .serviceName("自习室预约").manageStatus(1).build();
+            BookingRecordRespVO b2 = BookingRecordRespVO.builder()
+                    .serviceName("心理咨询").manageStatus(0).build();
+            List<BookingRecordRespVO> bookings = List.of(b1, b2);
             when(userRepository.getAllBookings(USER_ID)).thenReturn(bookings);
 
             // When
@@ -68,8 +67,8 @@ class UserServiceImplTest {
             assertEquals("测试用户", result.getUser().getName());
             assertNotNull(result.getBookings());
             assertEquals(2, result.getBookings().size());
-            assertEquals("自习室预约", result.getBookings().get(0).get("serviceName"));
-            assertEquals("心理咨询", result.getBookings().get(1).get("serviceName"));
+            assertEquals("自习室预约", result.getBookings().get(0).getServiceName());
+            assertEquals("心理咨询", result.getBookings().get(1).getServiceName());
         }
 
         @Test

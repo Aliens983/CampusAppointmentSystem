@@ -1,5 +1,6 @@
 package com.laoliu.cas.appointment.infrastructure.persistence.repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laoliu.cas.appointment.domain.entity.Service;
@@ -8,13 +9,14 @@ import com.laoliu.cas.appointment.infrastructure.persistence.dataobject.Services
 import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ServiceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * 服务仓库实现 - 基础设施层
+ * 服务仓库实现 - 基础设施层。
  *
  * @author forever-king
  */
@@ -38,9 +40,18 @@ public class ServiceRepositoryImpl implements ServiceRepository {
     }
 
     @Override
-    public IPage<Service> findAll(int page, int pageSize) {
+    public IPage<Service> findAll(int page, int pageSize, String serviceName, Integer serviceState) {
+        LambdaQueryWrapper<ServicesDO> wrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.hasText(serviceName)) {
+            wrapper.like(ServicesDO::getServiceName, serviceName);
+        }
+        if (serviceState != null) {
+            wrapper.eq(ServicesDO::getServiceState, serviceState);
+        }
+        wrapper.orderByDesc(ServicesDO::getServiceId);
+
         Page<ServicesDO> pageParam = new Page<>(page, pageSize);
-        IPage<ServicesDO> doPage = serviceMapper.selectAllWithPage(pageParam);
+        IPage<ServicesDO> doPage = serviceMapper.selectPage(pageParam, wrapper);
         return doPage.convert(ServicesDO::toEntity);
     }
 

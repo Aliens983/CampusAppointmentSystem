@@ -5,6 +5,7 @@ import com.laoliu.cas.appointment.application.service.ServiceService;
 import com.laoliu.cas.appointment.domain.entity.Service;
 import com.laoliu.cas.appointment.domain.repository.ServiceRepository;
 import com.laoliu.cas.appointment.interfaces.dto.request.ServiceAddRequest;
+import com.laoliu.cas.appointment.interfaces.dto.request.ServicePageReqVO;
 import com.laoliu.cas.common.result.PageResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 服务管理应用服务实现
+ * 服务管理应用服务实现。
  *
  * @author forever-king
  */
@@ -30,8 +31,10 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public PageResult<Service> getAllServices(int page, int pageSize) {
-        IPage<Service> result = serviceRepository.findAll(page, pageSize);
+    public PageResult<Service> getAllServices(ServicePageReqVO reqVO) {
+        IPage<Service> result = serviceRepository.findAll(
+                reqVO.getPageNo(), reqVO.getPageSize(),
+                reqVO.getServiceName(), reqVO.getServiceState());
         return PageResult.of(result);
     }
 
@@ -41,22 +44,6 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceRepository.findAll().stream()
                 .filter(Service::isAvailable)
                 .toList();
-    }
-
-    @Override
-    public PageResult<Service> getAvailableServices(int page, int pageSize) {
-        IPage<Service> allServices = serviceRepository.findAll(page, pageSize);
-        List<Service> availableList = allServices.getRecords().stream()
-                .filter(Service::isAvailable)
-                .toList();
-        // 在内存过滤后重建分页结果（可用服务数量可能少于分页大小）
-        return PageResult.<Service>builder()
-                .records(availableList)
-                .total(allServices.getTotal())
-                .pageSize(pageSize)
-                .current(page)
-                .pages(allServices.getPages())
-                .build();
     }
 
     @Override

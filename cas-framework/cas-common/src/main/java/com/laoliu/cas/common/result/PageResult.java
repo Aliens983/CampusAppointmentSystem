@@ -39,6 +39,17 @@ public class PageResult<T> {
     private long pages;
 
     /**
+     * 快速构造（仅 records + total，其余字段为 0）。
+     */
+    public PageResult(List<T> records, long total) {
+        this.records = records;
+        this.total = total;
+        this.pageSize = 0;
+        this.current = 0;
+        this.pages = 0;
+    }
+
+    /**
      * 从 MyBatis-Plus 的 IPage 对象构建 PageResult。
      */
     public static <T> PageResult<T> of(IPage<T> page) {

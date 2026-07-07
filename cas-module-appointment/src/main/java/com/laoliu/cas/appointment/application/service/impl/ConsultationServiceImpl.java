@@ -6,6 +6,7 @@ import com.laoliu.cas.appointment.domain.entity.Service;
 import com.laoliu.cas.appointment.domain.repository.ServiceRepository;
 import com.laoliu.cas.appointment.infrastructure.persistence.mapper.ConsultantMapper;
 import com.laoliu.cas.appointment.interfaces.dto.response.ConsultantResponse;
+import com.laoliu.cas.appointment.interfaces.dto.response.TimeSlotRespVO;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
@@ -52,14 +53,15 @@ public class ConsultationServiceImpl implements ConsultationService {
     }
 
     @Override
-    public List<Map<String, String>> getAvailableTimeSlots(Long consultantId, String date) {
-        List<Map<String, String>> slots = new ArrayList<>();
+    public List<TimeSlotRespVO> getAvailableTimeSlots(Long consultantId, String date) {
+        List<TimeSlotRespVO> slots = new ArrayList<>();
         for (String time : TIME_SLOTS) {
-            Map<String, String> slot = new LinkedHashMap<>();
-            slot.put("time", time);
-            slot.put("date", date);
-            slot.put("available", "true");
-            slots.add(slot);
+            String[] parts = time.split("-");
+            slots.add(TimeSlotRespVO.builder()
+                    .startTime(parts[0].trim())
+                    .endTime(parts.length > 1 ? parts[1].trim() : "")
+                    .available("true")
+                    .build());
         }
         return slots;
     }

@@ -1,9 +1,9 @@
 package com.laoliu.cas.appointment.application.service;
 
 import com.laoliu.cas.appointment.interfaces.dto.response.ConsultantResponse;
+import com.laoliu.cas.appointment.interfaces.dto.response.TimeSlotRespVO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 咨询查询应用服务接口
@@ -25,5 +25,5 @@ public interface ConsultationService {
     /**
      * 获取指定咨询师的可用时段
      */
-    List<Map<String, String>> getAvailableTimeSlots(Long consultantId, String date);
+    List<TimeSlotRespVO> getAvailableTimeSlots(Long consultantId, String date);
 }

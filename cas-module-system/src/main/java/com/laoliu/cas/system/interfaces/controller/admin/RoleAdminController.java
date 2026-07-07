@@ -7,6 +7,7 @@ import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.system.application.service.RoleService;
 import com.laoliu.cas.system.domain.entity.User;
 import com.laoliu.cas.system.domain.repository.UserRepository;
+import com.laoliu.cas.system.interfaces.dto.response.ChangeRoleRespVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 管理员端角色管理接口。
@@ -53,7 +51,7 @@ public class RoleAdminController {
     @Operation(summary = "修改用户角色", description = "管理员修改用户角色，返回修改后的用户信息和新的角色（仅限修改非普通用户）")
     @PutMapping
     @RequireRole(UserRoleEnum.ADMIN)
-    public CommonResult<Map<String, Object>> changeRole() {
+    public CommonResult<ChangeRoleRespVO> changeRole() {
         try {
             Long userId = getUserIdViaTokenApi.getUserId();
             String role = roleService.getRoleByUserId(userId);
@@ -68,10 +66,7 @@ public class RoleAdminController {
             }
 
             User user = userRepository.findById(userId).orElse(null);
-            Map<String, Object> result = new HashMap<>();
-            result.put("user", user);
-            result.put("role", changeRole);
-            return CommonResult.success("修改用户角色成功", result);
+            return CommonResult.success(ChangeRoleRespVO.of(user, changeRole));
         } catch (Exception e) {
             return CommonResult.internalServerError("修改用户角色失败：" + e.getMessage());
         }

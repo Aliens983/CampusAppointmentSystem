@@ -3,6 +3,7 @@ package com.laoliu.cas.appointment.interfaces.controller.admin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.laoliu.cas.appointment.application.service.ServiceStatusService;
 import com.laoliu.cas.appointment.interfaces.dto.request.AuditRequest;
+import com.laoliu.cas.appointment.interfaces.dto.request.ServiceStatusPageReqVO;
 import com.laoliu.cas.appointment.interfaces.dto.response.ServiceStatusResponse;
 import com.laoliu.cas.common.annotation.RequireRole;
 import com.laoliu.cas.common.enums.ManageStatus;
@@ -11,14 +12,10 @@ import com.laoliu.cas.common.exception.code.BookErrorCode;
 import com.laoliu.cas.common.result.CommonResult;
 import com.laoliu.cas.common.result.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 管理员端服务审核接口。
@@ -33,12 +30,10 @@ public class ServiceStatusAdminController {
 
     private final ServiceStatusService serviceStatusService;
 
-    @Operation(summary = "获取所有服务状态（管理员专用，分页）", description = "管理员分页查看所有用户的服务预约状态列表，包含待审核、通过、拒绝、取消等状态")
+    @Operation(summary = "获取所有服务状态（管理员专用，分页+筛选）", description = "管理员分页查看所有用户的服务预约状态，支持按审核状态和服务名称筛选")
     @GetMapping
-    public CommonResult<PageResult<ServiceStatusResponse>> getServiceStatus(
-            @Parameter(description = "页码，从1开始") @RequestParam(defaultValue = "1") int page,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") int pageSize) {
-        IPage<ServiceStatusResponse> statusPage = serviceStatusService.getServiceStatus(page, pageSize);
+    public CommonResult<PageResult<ServiceStatusResponse>> getServiceStatus(@Valid ServiceStatusPageReqVO reqVO) {
+        IPage<ServiceStatusResponse> statusPage = serviceStatusService.getServiceStatus(reqVO);
         return CommonResult.success(PageResult.of(statusPage));
     }
 
@@ -65,17 +60,5 @@ public class ServiceStatusAdminController {
         }
         serviceStatusService.auditReject(auditRequest.getOrderId(), auditRequest.getReason());
         return CommonResult.success("审核驳回成功", null);
-    }
-
-    private void setStatusDescription(ServiceStatusResponse response) {
-        if (response.getManageStatus() != null) {
-            switch (response.getManageStatus()) {
-                case 0 -> response.setStatusDescription(ManageStatus.SUBMIT.getMessage());
-                case 1 -> response.setStatusDescription(ManageStatus.APPROVED.getMessage());
-                case 2 -> response.setStatusDescription(ManageStatus.REJECTED.getMessage());
-                case 3 -> response.setStatusDescription(ManageStatus.CANCELLED.getMessage());
-                default -> response.setStatusDescription("未知状态");
-            }
-        }
     }
 }
