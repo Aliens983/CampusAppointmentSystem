@@ -3,8 +3,8 @@ package com.laoliu.cas.infra.application.service.impl;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import com.laoliu.cas.common.exception.BusinessException;
 import com.laoliu.cas.common.exception.code.CommonErrorCode;
+import com.laoliu.cas.infra.application.service.FileService;
 import com.laoliu.cas.infra.application.service.QRCodeService;
-import com.laoliu.cas.thirdparty.application.service.OSSService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,13 +14,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 /**
@@ -33,19 +32,30 @@ import static org.mockito.Mockito.*;
 class QRCodeServiceImplTest {
 
     @Mock
-    private OSSService ossService;
+    private FileService fileService;
 
     private MockedStatic<QrCodeUtil> qrCodeUtilMock;
 
     private QRCodeService qrCodeService;
 
     private static final String CONTENT = "https://example.com/booking/123";
-    private static final String UPLOAD_URL = "https://oss.example.com/qrcodes/abc123.png";
+    private static final String FILE_PATH = "/uploads/qrcode-abc123.png";
+    private static final String SERVER_ADDRESS = "http://localhost:18080";
+    private static final String CONTEXT_PATH = "/api/v1";
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         qrCodeUtilMock = mockStatic(QrCodeUtil.class);
-        qrCodeService = new QRCodeServiceImpl(ossService);
+        qrCodeService = new QRCodeServiceImpl(fileService);
+
+        // 通过反射设置 @Value 注入的字段
+        var serverField = QRCodeServiceImpl.class.getDeclaredField("serverAddress");
+        serverField.setAccessible(true);
+        serverField.set(qrCodeService, SERVER_ADDRESS);
+
+        var contextField = QRCodeServiceImpl.class.getDeclaredField("contextPath");
+        contextField.setAccessible(true);
+        contextField.set(qrCodeService, CONTEXT_PATH);
     }
 
     @AfterEach
@@ -58,20 +68,21 @@ class QRCodeServiceImplTest {
     class GenerateQrCodeTests {
 
         @Test
-        @DisplayName("应当成功生成二维码并返回 OSS 上传地址")
+        @DisplayName("应当成功生成二维码并返回本地文件访问地址")
         void shouldGenerateQrCodeSuccessfully() {
             // Given
             BufferedImage mockImage = new BufferedImage(300, 300, BufferedImage.TYPE_INT_RGB);
             qrCodeUtilMock.when(() -> QrCodeUtil.generate(CONTENT, 300, 300)).thenReturn(mockImage);
-            when(ossService.uploadFile(any(MultipartFile.class))).thenReturn(UPLOAD_URL);
+            when(fileService.uploadFile(any(File.class))).thenReturn(FILE_PATH);
 
             // When
             String result = qrCodeService.generateQrCode(CONTENT);
 
             // Then
             assertNotNull(result);
-            assertEquals(UPLOAD_URL, result);
-            verify(ossService).uploadFile(any(MultipartFile.class));
+            String expectedUrl = SERVER_ADDRESS + CONTEXT_PATH + FILE_PATH;
+            assertEquals(expectedUrl, result);
+            verify(fileService).uploadFile(any(File.class));
         }
 
         @Test
@@ -81,7 +92,7 @@ class QRCodeServiceImplTest {
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> qrCodeService.generateQrCode(null));
             assertEquals(CommonErrorCode.BAD_REQUEST.getCode(), exception.getCode());
-            verify(ossService, never()).uploadFile(any(MultipartFile.class));
+            verify(fileService, never()).uploadFile(any(File.class));
         }
 
         @Test
@@ -91,7 +102,7 @@ class QRCodeServiceImplTest {
             BusinessException exception = assertThrows(BusinessException.class,
                     () -> qrCodeService.generateQrCode("   "));
             assertEquals(CommonErrorCode.BAD_REQUEST.getCode(), exception.getCode());
-            verify(ossService, never()).uploadFile(any(MultipartFile.class));
+            verify(fileService, never()).uploadFile(any(File.class));
         }
     }
 }

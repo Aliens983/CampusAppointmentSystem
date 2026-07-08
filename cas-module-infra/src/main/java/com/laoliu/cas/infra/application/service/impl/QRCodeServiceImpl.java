@@ -3,29 +3,36 @@ package com.laoliu.cas.infra.application.service.impl;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import com.laoliu.cas.common.exception.BusinessException;
 import com.laoliu.cas.common.exception.code.CommonErrorCode;
+import com.laoliu.cas.infra.application.service.FileService;
 import com.laoliu.cas.infra.application.service.QRCodeService;
-import com.laoliu.cas.thirdparty.application.service.OSSService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
+import java.nio.file.Files;
 
 /**
  * @author forever-king
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class QRCodeServiceImpl implements QRCodeService {
 
-    private final OSSService ossService;
+    private final FileService fileService;
+
+    @Value("${file.upload.server-address:http://localhost:18080}")
+    private String serverAddress;
+
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
+
+    public QRCodeServiceImpl(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     @Override
     public String generateQrCode(String content) {
@@ -33,70 +40,23 @@ public class QRCodeServiceImpl implements QRCodeService {
             throw new BusinessException(CommonErrorCode.BAD_REQUEST);
         }
 
+        File tempFile = null;
         try {
             BufferedImage qrCodeImage = QrCodeUtil.generate(content, 300, 300);
-            byte[] qrCodeBytes = bufferedImageToBytes(qrCodeImage);
-            MultipartFile multipartFile = new ByteArrayMultipartFile(qrCodeBytes, UUID.randomUUID().toString() + ".png");
-            return ossService.uploadFile(multipartFile);
+            tempFile = File.createTempFile("qrcode-", ".png");
+            ImageIO.write(qrCodeImage, "PNG", tempFile);
+
+            String fileUrl = fileService.uploadFile(tempFile);
+            String fullUrl = serverAddress + contextPath + fileUrl;
+            log.info("二维码已生成并存储到本地: {}", fullUrl);
+            return fullUrl;
         } catch (Exception e) {
             log.error("生成二维码失败", e);
             throw new BusinessException(CommonErrorCode.QR_CODE_FAILED);
-        }
-    }
-
-    private byte[] bufferedImageToBytes(BufferedImage bufferedImage) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "PNG", outputStream);
-        return outputStream.toByteArray();
-    }
-
-    private static class ByteArrayMultipartFile implements MultipartFile {
-        private final byte[] content;
-        private final String filename;
-
-        public ByteArrayMultipartFile(byte[] content, String filename) {
-            this.content = content;
-            this.filename = filename;
-        }
-
-        @Override
-        public String getName() {
-            return filename;
-        }
-
-        @Override
-        public String getOriginalFilename() {
-            return filename;
-        }
-
-        @Override
-        public String getContentType() {
-            return "image/png";
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return content == null || content.length == 0;
-        }
-
-        @Override
-        public long getSize() {
-            return content.length;
-        }
-
-        @Override
-        public byte[] getBytes() {
-            return content;
-        }
-
-        @Override
-        public java.io.InputStream getInputStream() {
-            return new ByteArrayInputStream(content);
-        }
-
-        @Override
-        public void transferTo(java.io.File dest) throws IOException {
-            java.nio.file.Files.write(dest.toPath(), content);
+        } finally {
+            if (tempFile != null) {
+                try { Files.deleteIfExists(tempFile.toPath()); } catch (IOException ignored) {}
+            }
         }
     }
 }

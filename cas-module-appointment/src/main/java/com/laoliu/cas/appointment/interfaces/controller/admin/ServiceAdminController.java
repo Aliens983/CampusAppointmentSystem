@@ -54,6 +54,18 @@ public class ServiceAdminController {
         }
     }
 
+    @Operation(summary = "更新服务", description = "管理员更新已有的服务项目信息")
+    @PutMapping("/{id}")
+    @RequireRole(UserRoleEnum.ADMIN)
+    public CommonResult<Void> updateService(@PathVariable Long id, @Valid @RequestBody ServiceAddRequest request) {
+        boolean success = serviceService.updateService(id, request);
+        if (success) {
+            return CommonResult.success("更新服务成功", null);
+        } else {
+            return CommonResult.notFound("服务不存在");
+        }
+    }
+
     @Operation(summary = "获取指定用户的所有已预约服务（分页）", description = "管理员根据用户ID分页查询该用户预约的所有服务详情")
     @GetMapping("/by-user")
     @RequireRole(UserRoleEnum.ADMIN)

@@ -46,7 +46,10 @@ public class OSSServiceImpl implements OSSService {
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, fileName, inputStream);
             ossClient.putObject(putObjectRequest);
 
-            return "https://" + bucketName + "." + endpoint + "/" + fileName;
+            // 生成带签名的临时访问URL（有效期1小时），避免私有bucket无法访问
+            java.util.Date expiration = new java.util.Date(System.currentTimeMillis() + 3600 * 1000);
+            java.net.URL signedUrl = ossClient.generatePresignedUrl(bucketName, fileName, expiration);
+            return signedUrl.toString();
         } catch (IOException e) {
             log.error("文件上传失败", e);
             throw new BusinessException(CommonErrorCode.FILE_UPLOAD_FAILED);

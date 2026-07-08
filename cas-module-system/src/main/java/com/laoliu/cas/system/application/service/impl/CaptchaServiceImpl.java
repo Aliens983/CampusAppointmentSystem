@@ -31,6 +31,9 @@ public class CaptchaServiceImpl implements CaptchaService {
     @Value("${file.upload.server-address:http://localhost:18080}")
     private String serverAddress;
 
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
+
     @Override
     public CaptchaResult generateCaptcha() {
         String uuid = UUID.randomUUID().toString();
@@ -53,7 +56,7 @@ public class CaptchaServiceImpl implements CaptchaService {
             String fileUrl = fileService.uploadFile(tempFile);
             tempFile.delete();
 
-            String imageUrl = serverAddress + fileUrl;
+            String imageUrl = serverAddress + contextPath + fileUrl;
 
             return CaptchaResult.builder()
                     .uuid(uuid)

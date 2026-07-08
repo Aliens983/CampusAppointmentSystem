@@ -65,6 +65,18 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
+    @CacheEvict(value = "services", allEntries = true)
+    public boolean updateService(Long id, ServiceAddRequest request) {
+        Service existing = serviceRepository.findById(id).orElse(null);
+        if (existing == null) return false;
+        existing.setServiceName(request.getServiceName());
+        existing.setServiceDescribe(request.getServiceDescribe());
+        if (request.getServiceState() != null) existing.setServiceState(request.getServiceState());
+        serviceRepository.save(existing);
+        return true;
+    }
+
+    @Override
     public List<Service> selectUserServices(Long userId) {
         return serviceRepository.findByUserId(userId);
     }

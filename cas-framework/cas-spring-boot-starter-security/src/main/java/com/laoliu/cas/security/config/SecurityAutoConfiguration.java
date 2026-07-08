@@ -56,7 +56,7 @@ public class SecurityAutoConfiguration {
                                 "/webjars/**",
                                 "/favicon.ico",
                                 "/hello",
-                                "/weather",
+                                "/weather/**",
                                 "/ai/**"
                         ).permitAll()
                         .anyRequest().authenticated()

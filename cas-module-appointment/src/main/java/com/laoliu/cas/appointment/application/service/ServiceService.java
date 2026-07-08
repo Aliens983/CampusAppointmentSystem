@@ -32,6 +32,9 @@ public interface ServiceService {
     /** 添加服务 */
     boolean addService(ServiceAddRequest request);
 
+    /** 更新服务 */
+    boolean updateService(Long id, ServiceAddRequest request);
+
     /** 获取用户已选服务 */
     List<Service> selectUserServices(Long userId);
 
