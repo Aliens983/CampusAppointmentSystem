@@ -1,6 +1,7 @@
 package com.laoliu.cas.appointment.interfaces.controller.app;
 
-import com.laoliu.cas.appointment.application.service.ConsultationService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.laoliu.cas.appointment.application.service.impl.ConsultationServiceImpl;
 import com.laoliu.cas.appointment.interfaces.dto.response.ConsultantResponse;
 import com.laoliu.cas.appointment.interfaces.dto.response.TimeSlotRespVO;
 import com.laoliu.cas.common.pojo.PageParam;
@@ -25,13 +26,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConsultationAppController {
 
-    private final ConsultationService consultationService;
+    private final ConsultationServiceImpl consultationService;
 
-    @Operation(summary = "获取咨询师列表（分页）", description = "分页获取所有咨询类服务列表")
+    @Operation(summary = "获取咨询师列表（分页）", description = "分页获取所有咨询师，支持按名称/部门筛选")
     @GetMapping
-    public CommonResult<PageResult<ConsultantResponse>> getConsultants(@Valid PageParam pageParam) {
-        List<ConsultantResponse> allList = consultationService.getAvailableConsultants();
-        return CommonResult.success(paginateInMemory(allList, pageParam.getPageNo(), pageParam.getPageSize()));
+    public CommonResult<PageResult<ConsultantResponse>> getConsultants(
+            @Valid PageParam pageParam,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String department) {
+        IPage<ConsultantResponse> page = consultationService.getAvailableConsultants(
+                pageParam.getPageNo(), pageParam.getPageSize(), name, department);
+        return CommonResult.success(PageResult.of(page));
     }
 
     @Operation(summary = "获取咨询师详情", description = "根据ID获取单个咨询师详细信息")
@@ -50,24 +55,5 @@ public class ConsultationAppController {
             @PathVariable Long consultantId,
             @RequestParam String date) {
         return CommonResult.success(consultationService.getAvailableTimeSlots(consultantId, date));
-    }
-
-    /** 内存分页工具方法，用于 stub / 假数据场景。 */
-    private static <T> PageResult<T> paginateInMemory(List<T> allList, int page, int pageSize) {
-        int total = allList.size();
-        int fromIndex = (page - 1) * pageSize;
-        if (fromIndex >= total) {
-            return PageResult.empty(pageSize, page);
-        }
-        int toIndex = Math.min(fromIndex + pageSize, total);
-        List<T> pageRecords = allList.subList(fromIndex, toIndex);
-        long pages = (total + pageSize - 1) / pageSize;
-        return PageResult.<T>builder()
-                .records(pageRecords)
-                .total(total)
-                .pageSize(pageSize)
-                .current(page)
-                .pages(pages)
-                .build();
     }
 }

@@ -24,6 +24,7 @@ public class EquipmentDO {
     @TableId(type = IdType.AUTO)
     private Long id;
     private String name;
+    private String category;
     private String description;
     private Integer totalStock;
     private Integer availableStock;
@@ -33,7 +34,7 @@ public class EquipmentDO {
 
     public Equipment toEntity() {
         return Equipment.builder()
-                .id(id).name(name).description(description)
+                .id(id).name(name).category(category).description(description)
                 .totalStock(totalStock).availableStock(availableStock)
                 .unit(unit).location(location).serviceId(serviceId)
                 .build();
@@ -42,7 +43,8 @@ public class EquipmentDO {
     public static EquipmentDO fromEntity(Equipment entity) {
         if (entity == null) return null;
         return EquipmentDO.builder()
-                .id(entity.getId()).name(entity.getName()).description(entity.getDescription())
+                .id(entity.getId()).name(entity.getName()).category(entity.getCategory())
+                .description(entity.getDescription())
                 .totalStock(entity.getTotalStock()).availableStock(entity.getAvailableStock())
                 .unit(entity.getUnit()).location(entity.getLocation()).serviceId(entity.getServiceId())
                 .build();

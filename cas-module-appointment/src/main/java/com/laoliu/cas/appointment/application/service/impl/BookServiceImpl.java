@@ -1,5 +1,6 @@
 package com.laoliu.cas.appointment.application.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.laoliu.cas.appointment.application.service.BookService;
 import com.laoliu.cas.appointment.domain.repository.BookingRepository;
 import com.laoliu.cas.appointment.domain.repository.ServiceRepository;
@@ -39,12 +40,10 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public UserInfoDTO bookService(Long userId, List<Long> serviceIds) {
-        // 参数校验
         if (serviceIds == null || serviceIds.isEmpty()) {
             throw new BusinessException(ServiceErrorCode.SERVICE_ID_EMPTY);
         }
 
-        // 校验每个服务的有效性
         for (Long sid : serviceIds) {
             com.laoliu.cas.appointment.domain.entity.Service service = serviceRepository.findById(sid)
                     .orElseThrow(() -> new BusinessException(ServiceErrorCode.SERVICE_NOT_EXIST, sid));
@@ -69,15 +68,18 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookingDTO> getAllBookings(Long userId) {
-        List<ServiceStatusResponse> statusList = bookingRepository.getServiceStatusByUserId(userId);
-        return statusList.stream()
+        return bookingRepository.getServiceStatusByUserId(userId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 将 ServiceStatusResponse 转换为 BookingDTO
-     */
+    @Override
+    public IPage<BookingDTO> getAllBookings(Long userId, int page, int pageSize) {
+        IPage<ServiceStatusResponse> statusPage = bookingRepository.getServiceStatusByUserId(
+                userId, page, pageSize, null, null);
+        return statusPage.convert(this::convertToDTO);
+    }
+
     private BookingDTO convertToDTO(ServiceStatusResponse status) {
         BookingDTO dto = new BookingDTO();
         dto.setOrderId(status.getOrderId());
@@ -90,9 +92,6 @@ public class BookServiceImpl implements BookService {
         return dto;
     }
 
-    /**
-     * 获取状态描述
-     */
     private String getStatusDescription(Integer status) {
         if (status == null) {
             return "未知状态";

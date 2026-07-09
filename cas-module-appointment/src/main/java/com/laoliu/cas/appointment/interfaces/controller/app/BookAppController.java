@@ -47,25 +47,8 @@ public class BookAppController {
     @GetMapping
     public CommonResult<PageResult<BookingDTO>> getBook(@Valid PageParam pageParam) {
         Long userId = getUserIdViaTokenApi.getUserId();
-        int page = pageParam.getPageNo();
-        int pageSize = pageParam.getPageSize();
-        List<BookingDTO> allBookings = bookService.getAllBookings(userId);
-        if (allBookings == null || allBookings.isEmpty()) {
-            return CommonResult.success(PageResult.empty(pageSize, page));
-        }
-        // 手动分页（已查询全量数据）
-        int total = allBookings.size();
-        int fromIndex = Math.min((page - 1) * pageSize, total);
-        int toIndex = Math.min(fromIndex + pageSize, total);
-        int pages = (int) Math.ceil((double) total / pageSize);
-        PageResult<BookingDTO> pageResult = PageResult.<BookingDTO>builder()
-                .records(allBookings.subList(fromIndex, toIndex))
-                .total(total)
-                .pageSize(pageSize)
-                .current(page)
-                .pages(pages)
-                .build();
-        return CommonResult.success(pageResult);
+        var page = bookService.getAllBookings(userId, pageParam.getPageNo(), pageParam.getPageSize());
+        return CommonResult.success(PageResult.of(page));
     }
 
     @Operation(summary = "取消预约", description = "取消用户已预约的服务，传入预约ID")

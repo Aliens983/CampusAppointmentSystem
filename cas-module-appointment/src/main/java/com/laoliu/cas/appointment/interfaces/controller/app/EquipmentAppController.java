@@ -1,6 +1,7 @@
 package com.laoliu.cas.appointment.interfaces.controller.app;
 
-import com.laoliu.cas.appointment.application.service.EquipmentService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.laoliu.cas.appointment.application.service.impl.EquipmentServiceImpl;
 import com.laoliu.cas.appointment.interfaces.dto.response.EquipmentResponse;
 import com.laoliu.cas.common.pojo.PageParam;
 import com.laoliu.cas.common.result.CommonResult;
@@ -24,16 +25,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EquipmentAppController {
 
-    private final EquipmentService equipmentService;
+    private final EquipmentServiceImpl equipmentService;
 
-    @Operation(summary = "获取设备列表（分页）", description = "分页获取所有设备类服务列表")
+    @Operation(summary = "获取设备列表（分页）", description = "分页获取所有设备，支持按名称/分类筛选")
     @GetMapping
-    public CommonResult<PageResult<EquipmentResponse>> getEquipment(@Valid PageParam pageParam) {
-        List<EquipmentResponse> allList = equipmentService.getAvailableEquipment();
-        return CommonResult.success(paginateInMemory(allList, pageParam.getPageNo(), pageParam.getPageSize()));
+    public CommonResult<PageResult<EquipmentResponse>> getEquipment(
+            @Valid PageParam pageParam,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category) {
+        IPage<EquipmentResponse> page = equipmentService.getAvailableEquipment(
+                pageParam.getPageNo(), pageParam.getPageSize(), name, category);
+        return CommonResult.success(PageResult.of(page));
     }
 
-    @Operation(summary = "获取设备分类", description = "获取所有设备分类列表")
+    @Operation(summary = "获取设备分类", description = "获取所有设备分类列表（从数据库去重）")
     @GetMapping("/categories")
     public CommonResult<List<String>> getCategories() {
         return CommonResult.success(equipmentService.getCategories());
@@ -47,24 +52,5 @@ public class EquipmentAppController {
             return CommonResult.notFound("设备不存在");
         }
         return CommonResult.success(equipment);
-    }
-
-    /** 内存分页工具方法，用于 stub / 假数据场景。 */
-    private static <T> PageResult<T> paginateInMemory(List<T> allList, int page, int pageSize) {
-        int total = allList.size();
-        int fromIndex = (page - 1) * pageSize;
-        if (fromIndex >= total) {
-            return PageResult.empty(pageSize, page);
-        }
-        int toIndex = Math.min(fromIndex + pageSize, total);
-        List<T> pageRecords = allList.subList(fromIndex, toIndex);
-        long pages = (total + pageSize - 1) / pageSize;
-        return PageResult.<T>builder()
-                .records(pageRecords)
-                .total(total)
-                .pageSize(pageSize)
-                .current(page)
-                .pages(pages)
-                .build();
     }
 }

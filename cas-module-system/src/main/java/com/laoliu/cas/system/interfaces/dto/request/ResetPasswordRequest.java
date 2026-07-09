@@ -21,6 +21,7 @@ public class ResetPasswordRequest {
     private String email;
 
     @NotBlank(message = "验证码不能为空")
+    @Size(min = 6, max = 6, message = "验证码必须是6位数字")
     @Schema(description = "邮箱验证码", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456")
     private String code;
 

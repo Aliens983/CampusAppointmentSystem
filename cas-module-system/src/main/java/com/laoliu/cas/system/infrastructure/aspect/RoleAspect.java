@@ -1,12 +1,11 @@
 package com.laoliu.cas.system.infrastructure.aspect;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laoliu.cas.common.annotation.RequireRole;
 import com.laoliu.cas.common.api.GetUserIdViaTokenApi;
 import com.laoliu.cas.common.enums.UserRoleEnum;
+import com.laoliu.cas.common.exception.ForbiddenException;
+import com.laoliu.cas.common.exception.UnauthorizedException;
 import com.laoliu.cas.system.infrastructure.persistence.mapper.UserMapper;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,23 +13,24 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
+ * 角色权限校验切面。
+ * <p>
+ * 拦截所有标注 {@link RequireRole} 的方法，校验当前用户是否具备所需角色。
+ * 权限不足时直接抛出异常，由 {@code GlobalExceptionHandler} 统一处理。
+ *
  * @author forever-king
  */
 @Aspect
 @Component
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RoleAspect {
 
-    private final ObjectMapper objectMapper;
     private final GetUserIdViaTokenApi getUserIdViaTokenApi;
     private final UserMapper userMapper;
 
@@ -47,58 +47,28 @@ public class RoleAspect {
             return joinPoint.proceed();
         }
 
-        try {
-            HttpServletResponse response = null;
-            for (Object arg : joinPoint.getArgs()) {
-                if (arg instanceof HttpServletResponse httpResponse) {
-                    response = httpResponse;
-                    break;
-                }
-            }
-
-            Long userId = getUserIdViaTokenApi.getUserId();
-            if (userId == null) {
-                if (response != null) {
-                    sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "用户未登录");
-                }
-                return null;
-            }
-
-            String userRole = userMapper.getRoleByUserId(userId);
-
-            if (userRole == null) {
-                if (response != null) {
-                    sendErrorResponse(response, HttpStatus.FORBIDDEN, "无法获取用户角色信息");
-                }
-                return null;
-            }
-
-            UserRoleEnum[] requiredRoles = requireRole.value();
-            boolean hasPermission = hasPermission(userRole, requiredRoles);
-
-            if (!hasPermission) {
-                log.warn("用户权限不足，当前角色: {}, 需要角色: {}",
-                        UserRoleEnum.getByCode(Integer.parseInt(userRole)).getDescription(),
-                        Arrays.toString(requiredRoles));
-                if (response != null) {
-                    sendErrorResponse(response, HttpStatus.FORBIDDEN, "权限不足，无法访问该接口");
-                }
-                return null;
-            }
-
-            log.debug("权限验证通过，用户角色: {}", UserRoleEnum.getByCode(Integer.parseInt(userRole)).getDescription());
-            return joinPoint.proceed();
-
-        } catch (RuntimeException e) {
-            log.error("Token解析失败: {}", e.getMessage());
-            for (Object arg : joinPoint.getArgs()) {
-                if (arg instanceof HttpServletResponse httpResponse) {
-                    sendErrorResponse(httpResponse, HttpStatus.UNAUTHORIZED, "Token无效或已过期");
-                    break;
-                }
-            }
-            return null;
+        Long userId = getUserIdViaTokenApi.getUserId();
+        if (userId == null) {
+            throw new UnauthorizedException(401, "用户未登录");
         }
+
+        String userRole = userMapper.getRoleByUserId(userId);
+        if (userRole == null) {
+            throw new ForbiddenException(403, "无法获取用户角色信息");
+        }
+
+        UserRoleEnum[] requiredRoles = requireRole.value();
+        boolean hasPermission = hasPermission(userRole, requiredRoles);
+
+        if (!hasPermission) {
+            log.warn("用户权限不足，当前角色: {}, 需要角色: {}",
+                    UserRoleEnum.getByCode(Integer.parseInt(userRole)).getDescription(),
+                    Arrays.toString(requiredRoles));
+            throw new ForbiddenException(403, "权限不足，无法访问该接口");
+        }
+
+        log.debug("权限验证通过，用户角色: {}", UserRoleEnum.getByCode(Integer.parseInt(userRole)).getDescription());
+        return joinPoint.proceed();
     }
 
     private boolean hasPermission(String userRole, UserRoleEnum[] requiredRoles) {
@@ -108,12 +78,5 @@ public class RoleAspect {
             }
         }
         return false;
-    }
-
-    private void sendErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
-        response.setStatus(status.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("{\"code\":" + status.value() + ",\"message\":\"" + message + "\"}");
     }
 }

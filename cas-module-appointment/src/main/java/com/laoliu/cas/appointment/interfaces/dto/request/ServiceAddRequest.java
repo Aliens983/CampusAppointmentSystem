@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
@@ -17,10 +18,12 @@ import lombok.Data;
 public class ServiceAddRequest {
 
     @NotBlank(message = "服务名称不能为空")
+    @Size(max = 100, message = "服务名称不能超过100个字符")
     @Schema(description = "服务名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "图书馆预约")
     private String serviceName;
 
     @NotBlank(message = "服务描述不能为空")
+    @Size(max = 500, message = "服务描述不能超过500个字符")
     @Schema(description = "服务描述", requiredMode = Schema.RequiredMode.REQUIRED, example = "预约图书馆座位或图书")
     private String serviceDescribe;
 

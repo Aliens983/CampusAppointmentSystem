@@ -25,6 +25,8 @@ public class Equipment implements Serializable {
     private Long id;
     /** 设备名称 */
     private String name;
+    /** 设备分类 */
+    private String category;
     /** 设备描述 */
     private String description;
     /** 总库存 */
